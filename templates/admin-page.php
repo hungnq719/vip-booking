@@ -1,8 +1,8 @@
 <?php
 $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
 
-// Get statistics with status breakdown
-$now = time();
+// Get statistics with status breakdown - sử dụng current_time để đảm bảo timezone đúng
+$now = current_time('timestamp');
 $all_bookings = get_posts(array(
     'post_type' => 'vip_booking',
     'posts_per_page' => -1,
@@ -19,9 +19,7 @@ $all_bookings = get_posts(array(
 $total_upcoming = 0;
 $total_completed = 0;
 foreach ($all_bookings as $booking_id) {
-    $date = get_post_meta($booking_id, '_booking_date', true);
-    $time = get_post_meta($booking_id, '_booking_time', true);
-    $timestamp = strtotime($date . ' ' . $time);
+    $timestamp = get_post_meta($booking_id, '_booking_timestamp', true);
     if ($timestamp > $now) {
         $total_upcoming++;
     } else {
@@ -42,9 +40,7 @@ $today_bookings = get_posts(array(
 $today_upcoming = 0;
 $today_completed = 0;
 foreach ($today_bookings as $booking_id) {
-    $date = get_post_meta($booking_id, '_booking_date', true);
-    $time = get_post_meta($booking_id, '_booking_time', true);
-    $timestamp = strtotime($date . ' ' . $time);
+    $timestamp = get_post_meta($booking_id, '_booking_timestamp', true);
     if ($timestamp > $now) {
         $today_upcoming++;
     } else {
@@ -63,9 +59,7 @@ $week_bookings = get_posts(array(
 $week_upcoming = 0;
 $week_completed = 0;
 foreach ($week_bookings as $booking_id) {
-    $date = get_post_meta($booking_id, '_booking_date', true);
-    $time = get_post_meta($booking_id, '_booking_time', true);
-    $timestamp = strtotime($date . ' ' . $time);
+    $timestamp = get_post_meta($booking_id, '_booking_timestamp', true);
     if ($timestamp > $now) {
         $week_upcoming++;
     } else {
@@ -84,9 +78,7 @@ $month_bookings = get_posts(array(
 $month_upcoming = 0;
 $month_completed = 0;
 foreach ($month_bookings as $booking_id) {
-    $date = get_post_meta($booking_id, '_booking_date', true);
-    $time = get_post_meta($booking_id, '_booking_time', true);
-    $timestamp = strtotime($date . ' ' . $time);
+    $timestamp = get_post_meta($booking_id, '_booking_timestamp', true);
     if ($timestamp > $now) {
         $month_upcoming++;
     } else {
@@ -158,7 +150,7 @@ foreach ($month_bookings as $booking_id) {
         <!-- Shortcode Guide -->
         <div class="shortcode-guide" style="background: white; padding: 25px; margin-top: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
             <h3 style="margin-top: 0;">📖 Shortcode Usage Guide</h3>
-            <p style="color: #666; margin-bottom: 20px;">Use these shortcodes to display the booking form on any page or post:</p>
+            <p style="color: #666; margin-bottom: 20px;">Use these shortcodes to display booking features on any page or post:</p>
             
             <div class="shortcode-box" style="background: #f5f5f5; padding: 15px; border-left: 4px solid #2271b1; margin-bottom: 15px;">
                 <code style="font-size: 14px; color: #d63638; font-weight: bold;">[vip_booking]</code>
@@ -167,10 +159,17 @@ foreach ($month_bookings as $booking_id) {
                 </p>
             </div>
             
-            <div class="shortcode-box" style="background: #f5f5f5; padding: 15px; border-left: 4px solid #d63638; margin-bottom: 0;">
+            <div class="shortcode-box" style="background: #f5f5f5; padding: 15px; border-left: 4px solid #d63638; margin-bottom: 15px;">
                 <code style="font-size: 14px; color: #d63638; font-weight: bold;">[vip_booking_secret]</code>
                 <p style="margin: 10px 0 0 0; color: #666;">
                     <strong>Guest booking form</strong> - Allows bookings WITHOUT login (use with caution).
+                </p>
+            </div>
+            
+            <div class="shortcode-box" style="background: #f5f5f5; padding: 15px; border-left: 4px solid #00a32a; margin-bottom: 0;">
+                <code style="font-size: 14px; color: #d63638; font-weight: bold;">[vip_booking_user]</code>
+                <p style="margin: 10px 0 0 0; color: #666;">
+                    <strong>User dashboard</strong> - Displays booking history for logged-in users (with card regeneration).
                 </p>
             </div>
         </div>
@@ -212,11 +211,8 @@ foreach ($month_bookings as $booking_id) {
                 if (empty($bookings)): ?>
                     <tr><td colspan="12" style="text-align:center;padding:30px;">No bookings yet</td></tr>
                 <?php else:
-                    $now = time();
                     foreach ($bookings as $booking):
-                        $booking_date = get_post_meta($booking->ID, '_booking_date', true);
-                        $booking_time = get_post_meta($booking->ID, '_booking_time', true);
-                        $booking_timestamp = strtotime($booking_date . ' ' . $booking_time);
+                        $booking_timestamp = get_post_meta($booking->ID, '_booking_timestamp', true);
                         
                         // Auto determine status based on time
                         if ($booking_timestamp > $now) {

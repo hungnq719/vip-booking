@@ -100,25 +100,38 @@ jQuery(document).ready(function($) {
         
         // Split by colon
         const parts = timeStr.split(':');
-        if (parts.length !== 2) return '';
+        if (parts.length !== 2) {
+            console.warn('Invalid time format:', timeStr);
+            return '';
+        }
         
         // Parse and validate
         let hours = parseInt(parts[0], 10);
         let minutes = parseInt(parts[1], 10);
         
-        if (isNaN(hours) || isNaN(minutes)) return '';
+        if (isNaN(hours) || isNaN(minutes)) {
+            console.warn('Invalid time values:', timeStr);
+            return '';
+        }
         
         // Validate ranges
         if (hours < 0 || hours > 23) hours = 0;
         if (minutes < 0 || minutes > 59) minutes = 0;
         
-        // Pad with zeros and return
-        return String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0');
+        // Pad with zeros
+        const normalized = String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0');
+        
+        console.log('Normalized time:', timeStr, '->', normalized);
+        return normalized;
     }
     
     function addRow(data = null) {
+        console.log('addRow called with data:', data);
+        
         const openingTime = data && data.opening_hours ? normalizeTime(data.opening_hours) : '';
         const closingTime = data && data.closing_hours ? normalizeTime(data.closing_hours) : '';
+        
+        console.log('After normalize - Opening:', openingTime, '| Closing:', closingTime);
         
         const row = $(`
             <tr>
@@ -265,6 +278,8 @@ jQuery(document).ready(function($) {
             let importCount = 0;
             let errorCount = 0;
             
+            console.log('=== CSV IMPORT START ===');
+            
             for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
                 if (!line) continue;
@@ -285,10 +300,16 @@ jQuery(document).ready(function($) {
                         current += char;
                     }
                 }
+                // Don't forget the last value!
                 values.push(current.trim().replace(/^["']|["']$/g, ''));
+                
+                // Debug every row
+                console.log('Row', i, 'raw values:', values);
                 
                 // Must have at least 7 columns
                 if (values.length >= 7) {
+                    console.log('Row', i, '- Opening raw:', values[4], '- Closing raw:', values[5]);
+                    
                     addRow({
                         service: values[0] || '',
                         store: values[1] || '',
@@ -300,9 +321,13 @@ jQuery(document).ready(function($) {
                     });
                     importCount++;
                 } else {
+                    console.warn('Row', i, 'only has', values.length, 'columns:', values);
                     errorCount++;
                 }
             }
+            
+            console.log('=== CSV IMPORT END ===');
+            console.log('Imported:', importCount, '| Errors:', errorCount);
             
             if (importCount > 0) {
                 let message = `✅ Successfully imported ${importCount} row(s)!`;
@@ -312,7 +337,7 @@ jQuery(document).ready(function($) {
                 message += '\n\n💾 Click "Save Changes" to save to database.';
                 alert(message);
             } else {
-                alert('❌ No valid data found in CSV file.\n\nExpected 7 columns:\nService, Store Name, Service Package, Price, Opening Hours, Closing Hours, Prebook Time');
+                alert('❌ No valid data found in CSV file.\n\nExpected 7 columns:\nService, Store Name, Service Package, Price, Opening Hours, Closing Hours, Prebook Time\n\nCheck browser console (F12) for details.');
             }
         };
         reader.readAsText(file);

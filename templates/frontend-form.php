@@ -70,7 +70,7 @@ $show_login_notice = $require_login && !$is_logged_in;
                 <select id="package" disabled class="step-select">
                     <option value="">Complete previous steps...</option>
                 </select>
-                <div id="price-display" style="display: none; margin: 10px 0 0 35px;">
+                <div id="price-display" style="display: none; text-align: center;">
                     <strong style="color: #FE9800; font-size: 18px;" id="price"></strong>
                 </div>
             </div>
@@ -215,7 +215,7 @@ $show_login_notice = $require_login && !$is_logged_in;
 .step-line { position: absolute; left: 3px; top: 10px; width: 3px; bottom: -25px; background: #333; z-index: -1; }
 .step-item.completed .step-line { background: #ff9800; }
 .step-content { position: relative; padding-top: 0; min-width: 0; overflow: visible; z-index: 10; }
-.step-title { margin: 0 0 15px 35px; font-size: 18px; font-weight: bold; color: inherit; }
+.step-title { margin: 0 0 15px 35px; font-size: 20px; }
 .step-select { width: 90%; max-width: 600px; margin-left: auto; margin-right: auto; display: block; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; background: #fff; color: #000; transition: border-color 0.3s; }
 .step-select:disabled { background: #e0e0e0; cursor: not-allowed; color: #999; }
 .step-select:focus { outline: none; border-color: #ff9800; }
@@ -232,151 +232,40 @@ input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-
     display: inline-block;
 }
 .pax-selector { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; width: 90%; max-width: 600px; margin-left: auto; margin-right: auto; }
-.pax-option { padding: 8px 4px; text-align: center; cursor: pointer; font-size: 15px; font-weight: 600; border: 1px solid #ddd; border-radius: 6px; transition: all 0.3s; }
+.pax-option { padding: 8px 4px; text-align: center; cursor: pointer; font-size: 15px; font-weight: 600; border: 1px solid #ddd; border-radius: 8px; transition: all 0.3s; }
 .pax-option:not(:hover):not(.selected) { background: #fff; color: #000; }
 .date-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 90%; max-width: 600px; margin-left: auto; margin-right: auto; }
-.date-option { padding: 10px 6px; text-align: center; cursor: pointer; border: 1px solid #ddd; border-radius: 6px; transition: all 0.3s; }
+.date-option { padding: 10px 6px; text-align: center; cursor: pointer; border: 1px solid #ddd; border-radius: 15px; transition: all 0.3s; }
 .date-option:not(:hover):not(.selected) { background: #fff; color: #000; }
 .date-day { font-weight: bold; font-size: 11px; display: block; margin-bottom: 1px; line-height: 1; color: #ff3333; }
 .date-month { font-weight: bold; font-size: 11px; line-height: 1; margin-bottom: 1px; display: block; }
 .date-date { font-size: 26px; font-weight: bold; line-height: 1.1; }
 /* New Time Picker Styles */
-.new-time-picker {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.time-display-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.time-box {
-    background: #fff;
-    border: 3px solid transparent;
-    border-radius: 12px;
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    font-weight: 900;
-    color: #000;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.time-box[data-active="true"] {
-    border-color: #ff9800;
-    box-shadow: 0 0 15px rgba(255, 152, 0, 0.5), 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.time-box:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.time-separator {
-    font-size: 48px;
-    font-weight: bold;
-    color: #fff;
-    user-select: none;
-}
-
-.time-options-container {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 8px;
-    margin-top: 20px;
-}
-
-.time-option-btn {
-    background: #fff;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 12px 8px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #000;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-}
-
-.time-option-btn:hover:not(.disabled):not(.selected) {
-    background: #ff9800;
-    color: #fff;
-    border-color: #ff9800;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
-}
-
-.time-option-btn.selected {
-    background: #ff9800;
-    color: #fff;
-    border-color: #ff9800;
-    box-shadow: 0 0 12px rgba(255, 152, 0, 0.6);
-}
-
-.time-option-btn.disabled {
-    background: #e0e0e0;
-    color: #999;
-    border-color: #ccc;
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
+.new-time-picker { width: 100%; max-width: 600px; margin: 0 auto; }
+.time-display-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px; }
+.time-box { background: #fff; border: 3px solid transparent; border-radius: 15px; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; color: #000; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.time-box[data-active="true"] { border-color: #ff9800; box-shadow: 0 0 15px rgba(255, 152, 0, 0.5), 0 2px 8px rgba(0,0,0,0.1); }
+.time-box:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.time-separator { font-size: 48px; font-weight: bold; color: #fff; user-select: none; }
+.time-options-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 20px; }
+.time-option-btn { background: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 12px 8px; font-size: 16px; font-weight: 600; color: #000; cursor: pointer; transition: all 0.3s ease; text-align: center; }
+.time-option-btn:hover:not(.disabled):not(.selected) { background: #ff9800; color: #fff; border-color: #ff9800; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3); }
+.time-option-btn.selected { background: #ff9800; color: #fff; border-color: #ff9800; box-shadow: 0 0 12px rgba(255, 152, 0, 0.6); }
+.time-option-btn.disabled { background: #e0e0e0; color: #999; border-color: #ccc; cursor: not-allowed; opacity: 0.5; }
 @media (min-width: 769px) {
-    .time-display-container {
-        gap: 20px;
-    }
-    
-    .time-box {
-        width: 120px;
-        height: 120px;
-        font-size: 56px;
-    }
-    
-    .time-separator {
-        font-size: 56px;
-    }
-    
-    .time-options-container {
-        grid-template-columns: repeat(12, 1fr);
-        gap: 10px;
-    }
+    .time-display-container { gap: 20px; }
+    .time-box { width: 120px; height: 120px; font-size: 56px; }
+    .time-separator { font-size: 56px; }
+    .time-options-container { grid-template-columns: repeat(12, 1fr); gap: 10px; }
 }
-
 @media (max-width: 768px) {
-    .time-box {
-        width: 90px;
-        height: 90px;
-        font-size: 42px;
-    }
-    
-    .time-separator {
-        font-size: 42px;
-    }
-    
-    .time-options-container {
-        grid-template-columns: repeat(6, 1fr);
-        gap: 6px;
-    }
-    
-    .time-option-btn {
-        padding: 10px 6px;
-        font-size: 14px;
-    }
+    .time-box { width: 90px; height: 90px; font-size: 42px; }
+    .time-separator { font-size: 42px; }
+    .time-options-container { grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    .time-option-btn { padding: 10px 6px; font-size: 14px; }
 }
 .button-container { text-align: center; margin-top: 40px; }
-.generate-button { padding: 15px 40px; font-size: 18px; font-weight: bold; background: #ff9800; color: #fff; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
-.generate-button:hover { background: #f57c00; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4); }
+.generate-button { padding: 10px 20px; }
 .success-header { text-align: center; margin-bottom: 30px; }
 .success-icon { margin: 0px auto; animation: scaleIn 0.5s ease-out; }
 @keyframes scaleIn { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
@@ -1261,14 +1150,14 @@ var vipCardApp = (function() {
         overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;';
         
         var modal = document.createElement('div');
-        modal.style.cssText = 'background: white; border-radius: 12px; padding: 40px; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3);';
+        modal.style.cssText = 'background: white; border-radius: 30px; padding: 40px; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5);';
         
-        modal.innerHTML = '<div style="font-size: 48px; margin-bottom: 20px;">🔐</div>' +
-            '<h2 style="margin: 0 0 15px 0; font-size: 24px; color: #333;">Login Required</h2>' +
-            '<p style="margin: 0 0 15px 0; font-size: 16px; color: #666; line-height: 1.6;">To proceed with your booking, please login using your Telegram or Google account.</p>' +
-            '<p style="margin: 0 0 25px 0; font-size: 14px; color: #999; line-height: 1.5;">If you have already logged in, please refresh the Booking page.</p>' +
-            '<button onclick="vipCardApp.openLoginFromModal()" style="display: inline-block; padding: 15px 40px; background: #ff9800; color: white; border: none; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin-right: 10px; cursor: pointer;">🔑 Login Now</button>' +
-            '<button onclick="vipCardApp.closeLoginModal()" style="padding: 15px 30px; background: #666; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;">Cancel</button>';
+        modal.innerHTML = '<div style="margin-bottom: 20px;">🔐</div>' +
+            '<h2 style="margin: 0 0 15px 0;">Login Required</h2>' +
+            '<p style="margin: 0 0 15px 0; font-size: 16px; color: #333; line-height: 1.6;">To proceed with your booking, please login using your Telegram or Google account.</p>' +
+            '<p style="margin: 0 0 25px 0; font-size: 14px; color: #666; line-height: 1.5;">If you have already logged in, please refresh the Booking page.</p>' +
+            '<button onclick="vipCardApp.openLoginFromModal()" style="display: inline-block; padding: 10px 20px; margin: 10px">🔑 Login Now</button>' +
+            '<button onclick="vipCardApp.closeLoginModal()" style="padding: 10px 20px; background: #666; color: #fff;">Cancel</button>';
         
         overlay.appendChild(modal);
         document.body.appendChild(overlay);

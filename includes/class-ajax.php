@@ -142,6 +142,16 @@ class VIP_Booking_AJAX {
         
         if ($booking_id) {
             $booking_number = 'VIP-' . str_pad($booking_id, 6, '0', STR_PAD_LEFT);
+            
+            // CRITICAL: Lưu timestamp theo timezone WordPress
+            try {
+                $tz = wp_timezone();
+                $dt = new DateTime($data['date'] . ' ' . $data['time'], $tz);
+                $booking_timestamp = $dt->getTimestamp();
+            } catch (Exception $e) {
+                $booking_timestamp = strtotime($data['date'] . ' ' . $data['time']);
+            }
+            
             update_post_meta($booking_id, '_booking_number', $booking_number);
             update_post_meta($booking_id, '_booking_service', sanitize_text_field($data['service']));
             update_post_meta($booking_id, '_booking_store', sanitize_text_field($data['store']));
@@ -151,7 +161,7 @@ class VIP_Booking_AJAX {
             update_post_meta($booking_id, '_booking_pax', intval($data['pax']));
             update_post_meta($booking_id, '_booking_date', sanitize_text_field($data['date']));
             update_post_meta($booking_id, '_booking_time', sanitize_text_field($data['time']));
-            update_post_meta($booking_id, '_booking_timestamp', strtotime($data['date'] . ' ' . $data['time']));
+            update_post_meta($booking_id, '_booking_timestamp', $booking_timestamp);
             update_post_meta($booking_id, '_booking_status', 'confirmed');
             update_post_meta($booking_id, '_booking_created_at', time());
             

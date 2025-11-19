@@ -2,8 +2,8 @@
 /**
  * Plugin Name: VIP Booking
  * Description: Complete booking management system with dashboard and statistics
- * Version: 1.0.2.2
- * Author: Hung Nguyen 719
+ * Version: 1.0.0
+ * Author: Your Name
  */
 
 if (!defined('ABSPATH')) exit;
