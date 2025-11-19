@@ -94,7 +94,85 @@ $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
 </div>
 
 <script>
-var currentBookingData=null,templateImageUrl='<?php echo esc_url(VIP_BOOKING_PLUGIN_URL."templates/vip-template.png");?>';function showBookingCard(e){var t=e.closest(".booking-card");currentBookingData=JSON.parse(t.getAttribute("data-booking")),document.getElementById("card-modal").style.display="flex",generateCardImage(currentBookingData)}function closeCardModal(){document.getElementById("card-modal").style.display="none"}function generateCardImage(e){var t=document.getElementById("card-canvas"),a=t.getContext("2d"),o=new Image;o.src=templateImageUrl,o.crossOrigin="anonymous",o.onload=function(){a.clearRect(0,0,750,450),a.drawImage(o,0,0,750,450);var t="⋆⋆⋆✦ "+e.store+" ✦⋆⋆⋆";a.font="bold 24px Arial",a.textAlign="center";var n=a.measureText(t).width,r=375,s=290,i=a.createLinearGradient(r-n/2,s,r+n/2,s);i.addColorStop(0,"#EDE3B6"),i.addColorStop(1,"#856641"),a.fillStyle=i,a.fillText(t,r,s);var c=new Date(e.date),l=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],d=l[c.getMonth()]+" "+c.getDate(),u=e.nation+" "+e.pax+" Pax  ⋆  ⏰ "+e.time+"  ⋆  🗓️ "+d+"  ⋆  💎 "+e.package;a.font="bold 28px Arial",a.fillStyle="#000000",a.fillText(u,375,370)},o.onerror=function(){a.fillStyle="#f0f0f0",a.fillRect(0,0,750,450),a.fillStyle="#999",a.font="20px Arial",a.textAlign="center",a.fillText("Template image not found",375,225),a.fillText("Path: "+templateImageUrl,375,260)}}function downloadCard(){if(currentBookingData){var e=document.getElementById("card-canvas"),t=document.createElement("a");t.download="vip-booking-"+currentBookingData.number+".png",t.href=e.toDataURL("image/png"),t.click()}}document.getElementById("card-modal").addEventListener("click",function(e){e.target===this&&closeCardModal()});
+var currentBookingData = null;
+var templateImageUrl = '<?php echo esc_url(VIP_BOOKING_PLUGIN_URL . 'templates/vip-template.png'); ?>';
+
+function showBookingCard(btn) {
+    var card = btn.closest('.booking-card');
+    var bookingData = JSON.parse(card.getAttribute('data-booking'));
+    currentBookingData = bookingData;
+    
+    var modal = document.getElementById('card-modal');
+    modal.style.display = 'flex';
+    
+    generateCardImage(bookingData);
+}
+
+function closeCardModal() {
+    document.getElementById('card-modal').style.display = 'none';
+}
+
+function generateCardImage(data) {
+    var canvas = document.getElementById('card-canvas');
+    var ctx = canvas.getContext('2d');
+    
+    var img = new Image();
+    img.src = templateImageUrl;
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = function() {
+        ctx.clearRect(0, 0, 750, 450);
+        ctx.drawImage(img, 0, 0, 750, 450);
+        
+        // Store name
+        var storeText = '⋆⋆⋆✦ ' + data.store + ' ✦⋆⋆⋆';
+        ctx.font = 'bold 24px Arial';
+        ctx.textAlign = 'center';
+        var tw = ctx.measureText(storeText).width;
+        var x = 375, y = 290;
+        var grad = ctx.createLinearGradient(x - tw/2, y, x + tw/2, y);
+        grad.addColorStop(0, '#EDE3B6');
+        grad.addColorStop(1, '#856641');
+        ctx.fillStyle = grad;
+        ctx.fillText(storeText, x, y);
+        
+        // Bottom info
+        var dateObj = new Date(data.date);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var dateStr = months[dateObj.getMonth()] + ' ' + dateObj.getDate();
+        var bottomText = data.nation + ' ' + data.pax + ' Pax  ⋆  ⏰ ' + data.time + '  ⋆  🗓️ ' + dateStr + '  ⋆  💎 ' + data.package;
+        
+        ctx.font = 'bold 28px Arial';
+        ctx.fillStyle = '#000000';
+        ctx.fillText(bottomText, 375, 370);
+    };
+    
+    img.onerror = function() {
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, 750, 450);
+        ctx.fillStyle = '#999';
+        ctx.font = '20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Template image not found', 375, 225);
+        ctx.fillText('Path: ' + templateImageUrl, 375, 260);
+    };
+}
+
+function downloadCard() {
+    if (!currentBookingData) return;
+    var canvas = document.getElementById('card-canvas');
+    var link = document.createElement('a');
+    link.download = 'vip-booking-' + currentBookingData.number + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+
+// Close modal when clicking outside
+document.getElementById('card-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeCardModal();
+    }
+});
 </script>
 
 <style>
