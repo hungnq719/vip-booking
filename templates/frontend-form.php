@@ -71,7 +71,7 @@ $show_login_notice = $require_login && !$is_logged_in;
                     <option value="">Complete previous steps...</option>
                 </select>
                 <div id="price-display" style="display: none; text-align: center;">
-                    <strong style="color: #FE9800; font-size: 18px;" id="price"></strong>
+                    <strong style="color: #ff9800; font-size: 18px;" id="price"></strong>
                 </div>
             </div>
         </div>
@@ -228,7 +228,7 @@ input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-
     border: 3px solid #ff9800; 
     border-radius: 8px; 
     padding: 5px; 
-    box-shadow: 0 0 12px rgba(255, 152, 0, 0.6);
+    box-shadow: 0 0 12px rgba(255, 152, 0, 0.4);
     display: inline-block;
 }
 .pax-selector { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; width: 90%; max-width: 600px; margin-left: auto; margin-right: auto; }
@@ -273,9 +273,7 @@ input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-
 .success-message { font-size: 18px; color: #fff; line-height: 1.6; max-width: 600px; margin: 0 auto; }
 #canvas { display: block; margin: 30px auto; max-width: 100%; height: auto; image-rendering: crisp-edges; }
 .save-button-container { text-align: center; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-.save-button, .back-button { padding: 15px 30px; font-size: 16px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
-.save-button { background: #ff9800; color: #fff; }
-.save-button:hover { background: #f57c00; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4); }
+.save-button, .back-button { padding: 10px 20px; font-size: 18px; transition: all 0.3s; }
 .back-button { background: #666; color: #fff; }
 .back-button:hover { background: #555; }
 @media (max-width: 768px) { 
@@ -1150,7 +1148,7 @@ var vipCardApp = (function() {
         overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;';
         
         var modal = document.createElement('div');
-        modal.style.cssText = 'background: white; border-radius: 30px; padding: 40px; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5);';
+        modal.style.cssText = 'background: white; border-radius: 30px; padding: 40px; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6);';
         
         modal.innerHTML = '<div style="margin-bottom: 20px;">🔐</div>' +
             '<h2 style="margin: 0 0 15px 0;">Login Required</h2>' +
