@@ -7,7 +7,8 @@
 - User dashboard for managing bookings
 - Admin dashboard with statistics and data management
 - Configurable rate limiting system (admin can set limits)
-- Multi-language support (flag-based nationality selection)
+- Multi-language UI support (English, Korean, Russian, Chinese) with automatic language detection
+- Flag-based nationality selection in booking forms
 - Configurable automatic cleanup of old bookings (admin can set period)
 - Real-time notifications (Telegram & Email) for new bookings with card image generation
 
@@ -28,6 +29,7 @@ vip-booking/
 │   ├── class-ajax.php       # AJAX handlers (admin + frontend)
 │   ├── class-assets.php     # Asset enqueueing
 │   ├── class-cpt.php        # Custom Post Type registration
+│   ├── class-i18n.php       # Internationalization (multi-language support)
 │   ├── class-rate-limiter.php # Rate limiting logic
 │   ├── class-shortcode.php  # Shortcode handlers
 │   ├── class-notification-settings.php # Notification settings management
@@ -182,6 +184,85 @@ vip-booking/
 **Settings Storage:**
 - Stored in `wp_options` table as `vip_booking_notification_settings`
 - All settings accessible via admin interface (Notifications tab)
+
+### 7. Internationalization (I18n) System - `class-i18n.php`
+
+**Purpose:** Provides multi-language support for all user-facing text in frontend booking forms and user dashboard.
+
+**Supported Languages:**
+- English (en) - Default language
+- Korean (ko) - 한국어
+- Russian (ru) - Русский
+- Chinese (zh) - 中文
+
+**Automatic Language Detection:**
+- Uses WordPress `get_locale()` function to detect site language
+- Maps WordPress locale codes to language codes:
+  - `en_US`, `en_GB`, etc. → `en`
+  - `ko_KR` → `ko`
+  - `ru_RU` → `ru`
+  - `zh_CN`, `zh_TW` → `zh`
+- Falls back to English if unsupported language detected
+
+**Architecture:**
+```php
+class VIP_Booking_I18n {
+    // Returns current language code (en, ko, ru, zh)
+    public static function get_current_language();
+
+    // Returns translations array for current language
+    public static function get_translations();
+
+    // Returns translations as JSON for JavaScript
+    public static function get_translations_json();
+}
+```
+
+**Usage in Templates:**
+
+PHP (Server-side):
+```php
+$i18n = VIP_Booking_I18n::get_translations();
+echo esc_html($i18n['choose_service']);
+```
+
+JavaScript (Client-side):
+```javascript
+var i18n = <?php echo VIP_Booking_I18n::get_translations_json(); ?>;
+alert(i18n.choose_service);
+```
+
+**Key Translation Keys:**
+- Form labels: `choose_service`, `choose_store`, `choose_package`, `select_nation`, `select_pax`, `select_date`, `select_time`
+- Field labels: `service`, `store`, `package`, `nation_label`, `guests`, `date_label`, `time_label`, `price`
+- Actions: `submit_booking`, `view_card`, `save_to_photos`, `close`
+- Status: `upcoming`, `completed`, `login_required`
+- Rate limiting: `time_singular`, `times_plural`, `remaining_bookings`
+- Messages: `no_bookings_yet`, `no_bookings_message`, `login_to_view`
+
+**Consistency Guidelines:**
+- All dashboard labels include colons (e.g., `nation_label: 'Nation:'`)
+- Time-related keys differentiate singular/plural (`time_singular: 'Time'`, `times_plural: 'Times'`)
+- All labels properly capitalized across all languages
+- Month names abbreviated (Jan, Feb, Mar, etc.) for card generation
+
+**Implementation Notes:**
+- Frontend form (`frontend-form.php`) uses translations for all UI text
+- User dashboard (`user-dashboard.php`) uses translations with inline H3 headers
+- Booking card canvas generation uses translated month names
+- Rate limit messages dynamically use singular/plural forms based on count
+
+**Adding New Translation Keys:**
+1. Add key to all 4 language arrays in `class-i18n.php`
+2. Update templates to use new key with `$i18n['new_key']`
+3. For JavaScript, ensure `get_translations_json()` is called in template
+4. Test all 4 languages to verify translations display correctly
+
+**UI Enhancements:**
+- **Disabled Time Picker:** Time selection boxes are disabled until all previous booking steps (Service, Store, Package, Nation, Pax, Date) are completed
+- **Inline Labels:** Dashboard labels display inline with their values using CSS `display: inline`
+- **Consistent Formatting:** All labels formatted as H3 headers with emoji icons (🎯 🌍 ⏰ 🏷️ etc.)
+- **Store Name Prominence:** Store name displayed as H2 header in user dashboard for better visual hierarchy
 
 ---
 
@@ -342,6 +423,9 @@ $data = isset($_POST['data']) ? json_decode(stripslashes($_POST['data']), true) 
 - [ ] Test public form (`[vip_booking_secret]`)
 - [ ] Check user dashboard displays correct bookings
 - [ ] Verify timezone handling for booking dates
+- [ ] Test multi-language support by changing WordPress site language (English, Korean, Russian, Chinese)
+- [ ] Verify time picker is disabled until all previous steps are completed
+- [ ] Check that all UI text translates correctly in frontend form and user dashboard
 
 **Admin:**
 - [ ] Save and load booking configuration data
@@ -599,6 +683,16 @@ Network failures on push/fetch should retry up to 4 times with exponential backo
 4. Ensure GD library is installed for fallback generation
 5. Check if "Send Card Image" option is enabled in settings
 
+### Multi-Language Not Working
+
+1. Verify WordPress site language is set correctly (Settings > General > Site Language)
+2. Check if `get_locale()` returns expected value (use debug.log)
+3. Ensure `VIP_Booking_I18n::get_current_language()` maps locale correctly
+4. Clear browser cache and reload page
+5. Verify all translation keys exist in `class-i18n.php` for all 4 languages
+6. Check for JavaScript console errors that might prevent translations from loading
+7. Ensure `VIP_Booking_I18n::get_translations_json()` is called in template
+
 ---
 
 ## Plugin Constants
@@ -685,7 +779,7 @@ VIP_BOOKING_PLUGIN_URL   // URL to plugin directory
 - Payment integration (Stripe, PayPal)
 - Calendar view for bookings
 - Export bookings to CSV
-- Multi-language support (WPML/Polylang)
+- Additional language support beyond current 4 languages (WPML/Polylang integration)
 - REST API endpoints
 - Booking approval workflow
 - SMS notifications (Twilio)
@@ -696,7 +790,7 @@ VIP_BOOKING_PLUGIN_URL   // URL to plugin directory
 
 ---
 
-**Last Updated:** 2025-11-20 (Completed notification system with frontend card integration, multi-receiver UI, and comprehensive testing tools)
+**Last Updated:** 2025-11-20 (Added multi-language UI support with automatic language detection for 4 languages: English, Korean, Russian, Chinese. Improved user dashboard with inline labels, H2/H3 header formatting, and disabled time picker until all booking steps completed)
 **Maintainer:** VIP Booking Development Team
 **WordPress Version Tested:** 6.x+
 **PHP Version Required:** 7.4+
