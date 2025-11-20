@@ -17,7 +17,11 @@ class VIP_Booking_AJAX {
         add_action('wp_ajax_vip_booking_mark_complete', array($this, 'mark_complete'));
         add_action('wp_ajax_vip_booking_save_cleanup_period', array($this, 'save_cleanup_period'));
         add_action('wp_ajax_vip_booking_get_cleanup_period', array($this, 'get_cleanup_period'));
-        
+        add_action('wp_ajax_vip_booking_save_notification_settings', array($this, 'save_notification_settings'));
+        add_action('wp_ajax_vip_booking_get_notification_settings', array($this, 'get_notification_settings'));
+        add_action('wp_ajax_vip_booking_test_telegram', array($this, 'test_telegram'));
+        add_action('wp_ajax_vip_booking_test_email', array($this, 'test_email'));
+
         // Frontend AJAX
         add_action('wp_ajax_vip_booking_check_rate_limit', array($this, 'check_rate_limit'));
         add_action('wp_ajax_vip_booking_record_booking', array($this, 'record_booking'));
@@ -182,7 +186,9 @@ class VIP_Booking_AJAX {
             update_post_meta($booking_id, '_booking_timestamp', $booking_timestamp);
             update_post_meta($booking_id, '_booking_status', 'confirmed');
             update_post_meta($booking_id, '_booking_created_at', time());
-            
+
+            $this->send_booking_notifications($booking_id);
+
             wp_send_json_success(array('booking_id' => $booking_id, 'booking_number' => $booking_number));
         } else {
             wp_send_json_error('Failed to create booking');
@@ -191,5 +197,112 @@ class VIP_Booking_AJAX {
     
     public function check_login() {
         wp_send_json_success(array('logged_in' => is_user_logged_in()));
+    }
+
+    private function send_booking_notifications($booking_id) {
+        $settings = VIP_Booking_Notification_Settings::get_notification_settings();
+
+        if ($settings['telegram_enabled']) {
+            VIP_Booking_Telegram_Notifier::send_notification($booking_id);
+        }
+
+        if ($settings['email_enabled']) {
+            VIP_Booking_Email_Notifier::send_notification($booking_id);
+        }
+    }
+
+    public function save_notification_settings() {
+        check_ajax_referer('vip_booking_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
+
+        $settings = array(
+            'telegram_enabled' => isset($_POST['telegram_enabled']) && $_POST['telegram_enabled'] === 'true',
+            'telegram_bot_token' => isset($_POST['telegram_bot_token']) ? sanitize_text_field($_POST['telegram_bot_token']) : '',
+            'telegram_chat_ids' => isset($_POST['telegram_chat_ids']) ? json_decode(stripslashes($_POST['telegram_chat_ids']), true) : array(),
+            'email_enabled' => isset($_POST['email_enabled']) && $_POST['email_enabled'] === 'true',
+            'email_recipients' => isset($_POST['email_recipients']) ? json_decode(stripslashes($_POST['email_recipients']), true) : array(),
+            'send_card_image' => isset($_POST['send_card_image']) && $_POST['send_card_image'] === 'true',
+            'notification_template' => isset($_POST['notification_template']) ? wp_kses_post(stripslashes($_POST['notification_template'])) : VIP_Booking_Notification_Settings::get_default_template()
+        );
+
+        if (!is_array($settings['telegram_chat_ids'])) {
+            $settings['telegram_chat_ids'] = array();
+        }
+
+        if (!is_array($settings['email_recipients'])) {
+            $settings['email_recipients'] = array();
+        }
+
+        VIP_Booking_Notification_Settings::save_notification_settings($settings);
+        wp_send_json_success();
+    }
+
+    public function get_notification_settings() {
+        check_ajax_referer('vip_booking_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
+        wp_send_json_success(VIP_Booking_Notification_Settings::get_notification_settings());
+    }
+
+    public function test_telegram() {
+        check_ajax_referer('vip_booking_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
+
+        $bot_token = isset($_POST['bot_token']) ? sanitize_text_field($_POST['bot_token']) : '';
+        $chat_id = isset($_POST['chat_id']) ? sanitize_text_field($_POST['chat_id']) : '';
+
+        if (empty($bot_token) || empty($chat_id)) {
+            wp_send_json_error('Bot token and chat ID are required');
+        }
+
+        $result = VIP_Booking_Telegram_Notifier::test_connection($bot_token, $chat_id);
+
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result);
+        }
+    }
+
+    public function test_email() {
+        check_ajax_referer('vip_booking_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
+
+        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+
+        if (empty($email) || !is_email($email)) {
+            wp_send_json_error('Valid email address is required');
+        }
+
+        $subject = '✅ VIP Booking: Email Notification Test';
+        $message = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .container { max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 10px; }
+                h1 { color: #fff; text-align: center; }
+                p { color: #fff; font-size: 16px; line-height: 1.6; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>✅ Test Successful!</h1>
+                <p>Your VIP Booking email notification system is working correctly.</p>
+                <p>You will receive booking notifications at this email address.</p>
+            </div>
+        </body>
+        </html>
+        ';
+
+        $headers = array('Content-Type: text/html; charset=UTF-8');
+
+        $sent = wp_mail($email, $subject, $message, $headers);
+
+        if ($sent) {
+            wp_send_json_success(array('message' => 'Test email sent successfully'));
+        } else {
+            wp_send_json_error(array('message' => 'Failed to send test email'));
+        }
     }
 }
