@@ -459,11 +459,17 @@ jQuery(document).ready(function($) {
                     // Telegram settings
                     $('#telegram-enabled').prop('checked', settings.telegram_enabled || false);
                     $('#telegram-bot-token').val(settings.telegram_bot_token || '');
-                    $('#telegram-chat-ids').val((settings.telegram_chat_ids || []).join('\n'));
+
+                    // Load chat IDs
+                    const chatIds = settings.telegram_chat_ids || [];
+                    renderTelegramChatIds(chatIds.length > 0 ? chatIds : ['']);
 
                     // Email settings
                     $('#email-enabled').prop('checked', settings.email_enabled || false);
-                    $('#email-recipients').val((settings.email_recipients || []).join('\n'));
+
+                    // Load email recipients
+                    const emailRecipients = settings.email_recipients || [];
+                    renderEmailRecipients(emailRecipients.length > 0 ? emailRecipients : ['']);
 
                     // Card image setting
                     $('#send-card-image').prop('checked', settings.send_card_image !== false);
@@ -475,17 +481,93 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // Render Telegram Chat IDs
+    function renderTelegramChatIds(chatIds) {
+        const container = $('#telegram-chat-ids-container');
+        container.empty();
+
+        chatIds.forEach(function(chatId, index) {
+            addTelegramChatIdRow(chatId, index);
+        });
+    }
+
+    function addTelegramChatIdRow(value, index) {
+        const container = $('#telegram-chat-ids-container');
+        const isFirst = container.children().length === 0;
+
+        const row = $('<div class="notification-input-row"></div>');
+        const input = $('<input type="text" placeholder="Enter Chat ID (e.g., 1869690411)" value="' + (value || '') + '">');
+
+        row.append(input);
+
+        if (!isFirst) {
+            const removeBtn = $('<button type="button" class="remove-btn">✕ Remove</button>');
+            removeBtn.click(function() {
+                row.remove();
+            });
+            row.append(removeBtn);
+        }
+
+        container.append(row);
+    }
+
+    $('#add-telegram-chat-id').click(function() {
+        addTelegramChatIdRow('', $('#telegram-chat-ids-container').children().length);
+    });
+
+    // Render Email Recipients
+    function renderEmailRecipients(recipients) {
+        const container = $('#email-recipients-container');
+        container.empty();
+
+        recipients.forEach(function(recipient, index) {
+            addEmailRecipientRow(recipient, index);
+        });
+    }
+
+    function addEmailRecipientRow(value, index) {
+        const container = $('#email-recipients-container');
+        const isFirst = container.children().length === 0;
+
+        const row = $('<div class="notification-input-row"></div>');
+        const input = $('<input type="email" placeholder="Enter email address" value="' + (value || '') + '">');
+
+        row.append(input);
+
+        if (!isFirst) {
+            const removeBtn = $('<button type="button" class="remove-btn">✕ Remove</button>');
+            removeBtn.click(function() {
+                row.remove();
+            });
+            row.append(removeBtn);
+        }
+
+        container.append(row);
+    }
+
+    $('#add-email-recipient').click(function() {
+        addEmailRecipientRow('', $('#email-recipients-container').children().length);
+    });
+
     // Save notification settings
     $('#save-notification-settings').click(function() {
-        const telegramChatIds = $('#telegram-chat-ids').val()
-            .split('\n')
-            .map(id => id.trim())
-            .filter(id => id !== '');
+        // Collect Telegram chat IDs
+        const telegramChatIds = [];
+        $('#telegram-chat-ids-container input').each(function() {
+            const val = $(this).val().trim();
+            if (val !== '') {
+                telegramChatIds.push(val);
+            }
+        });
 
-        const emailRecipients = $('#email-recipients').val()
-            .split('\n')
-            .map(email => email.trim())
-            .filter(email => email !== '');
+        // Collect email recipients
+        const emailRecipients = [];
+        $('#email-recipients-container input').each(function() {
+            const val = $(this).val().trim();
+            if (val !== '') {
+                emailRecipients.push(val);
+            }
+        });
 
         const settings = {
             telegram_enabled: $('#telegram-enabled').is(':checked'),
@@ -573,10 +655,15 @@ jQuery(document).ready(function($) {
     // Test Telegram connection
     $('#test-telegram').click(function() {
         const botToken = $('#telegram-bot-token').val().trim();
-        const chatIds = $('#telegram-chat-ids').val()
-            .split('\n')
-            .map(id => id.trim())
-            .filter(id => id !== '');
+
+        // Collect chat IDs from inputs
+        const chatIds = [];
+        $('#telegram-chat-ids-container input').each(function() {
+            const val = $(this).val().trim();
+            if (val !== '') {
+                chatIds.push(val);
+            }
+        });
 
         if (!botToken) {
             alert('❌ Please enter a bot token first.');

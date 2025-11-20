@@ -357,9 +357,10 @@ foreach ($month_bookings as $booking_id) {
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px;"><strong>Chat IDs (one per line):</strong></label>
-                <textarea id="telegram-chat-ids" rows="4" placeholder="Enter Chat IDs (one per line)" style="width: 100%; max-width: 500px; padding: 8px;"></textarea>
-                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                <label style="display: block; margin-bottom: 8px;"><strong>Chat IDs:</strong></label>
+                <div id="telegram-chat-ids-container"></div>
+                <button type="button" id="add-telegram-chat-id" class="button button-secondary" style="margin-top: 8px;">➕ Add Chat ID</button>
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0;">
                     ℹ️ Get your chat ID from <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> on Telegram
                 </p>
             </div>
@@ -379,9 +380,10 @@ foreach ($month_bookings as $booking_id) {
                 </label>
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px;"><strong>Email Recipients (one per line):</strong></label>
-                <textarea id="email-recipients" rows="4" placeholder="Enter email addresses (one per line)" style="width: 100%; max-width: 500px; padding: 8px;"></textarea>
-                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                <label style="display: block; margin-bottom: 8px;"><strong>Email Recipients:</strong></label>
+                <div id="email-recipients-container"></div>
+                <button type="button" id="add-email-recipient" class="button button-secondary" style="margin-top: 8px;">➕ Add Recipient</button>
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0;">
                     ℹ️ Emails will be sent using your WordPress SMTP settings
                 </p>
             </div>
@@ -443,6 +445,10 @@ foreach ($month_bookings as $booking_id) {
 <style>
 .nav-tab-wrapper { margin-bottom: 20px; }
 .tab-content { display: none; padding: 20px 0; }
+.notification-input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.notification-input-row input { flex: 1; max-width: 450px; padding: 8px; }
+.notification-input-row .remove-btn { background: #dc3232; color: white; border: none; padding: 8px 12px; border-radius: 3px; cursor: pointer; font-size: 14px; }
+.notification-input-row .remove-btn:hover { background: #c62d2d; }
 .tab-content.active { display: block; }
 .booking-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
 .stat-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 20px; }
