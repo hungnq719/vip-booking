@@ -63,6 +63,7 @@ vip-booking/
 - `_booking_status` (string) - Status: 'confirmed' or 'completed'
 - `_booking_created_at` (integer) - Creation timestamp (UTC)
 - `_booking_number` (string) - Format: 'VIP-XXXXXX'
+- `_booking_card_image` (string) - Absolute path to frontend-generated card image
 
 **Automated Tasks:**
 - Daily cron job (`vip_booking_daily_cleanup`) removes bookings older than configured period (default: 90 days)
@@ -101,6 +102,7 @@ vip-booking/
 - `vip_booking_save_notification_settings` - Save notification settings
 - `vip_booking_get_notification_settings` - Load notification settings
 - `vip_booking_test_telegram` - Test Telegram bot connection
+- `vip_booking_test_email` - Send test email to specified address
 
 **Frontend Endpoints:**
 - `vip_booking_check_rate_limit` - Check if user can book (logged in only)
@@ -154,10 +156,18 @@ vip-booking/
   - Uses WordPress default email (WP Mail SMTP compatible)
 
 - **Booking Card Generation:**
-  - Dynamic PNG image generation using GD library
-  - Gradient background (purple/blue theme)
-  - All booking details displayed
-  - Auto-cleanup after sending
+  - **Primary Method:** Frontend canvas-generated card (preferred)
+    - Generated during booking creation in `frontend-form.php`
+    - Captured as base64-encoded PNG image
+    - Sent to server and saved in WordPress uploads directory
+    - Stored path in `_booking_card_image` meta field
+  - **Fallback Method:** Backend GD library generation
+    - Used only if frontend card is not available
+    - Dynamic PNG image generation using GD library
+    - Gradient background (purple/blue theme)
+  - Both methods display all booking details
+  - Temporary generated cards auto-cleanup after sending
+  - Frontend-generated cards are preserved for future use
 
 - **Customizable Template:**
   - Template with placeholders: `{booking_number}`, `{customer_name}`, `{service}`, `{store}`, `{package}`, `{nation}`, `{pax}`, `{date}`, `{time}`, `{price}`, `{created_at}`
@@ -561,6 +571,34 @@ Network failures on push/fetch should retry up to 4 times with exponential backo
 2. Verify `admin.js` is enqueued properly
 3. Check for JavaScript errors in browser console
 
+### Notifications Not Sending
+
+**Telegram Issues:**
+1. Verify bot token is correct (get from @BotFather)
+2. Ensure you've started the bot with `/start` command
+3. Verify chat ID is correct (get from @userinfobot)
+4. Test connection using admin panel test button
+5. Check `debug.log` for API error messages
+
+**Email Issues:**
+1. **WP Mail SMTP Configuration:**
+   - Ensure WP Mail SMTP plugin is installed and configured
+   - Verify SMTP credentials are correct
+   - Do NOT set a custom From header - let WP Mail SMTP handle it
+   - From header mismatch with SMTP server will cause failures
+2. Test WordPress email functionality with simple test first
+3. Check spam/junk folder for test emails
+4. Review `debug.log` for wp_mail() errors
+5. Verify recipient email addresses are valid
+6. Use admin panel test email button to diagnose issues
+
+**Card Image Not Attaching:**
+1. Check if `_booking_card_image` meta field exists for booking
+2. Verify file exists at the stored path
+3. Check WordPress uploads directory permissions (775)
+4. Ensure GD library is installed for fallback generation
+5. Check if "Send Card Image" option is enabled in settings
+
 ---
 
 ## Plugin Constants
@@ -598,14 +636,16 @@ VIP_BOOKING_PLUGIN_URL   // URL to plugin directory
 1. **Setup:**
    - Create a bot using [@BotFather](https://t.me/BotFather) on Telegram
    - Get your chat ID from [@userinfobot](https://t.me/userinfobot)
+   - **IMPORTANT:** Start your bot by sending `/start` command in Telegram
    - Navigate to **WordPress Admin > VIP Booking > Notifications**
    - Enter bot token and chat ID(s)
    - Enable Telegram notifications
 
 2. **Test Connection:**
-   - Click "Test Telegram Connection" button
+   - Click "🧪 Test Telegram Connection" button
    - Check for success message in admin panel
    - Verify test message received in Telegram
+   - **If you get "chat not found" error:** Send `/start` to your bot first
 
 3. **Test Live Booking:**
    - Create a new booking via frontend form
@@ -620,17 +660,25 @@ VIP_BOOKING_PLUGIN_URL   // URL to plugin directory
    - Enter recipient email address(es)
    - Enable email notifications
 
-2. **Test Live Booking:**
+2. **Test Connection:**
+   - Enter a test email address in "Test Email Address" field
+   - Click "🧪 Test Email Connection" button
+   - Check for success message in admin panel
+   - Verify test email received at specified address
+   - Check spam/junk folder if not received
+
+3. **Test Live Booking:**
    - Create a new booking via frontend form
    - Check recipient inbox for HTML email
    - Verify card image is attached (if enabled)
    - Check spam folder if not received
 
-3. **Troubleshooting:**
-   - Verify WordPress email configuration
+4. **Troubleshooting:**
+   - Verify WP Mail SMTP is properly configured
    - Check `debug.log` for errors
    - Ensure `wp_mail()` function is working
-   - Test with a simple email first
+   - Do NOT set custom From headers (let WP Mail SMTP handle it)
+   - Test with simple test button first before creating bookings
 
 ## Future Enhancement Ideas
 
@@ -648,7 +696,7 @@ VIP_BOOKING_PLUGIN_URL   // URL to plugin directory
 
 ---
 
-**Last Updated:** 2025-11-20 (Added notification system with Telegram and Email support)
+**Last Updated:** 2025-11-20 (Completed notification system with frontend card integration, multi-receiver UI, and comprehensive testing tools)
 **Maintainer:** VIP Booking Development Team
 **WordPress Version Tested:** 6.x+
 **PHP Version Required:** 7.4+
