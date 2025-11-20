@@ -6,9 +6,9 @@
 - Frontend booking forms (public and user-only)
 - User dashboard for managing bookings
 - Admin dashboard with statistics and data management
-- Rate limiting system
+- Configurable rate limiting system (admin can set limits)
 - Multi-language support (flag-based nationality selection)
-- Automatic cleanup of old bookings (90+ days)
+- Configurable automatic cleanup of old bookings (admin can set period)
 
 **Version:** 1.0.0
 **Platform:** WordPress Plugin
@@ -61,7 +61,8 @@ vip-booking/
 - `_booking_number` (string) - Format: 'VIP-XXXXXX'
 
 **Automated Tasks:**
-- Daily cron job (`vip_booking_daily_cleanup`) removes bookings older than 90 days
+- Daily cron job (`vip_booking_daily_cleanup`) removes bookings older than configured period (default: 90 days)
+- Cleanup period is configurable via admin settings
 - Uses `_booking_timestamp` for cleanup logic
 
 ### 2. Admin Interface - `class-admin.php`
@@ -72,18 +73,22 @@ vip-booking/
 **Static Methods for Data Management:**
 - `save_data($data)` - Saves booking configuration data
 - `get_data()` - Retrieves booking configuration
-- `save_settings($settings)` - Saves exchange rate
-- `get_settings()` - Gets exchange rate (default: 25000)
+- `save_settings($settings)` - Saves exchange rate and rate limiter settings
+- `get_settings()` - Gets settings (exchange_rate, limit_2h, limit_12h)
 - `save_flags($flags)` - Saves nationality flags
 - `get_flags()` - Gets flags (default: 🇺🇸, 🇰🇷, 🇷🇺, 🇨🇳, 🇯🇵)
+- `save_cleanup_period($period)` - Saves cleanup period (must be negative, e.g., -90)
+- `get_cleanup_period()` - Gets cleanup period (default: -90)
 
 ### 3. AJAX Handlers - `class-ajax.php`
 
 **Admin Endpoints (require `manage_options`):**
 - `vip_booking_save_data` - Save booking configuration
 - `vip_booking_get_data` - Load booking configuration
-- `vip_booking_save_settings` - Save exchange rate
-- `vip_booking_get_settings` - Load settings
+- `vip_booking_save_settings` - Save exchange rate and rate limiter settings
+- `vip_booking_get_settings` - Load settings (exchange_rate, limit_2h, limit_12h)
+- `vip_booking_save_cleanup_period` - Save cleanup period setting
+- `vip_booking_get_cleanup_period` - Load cleanup period setting
 - `vip_booking_save_flags` - Save nationality flags
 - `vip_booking_get_flags` - Load flags
 - `vip_booking_delete_booking` - Delete single booking
@@ -98,9 +103,11 @@ vip-booking/
 
 ### 4. Rate Limiting System - `class-rate-limiter.php`
 
-**Limits:**
-- 2 bookings per 2 hours
-- 4 bookings per 12 hours
+**Limits (Configurable via Admin Settings):**
+- Default: 2 bookings per 2 hours
+- Default: 4 bookings per 12 hours
+- Limits stored in `wp_options` table: `vip_booking_limit_2h` and `vip_booking_limit_12h`
+- Time windows are fixed: 2 hours (7200 seconds) and 12 hours (43200 seconds)
 
 **Administrator Exemption:** Admins bypass all rate limits
 
@@ -109,6 +116,8 @@ vip-booking/
 - Queries `_booking_created_at` meta field
 - Returns detailed limit status including wait times
 - Sliding window algorithm
+- Loads limits dynamically from database using `get_limit_2h()` and `get_limit_12h()` methods
+- Frontend displays remaining bookings based on configured limits
 
 ### 5. Shortcodes - `class-shortcode.php`
 
@@ -271,7 +280,8 @@ $data = isset($_POST['data']) ? json_decode(stripslashes($_POST['data']), true) 
 
 **Frontend:**
 - [ ] Create booking as logged-in user
-- [ ] Verify rate limiting (2 bookings in 2h)
+- [ ] Verify rate limiting with default settings (2 bookings in 2h)
+- [ ] Change rate limits in admin and verify frontend respects new limits
 - [ ] Test public form (`[vip_booking_secret]`)
 - [ ] Check user dashboard displays correct bookings
 - [ ] Verify timezone handling for booking dates
@@ -282,6 +292,9 @@ $data = isset($_POST['data']) ? json_decode(stripslashes($_POST['data']), true) 
 - [ ] Verify statistics calculations
 - [ ] Test flag management (add/remove)
 - [ ] Check exchange rate updates
+- [ ] Configure and save rate limiter settings (limit_2h, limit_12h)
+- [ ] Configure and save cleanup period setting
+- [ ] Verify settings persist after page reload
 
 **Security:**
 - [ ] Attempt AJAX calls without nonce
@@ -291,8 +304,10 @@ $data = isset($_POST['data']) ? json_decode(stripslashes($_POST['data']), true) 
 
 **Automated Cleanup:**
 - [ ] Create test booking with old `_booking_timestamp`
+- [ ] Configure cleanup period in admin (e.g., 30 days)
 - [ ] Run `wp cron run vip_booking_daily_cleanup`
-- [ ] Verify old bookings deleted
+- [ ] Verify bookings older than configured period are deleted
+- [ ] Verify bookings newer than configured period are kept
 
 ---
 
@@ -300,21 +315,31 @@ $data = isset($_POST['data']) ? json_decode(stripslashes($_POST['data']), true) 
 
 ### 1. Change Rate Limits
 
-**File:** `includes/class-rate-limiter.php:3-6`
+**Method:** Use Admin UI (Recommended)
 
+Navigate to **WordPress Admin > VIP Booking > Booking Data** tab:
+1. Update "Rate Limit (2 hours)" field (default: 2)
+2. Update "Rate Limit (12 hours)" field (default: 4)
+3. Click "Save Settings"
+
+**Direct Database Method** (Not recommended - use admin UI instead):
 ```php
-const LIMIT_2H = 2;    // Change this
-const LIMIT_12H = 4;   // Change this
-const WINDOW_2H = 7200;   // 2 hours in seconds
-const WINDOW_12H = 43200; // 12 hours in seconds
+update_option('vip_booking_limit_2h', 10);  // Set to desired limit
+update_option('vip_booking_limit_12h', 20); // Set to desired limit
 ```
 
 ### 2. Modify Cleanup Period
 
-**File:** `includes/class-cpt.php:40`
+**Method:** Use Admin UI (Recommended)
 
+Navigate to **WordPress Admin > VIP Booking > Booking Manager** tab:
+1. Update "Auto-cleanup period" field (default: 90 days)
+2. Click "Save Cleanup Settings"
+3. Note: Enter positive number in UI (e.g., 90), stored as negative in database (e.g., -90)
+
+**Direct Database Method** (Not recommended - use admin UI instead):
 ```php
-$ninety_days_ago = strtotime('-90 days'); // Change '-90 days' to desired period
+update_option('vip_booking_cleanup_period', -90); // Negative value, e.g., -90 for 90 days old
 ```
 
 ### 3. Add New AJAX Endpoint
@@ -375,6 +400,9 @@ console.log('AJAX Response:', response);
 
 - `vip_booking_data` - Serialized array of booking configuration
 - `vip_booking_exchange_rate` - Float, default 25000
+- `vip_booking_limit_2h` - Integer, rate limit for 2 hour window (default: 2)
+- `vip_booking_limit_12h` - Integer, rate limit for 12 hour window (default: 4)
+- `vip_booking_cleanup_period` - Integer, negative value for cleanup days (default: -90)
 - `vip_booking_flags` - Serialized array of flag emojis
 
 ### WordPress Posts Table
@@ -441,6 +469,7 @@ Network failures on push/fetch should retry up to 4 times with exponential backo
 - ❌ Missing nonce verification on AJAX
 - ❌ Timezone-naive datetime handling
 - ❌ Exposing sensitive data to non-authenticated users
+- ❌ Hardcoded rate limits or cleanup periods (use configurable wp_options instead)
 
 ### Green Patterns to Follow
 
@@ -466,12 +495,17 @@ Network failures on push/fetch should retry up to 4 times with exponential backo
 1. Verify `_booking_created_at` is being saved correctly
 2. Check if user is admin (admins bypass limits)
 3. Ensure timestamps are in UTC (use `time()`, not `current_time()`)
+4. Check rate limit settings in admin (VIP Booking > Booking Data > Settings)
+5. Verify frontend loads dynamic rate limits from database (not hardcoded)
+6. Clear browser cache and reload frontend booking page
 
 ### Cleanup Not Running
 
 1. Check if cron is enabled: `wp cron event list`
 2. Manually trigger: `wp cron run vip_booking_daily_cleanup`
 3. Verify bookings have `_booking_timestamp` meta field
+4. Check cleanup period setting in admin (VIP Booking > Booking Manager)
+5. Verify `vip_booking_cleanup_period` option exists in database
 
 ### Admin Page Not Loading
 
@@ -524,7 +558,7 @@ VIP_BOOKING_PLUGIN_URL   // URL to plugin directory
 
 ---
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-20 (Added configurable rate limits and cleanup period)
 **Maintainer:** VIP Booking Development Team
 **WordPress Version Tested:** 6.x+
 **PHP Version Required:** 7.4+
