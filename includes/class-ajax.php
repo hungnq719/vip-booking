@@ -162,8 +162,6 @@ class VIP_Booking_AJAX {
         
         if ($booking_id) {
             $booking_number = 'VIP-' . str_pad($booking_id, 6, '0', STR_PAD_LEFT);
-            
-            // CRITICAL: Lưu timestamp theo timezone WordPress
             try {
                 $tz = wp_timezone();
                 $dt = new DateTime($data['date'] . ' ' . $data['time'], $tz);
