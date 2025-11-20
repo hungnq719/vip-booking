@@ -181,10 +181,7 @@ foreach ($month_bookings as $booking_id) {
     
     <!-- Tab 2: Booking Manager -->
     <div id="tab-bookings" class="tab-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h2 style="margin: 0;">Booking Manager</h2>
-            <button id="delete-selected-bookings" class="button button-secondary" style="border-color: #dc3232;">🗑️ Delete Selected</button>
-        </div>
+        <h2 style="margin-bottom: 15px;">Booking Manager</h2>
 
         <div class="vip-booking-cleanup-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
             <h3>Cleanup Settings</h3>
@@ -197,6 +194,10 @@ foreach ($month_bookings as $booking_id) {
             <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
                 ℹ️ Bookings older than this number of days will be automatically deleted daily. Default: 90 days
             </p>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <button id="delete-selected-bookings" class="button button-secondary" style="border-color: #dc3232;">🗑️ Delete Selected</button>
         </div>
 
         <table class="wp-list-table widefat fixed striped" id="bookings-table">
@@ -351,7 +352,7 @@ foreach ($month_bookings as $booking_id) {
             </div>
             <div style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px;"><strong>Bot Token:</strong></label>
-                <input type="text" id="telegram-bot-token" placeholder="Enter Telegram Bot Token" style="width: 100%; max-width: 500px; padding: 8px;">
+                <input type="text" id="telegram-bot-token" placeholder="Enter Telegram Bot Token" style="width: 100%; max-width: 450px; padding: 8px;">
                 <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
                     ℹ️ Get your bot token from <a href="https://t.me/BotFather" target="_blank">@BotFather</a> on Telegram
                 </p>
@@ -389,7 +390,7 @@ foreach ($month_bookings as $booking_id) {
             </div>
             <div style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px;"><strong>Test Email Address:</strong></label>
-                <input type="email" id="test-email-address" placeholder="your-email@example.com" style="width: 100%; max-width: 500px; padding: 8px;">
+                <input type="email" id="test-email-address" placeholder="your-email@example.com" style="width: 100%; max-width: 450px; padding: 8px;">
             </div>
             <div style="margin-bottom: 15px;">
                 <button id="test-email" class="button button-secondary">🧪 Test Email Connection</button>
