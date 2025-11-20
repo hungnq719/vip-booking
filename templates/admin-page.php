@@ -462,7 +462,7 @@ foreach ($month_bookings as $booking_id) {
 .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
 .status-upcoming { background: #fff3cd; color: #856404; }
 .status-completed { background: #d4edda; color: #155724; }
-.vip-booking-toolbar { position: sticky; top: 32px; background: #fff; padding: 15px 0; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+.vip-booking-toolbar { position: sticky; top: 32px; padding: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; z-index: 99 }
 .vip-booking-table-container { overflow-x: auto; width: 100%; }
 #vip-booking-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
 #vip-booking-table th, #vip-booking-table td { padding: 8px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
