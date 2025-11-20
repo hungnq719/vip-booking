@@ -60,7 +60,7 @@ $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
                             <div style="font-size:12px;"><?php echo esc_html($i18n['booking']); ?><?php echo $booking_data['number']; ?></div>
                             <div style="padding:10px 20px;border-radius:.3em;background:<?php echo $status_bg; ?>;color:<?php echo $status_color; ?>;"><?php echo $status_label; ?></div>
                         </div>
-                        <h3 style="margin:0 0 15px 0;"><?php echo esc_html($booking_data['store']); ?></h3>
+                        <h2 style="margin:0 0 15px 0;"><?php echo esc_html($booking_data['store']); ?></h2>
                         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;color:#fff;">
                             <div><h3>🎯 <?php echo esc_html($i18n['service']); ?></h3> <?php echo esc_html($booking_data['service']); ?></div>
                             <div><h3>💎 <?php echo esc_html($i18n['package']); ?></h3> <?php echo esc_html($booking_data['package']); ?></div>
