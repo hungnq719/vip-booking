@@ -166,18 +166,24 @@ The `[vip_booking_badge]` shortcode displays a simple, circular red badge showin
 - Badge click URL is configured globally in **WordPress Admin > VIP Booking > Booking Manager** tab
 - Set once, applies to all badges site-wide
 - Typically set to your user dashboard page containing `[vip_booking_user]` shortcode
+- **Language-Aware Navigation**: Automatically detects current page language and prepends to URL
+  - Example: Korean page → `/ko/my-bookings/`, English page → `/en/my-bookings/`
+  - Supports multilingual plugins (WPML, Polylang, etc.)
+  - Detection methods: URL path, query string, HTML lang attribute
 
 **How It Works (Cache-Compatible):**
 1. Shortcode renders a static placeholder HTML (cached with page)
 2. JavaScript makes AJAX call on page load to fetch user-specific count
 3. Badge updates dynamically with current user's data
-4. Click handler fetches badge URL from server settings and navigates
-5. No need to exclude from cache - works seamlessly with all caching plugins
+4. Click handler fetches badge URL from server settings
+5. Detects current page language and prepends to URL
+6. Navigates to language-specific dashboard
+7. No need to exclude from cache - works seamlessly with all caching plugins
 
 **Design:**
 - Simple circular badge with gradient red background (#ff416c → #ff4b2b)
 - Displays only the number (no text label)
-- **Continuous pulse animation** to constantly attract attention
+- **Fast "tada" animation** (1.2s) - bouncy with rotation to grab attention
 - Animation pauses on hover, scales on click
 - Three size options:
   - Small: 24px diameter
@@ -188,10 +194,18 @@ The `[vip_booking_badge]` shortcode displays a simple, circular red badge showin
 - Fully accessible (keyboard navigation with Enter/Space keys)
 
 **Interactivity:**
-- Clickable: Navigates to URL configured in admin settings
+- Clickable: Navigates to language-aware URL configured in admin settings
 - Keyboard accessible: Tab to focus, Enter or Space to activate
 - Hover effect: Pauses animation and scales up slightly
 - Active/click effect: Scales down for tactile feedback
+
+**Language Detection:**
+- Automatically detects language from:
+  1. URL path (e.g., `/ko/page/` → detects Korean)
+  2. Query parameter (e.g., `?lang=ko`)
+  3. HTML lang attribute (e.g., `<html lang="ko-KR">`)
+- Supported languages: ko, en, zh, ru, ja, vi, th, id, es, fr, de, it, pt
+- Console logs detection for debugging
 
 **Use Cases:**
 - Navigation menu badge (e.g., next to "My Bookings" link)

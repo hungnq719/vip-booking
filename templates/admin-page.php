@@ -180,7 +180,7 @@ foreach ($month_bookings as $booking_id) {
             <div class="shortcode-box" style="background: #f5f5f5; padding: 15px; border-left: 4px solid #d63638; margin-bottom: 0;">
                 <code style="font-size: 14px; color: #d63638; font-weight: bold;">[vip_booking_badge]</code>
                 <p style="margin: 10px 0 5px 0; color: #666;">
-                    <strong>Booking count badge</strong> - Circular red badge showing upcoming bookings count with pulse animation. Cache-compatible!
+                    <strong>Booking count badge</strong> - Circular red badge showing upcoming bookings count with fast "tada" animation. Cache-compatible!
                 </p>
                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd;">
                     <p style="margin: 5px 0; color: #555; font-size: 13px;">
@@ -198,7 +198,7 @@ foreach ($month_bookings as $booking_id) {
                         <code style="display: block; color: #0073aa; font-size: 12px;">[vip_booking_badge size="small" show_zero="no"]</code>
                     </div>
                     <p style="margin: 10px 0 5px 0; color: #555; font-size: 13px;">
-                        💡 <strong>Click behavior:</strong> Configure badge click URL in <strong>Booking Manager</strong> tab.
+                        💡 <strong>Click behavior:</strong> Configure badge click URL in <strong>Booking Manager</strong> tab. Badge automatically detects page language (ko, en, zh, etc.) and navigates to the correct language version.
                     </p>
                 </div>
             </div>
@@ -230,7 +230,8 @@ foreach ($month_bookings as $booking_id) {
             </div>
             <button id="save-badge-url" class="button button-primary">Save Badge Settings</button>
             <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
-                ℹ️ Set the URL where users will be redirected when clicking the booking badge. Usually your user dashboard page with <code>[vip_booking_user]</code> shortcode.
+                ℹ️ Set the URL where users will be redirected when clicking the booking badge. Usually your user dashboard page with <code>[vip_booking_user]</code> shortcode.<br>
+                🌍 <strong>Multilingual support:</strong> Badge automatically detects page language (ko, en, zh, ru, etc.) and prepends it to the URL. Just set the base URL here (e.g., <code>/my-bookings/</code>).
             </p>
         </div>
 

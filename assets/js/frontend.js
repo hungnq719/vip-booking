@@ -57,6 +57,65 @@ jQuery(document).ready(function($) {
         updateBadgeCounts();
     }
 
+    // Detect current page language from URL
+    function getCurrentLanguage() {
+        var path = window.location.pathname;
+
+        // Common language codes
+        var langCodes = ['ko', 'en', 'zh', 'ru', 'ja', 'vi', 'th', 'id', 'es', 'fr', 'de', 'it', 'pt'];
+
+        // Check for language in URL path (e.g., /ko/, /en/)
+        var pathParts = path.split('/').filter(function(part) { return part.length > 0; });
+
+        // Check first part of path for language code
+        if (pathParts.length > 0 && langCodes.indexOf(pathParts[0]) !== -1) {
+            return pathParts[0];
+        }
+
+        // Check for language in query string (e.g., ?lang=ko)
+        var urlParams = new URLSearchParams(window.location.search);
+        var langParam = urlParams.get('lang');
+        if (langParam && langCodes.indexOf(langParam) !== -1) {
+            return langParam;
+        }
+
+        // Check HTML lang attribute
+        var htmlLang = $('html').attr('lang');
+        if (htmlLang) {
+            var langCode = htmlLang.split('-')[0].toLowerCase();
+            if (langCodes.indexOf(langCode) !== -1) {
+                return langCode;
+            }
+        }
+
+        return null; // No language detected
+    }
+
+    // Prepend language code to URL if needed
+    function getLanguageAwareUrl(baseUrl, langCode) {
+        if (!baseUrl || !langCode) {
+            return baseUrl;
+        }
+
+        try {
+            var url = new URL(baseUrl, window.location.origin);
+            var pathParts = url.pathname.split('/').filter(function(part) { return part.length > 0; });
+
+            // Check if language code is already in URL
+            if (pathParts.length > 0 && pathParts[0] === langCode) {
+                return baseUrl; // Language already in URL
+            }
+
+            // Prepend language code to path
+            url.pathname = '/' + langCode + url.pathname;
+
+            return url.toString();
+        } catch (e) {
+            console.error('Error parsing URL:', e);
+            return baseUrl;
+        }
+    }
+
     // Click handler for badge navigation
     $(document).on('click', '.vip-booking-badge', function(e) {
         e.preventDefault();
@@ -70,7 +129,17 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success && response.data && response.data.badge_url) {
-                    window.location.href = response.data.badge_url;
+                    var baseUrl = response.data.badge_url;
+                    var currentLang = getCurrentLanguage();
+                    var finalUrl = getLanguageAwareUrl(baseUrl, currentLang);
+
+                    console.log('Badge navigation:', {
+                        baseUrl: baseUrl,
+                        detectedLang: currentLang,
+                        finalUrl: finalUrl
+                    });
+
+                    window.location.href = finalUrl;
                 }
             }
         });

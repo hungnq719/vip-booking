@@ -36,25 +36,46 @@
     min-width: 44px;
 }
 
-/* Pulse animation to attract attention */
-@keyframes vip-badge-pulse {
+/* Tada animation to attract attention - fast and bouncy */
+@keyframes vip-badge-tada {
     0% {
-        transform: scale(1);
-        box-shadow: 0 3px 12px rgba(255, 65, 108, 0.5);
+        transform: scale(1) rotate(0deg);
+    }
+    10% {
+        transform: scale(0.9) rotate(-3deg);
+    }
+    20% {
+        transform: scale(0.9) rotate(-3deg);
+    }
+    30% {
+        transform: scale(1.1) rotate(3deg);
+    }
+    40% {
+        transform: scale(1.1) rotate(-3deg);
     }
     50% {
-        transform: scale(1.1);
-        box-shadow: 0 5px 20px rgba(255, 65, 108, 0.7);
+        transform: scale(1.1) rotate(3deg);
+    }
+    60% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+    70% {
+        transform: scale(1.1) rotate(3deg);
+    }
+    80% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+    90% {
+        transform: scale(1.1) rotate(3deg);
     }
     100% {
-        transform: scale(1);
-        box-shadow: 0 3px 12px rgba(255, 65, 108, 0.5);
+        transform: scale(1) rotate(0deg);
     }
 }
 
-/* Apply animation always when loaded (not just when count > 0) */
+/* Apply animation always when loaded - fast tada style */
 .vip-booking-badge:not([data-loading="true"]) {
-    animation: vip-badge-pulse 2s ease-in-out infinite;
+    animation: vip-badge-tada 1.2s ease-in-out infinite;
 }
 
 /* Hover effect - pause animation and scale up */
