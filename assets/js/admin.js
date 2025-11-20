@@ -528,6 +528,48 @@ jQuery(document).ready(function($) {
         });
     });
 
+    // Test Email connection
+    $('#test-email').click(function() {
+        const testEmail = $('#test-email-address').val().trim();
+
+        if (!testEmail) {
+            alert('❌ Please enter a test email address first.');
+            return;
+        }
+
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(testEmail)) {
+            alert('❌ Please enter a valid email address.');
+            return;
+        }
+
+        $('#email-test-result').html('<span style="color: #666;">Sending test email...</span>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_test_email',
+                nonce: nonce,
+                test_email: testEmail
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#email-test-result').html('<span style="color: #00a32a; font-weight: bold;">✅ Email sent! Check inbox and spam folder.</span>');
+                    setTimeout(function() {
+                        $('#email-test-result').html('');
+                    }, 8000);
+                } else {
+                    $('#email-test-result').html('<span style="color: #d63638; font-weight: bold;">❌ ' + (response.data || 'Failed to send email') + '</span>');
+                }
+            },
+            error: function() {
+                $('#email-test-result').html('<span style="color: #d63638; font-weight: bold;">❌ Network error</span>');
+            }
+        });
+    });
+
     // Test Telegram connection
     $('#test-telegram').click(function() {
         const botToken = $('#telegram-bot-token').val().trim();

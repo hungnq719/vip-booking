@@ -385,6 +385,19 @@ foreach ($month_bookings as $booking_id) {
                     ℹ️ Emails will be sent using your WordPress SMTP settings
                 </p>
             </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;"><strong>Test Email Address:</strong></label>
+                <input type="email" id="test-email-address" placeholder="your-email@example.com" style="width: 100%; max-width: 500px; padding: 8px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <button id="test-email" class="button button-secondary">🧪 Test Email Connection</button>
+                <span id="email-test-result" style="margin-left: 10px;"></span>
+            </div>
+            <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin-top: 15px;">
+                <p style="margin: 0; color: #856404; font-size: 13px;">
+                    ⚠️ <strong>Important:</strong> For reliable email delivery, install and configure <a href="<?php echo admin_url('plugin-install.php?s=WP+Mail+SMTP&tab=search&type=term'); ?>" target="_blank">WP Mail SMTP</a> plugin.
+                </p>
+            </div>
         </div>
 
         <!-- Card Image Settings -->
