@@ -302,9 +302,11 @@ class VIP_Booking_AJAX {
 HTML;
 
         $headers = array(
-            'Content-Type: text/html; charset=UTF-8',
-            'From: VIP Booking <' . $admin_email . '>'
+            'Content-Type: text/html; charset=UTF-8'
         );
+
+        // Note: Not setting From header - let WP Mail SMTP handle it
+        // This prevents conflicts when SMTP is configured with a different email
 
         // Add error logging
         add_action('wp_mail_failed', function($wp_error) {

@@ -20,9 +20,11 @@ class VIP_Booking_Email_Notifier {
         $message_html = self::format_html_message($booking_id);
 
         $headers = array(
-            'Content-Type: text/html; charset=UTF-8',
-            'From: VIP Booking <' . get_option('admin_email') . '>'
+            'Content-Type: text/html; charset=UTF-8'
         );
+
+        // Note: Not setting From header - let WP Mail SMTP handle it
+        // This prevents conflicts when SMTP is configured with a different email
 
         $attachments = array();
 
