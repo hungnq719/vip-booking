@@ -196,6 +196,7 @@ foreach ($month_bookings as $booking_id) {
                     <th style="width:70px">Time</th>
                     <th style="width:100px">Price</th>
                     <th style="width:120px">Status</th>
+                    <th style="width:60px">Delete</th>
                 </tr>
             </thead>
             <tbody id="bookings-tbody">
@@ -207,9 +208,9 @@ foreach ($month_bookings as $booking_id) {
                     'meta_key' => '_booking_timestamp',
                     'order' => 'DESC',
                 ));
-                
+
                 if (empty($bookings)): ?>
-                    <tr><td colspan="12" style="text-align:center;padding:30px;">No bookings yet</td></tr>
+                    <tr><td colspan="13" style="text-align:center;padding:30px;">No bookings yet</td></tr>
                 <?php else:
                     foreach ($bookings as $booking):
                         $booking_timestamp = get_post_meta($booking->ID, '_booking_timestamp', true);
@@ -243,6 +244,9 @@ foreach ($month_bookings as $booking_id) {
                             <span class="status-badge status-<?php echo $status_class; ?>">
                                 <?php echo $status_label; ?>
                             </span>
+                        </td>
+                        <td style="text-align:center;">
+                            <button class="button delete-booking-btn" data-booking-id="<?php echo $booking->ID; ?>" style="padding:2px 8px; border:none; background:transparent; cursor:pointer; font-size:16px;">❌</button>
                         </td>
                     </tr>
                 <?php endforeach; endif; ?>
@@ -361,16 +365,16 @@ jQuery(document).ready(function($) {
         $('.booking-checkbox:checked').each(function() {
             selectedIds.push($(this).val());
         });
-        
+
         if (selectedIds.length === 0) {
             alert('Please select at least one booking to delete.');
             return;
         }
-        
+
         if (!confirm('Delete ' + selectedIds.length + ' selected booking(s) permanently?')) {
             return;
         }
-        
+
         $('#loading-overlay').show();
         $.post(ajaxurl, {
             action: 'vip_booking_delete_multiple',
@@ -382,6 +386,36 @@ jQuery(document).ready(function($) {
                 location.reload();
             } else {
                 alert('Failed to delete bookings: ' + (response.data || 'Unknown error'));
+            }
+        });
+    });
+
+    // Booking Manager: Delete individual booking
+    $(document).on('click', '.delete-booking-btn', function() {
+        var bookingId = $(this).data('booking-id');
+        var $row = $(this).closest('tr');
+
+        if (!confirm('Delete this booking permanently?')) {
+            return;
+        }
+
+        $('#loading-overlay').show();
+        $.post(ajaxurl, {
+            action: 'vip_booking_delete_booking',
+            nonce: vipBookingAdmin.nonce,
+            booking_id: bookingId
+        }, function(response) {
+            $('#loading-overlay').hide();
+            if (response.success) {
+                $row.fadeOut(300, function() {
+                    $(this).remove();
+                    // Check if table is empty
+                    if ($('#bookings-tbody tr').length === 0) {
+                        $('#bookings-tbody').html('<tr><td colspan="13" style="text-align:center;padding:30px;">No bookings yet</td></tr>');
+                    }
+                });
+            } else {
+                alert('Failed to delete booking: ' + (response.data || 'Unknown error'));
             }
         });
     });
