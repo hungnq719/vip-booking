@@ -186,12 +186,12 @@ foreach ($month_bookings as $booking_id) {
             <h3>Cleanup Settings</h3>
             <div style="margin-bottom: 10px;">
                 <label style="display: inline-block; width: 200px;">Auto-cleanup period:</label>
-                <input type="number" id="cleanup-period" value="-90" min="-3650" max="-1" style="width: 100px; padding: 5px;">
-                <span style="color: #666; margin-left: 10px;">days (negative value, e.g., -90 for 90 days old)</span>
+                <input type="number" id="cleanup-period" value="90" min="1" max="3650" style="width: 100px; padding: 5px;">
+                <span style="color: #666; margin-left: 10px;">days old</span>
             </div>
             <button id="save-cleanup-period" class="button button-primary">Save Cleanup Settings</button>
             <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
-                ℹ️ Bookings older than this period will be automatically deleted daily. Default: -90 days
+                ℹ️ Bookings older than this number of days will be automatically deleted daily. Default: 90 days
             </p>
         </div>
 

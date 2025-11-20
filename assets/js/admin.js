@@ -247,7 +247,8 @@ jQuery(document).ready(function($) {
             data: { action: 'vip_booking_get_cleanup_period', nonce: nonce },
             success: function(response) {
                 if (response.success && response.data && response.data.cleanup_period !== undefined) {
-                    $('#cleanup-period').val(response.data.cleanup_period);
+                    // Convert negative backend value to positive display value
+                    $('#cleanup-period').val(Math.abs(response.data.cleanup_period));
                 }
             }
         });
@@ -275,17 +276,20 @@ jQuery(document).ready(function($) {
     });
 
     $('#save-cleanup-period').click(function() {
-        const cleanupPeriod = parseInt($('#cleanup-period').val()) || -90;
+        const cleanupPeriodPositive = parseInt($('#cleanup-period').val()) || 90;
 
-        // Validate
-        if (cleanupPeriod >= 0) {
-            alert('⚠️ Cleanup period must be negative (e.g., -90 for 90 days old)');
+        // Validate positive value
+        if (cleanupPeriodPositive <= 0) {
+            alert('⚠️ Cleanup period must be a positive number (e.g., 90 for 90 days old)');
             return;
         }
-        if (cleanupPeriod < -3650) {
-            alert('⚠️ Cleanup period cannot exceed -3650 days (10 years)');
+        if (cleanupPeriodPositive > 3650) {
+            alert('⚠️ Cleanup period cannot exceed 3650 days (10 years)');
             return;
         }
+
+        // Convert to negative for backend storage
+        const cleanupPeriodNegative = -Math.abs(cleanupPeriodPositive);
 
         $.ajax({
             url: ajaxurl,
@@ -293,7 +297,7 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'vip_booking_save_cleanup_period',
                 nonce: nonce,
-                cleanup_period: cleanupPeriod
+                cleanup_period: cleanupPeriodNegative
             },
             success: function(response) {
                 alert(response.success ? '✅ Cleanup settings saved!' : '❌ Failed to save cleanup settings');
