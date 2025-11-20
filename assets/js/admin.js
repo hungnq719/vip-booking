@@ -325,7 +325,35 @@ jQuery(document).ready(function($) {
             }
         });
     });
-    
+
+    $('#save-badge-url').click(function() {
+        const badgeUrl = $('#badge-url').val().trim();
+
+        console.log('Saving badge URL:', badgeUrl);
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_save_badge_url',
+                nonce: nonce,
+                badge_url: badgeUrl
+            },
+            success: function(response) {
+                console.log('Badge URL save response:', response);
+                if (response.success) {
+                    alert('✅ Badge settings saved!');
+                } else {
+                    alert('❌ Failed to save badge settings: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('❌ AJAX error: ' + error);
+            }
+        });
+    });
+
     $('#export-csv').click(function() {
         const data = [];
         $('#vip-booking-tbody tr').each(function() {

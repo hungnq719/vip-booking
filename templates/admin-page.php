@@ -189,16 +189,17 @@ foreach ($month_bookings as $booking_id) {
                     <ul style="margin: 8px 0; padding-left: 20px; color: #666; font-size: 13px;">
                         <li><code>size</code> - Badge size: <code>small</code>, <code>medium</code> (default), <code>large</code></li>
                         <li><code>show_zero</code> - Show badge when count is 0: <code>yes</code> (default), <code>no</code></li>
-                        <li><code>dashboard_url</code> - URL to navigate on click (e.g., your dashboard page URL)</li>
                     </ul>
                     <p style="margin: 10px 0 5px 0; color: #555; font-size: 13px;">
                         <strong>Examples:</strong>
                     </p>
                     <div style="background: #fff; padding: 10px; border-radius: 4px; margin-top: 8px;">
                         <code style="display: block; color: #0073aa; font-size: 12px; margin-bottom: 5px;">[vip_booking_badge]</code>
-                        <code style="display: block; color: #0073aa; font-size: 12px; margin-bottom: 5px;">[vip_booking_badge size="small" show_zero="no"]</code>
-                        <code style="display: block; color: #0073aa; font-size: 12px;">[vip_booking_badge size="large" dashboard_url="/my-bookings/"]</code>
+                        <code style="display: block; color: #0073aa; font-size: 12px;">[vip_booking_badge size="small" show_zero="no"]</code>
                     </div>
+                    <p style="margin: 10px 0 5px 0; color: #555; font-size: 13px;">
+                        💡 <strong>Click behavior:</strong> Configure badge click URL in <strong>Booking Manager</strong> tab.
+                    </p>
                 </div>
             </div>
         </div>
@@ -218,6 +219,18 @@ foreach ($month_bookings as $booking_id) {
             <button id="save-cleanup-period" class="button button-primary">Save Cleanup Settings</button>
             <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
                 ℹ️ Bookings older than this number of days will be automatically deleted daily. Default: 90 days
+            </p>
+        </div>
+
+        <div class="vip-booking-badge-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
+            <h3>🔴 Booking Badge Settings</h3>
+            <div style="margin-bottom: 10px;">
+                <label style="display: inline-block; width: 200px;">Badge click URL:</label>
+                <input type="url" id="badge-url" value="<?php echo esc_attr(get_option('vip_booking_badge_url', '')); ?>" placeholder="https://yoursite.com/my-bookings/" style="width: 400px; padding: 5px;">
+            </div>
+            <button id="save-badge-url" class="button button-primary">Save Badge Settings</button>
+            <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                ℹ️ Set the URL where users will be redirected when clicking the booking badge. Usually your user dashboard page with <code>[vip_booking_user]</code> shortcode.
             </p>
         </div>
 

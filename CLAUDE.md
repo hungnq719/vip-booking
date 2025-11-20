@@ -90,6 +90,8 @@ vip-booking/
 - `get_flags()` - Gets flags (default: 🇺🇸, 🇰🇷, 🇷🇺, 🇨🇳, 🇯🇵)
 - `save_cleanup_period($period)` - Saves cleanup period (must be negative, e.g., -90)
 - `get_cleanup_period()` - Gets cleanup period (default: -90)
+- `save_badge_url($url)` - Saves badge click URL
+- `get_badge_url()` - Gets badge click URL (default: empty string)
 
 ### 3. AJAX Handlers - `class-ajax.php`
 
@@ -100,6 +102,7 @@ vip-booking/
 - `vip_booking_get_settings` - Load settings (exchange_rate, limit_2h, limit_12h)
 - `vip_booking_save_cleanup_period` - Save cleanup period setting
 - `vip_booking_get_cleanup_period` - Load cleanup period setting
+- `vip_booking_save_badge_url` - Save badge click URL setting
 - `vip_booking_save_flags` - Save nationality flags
 - `vip_booking_get_flags` - Load flags
 - `vip_booking_delete_booking` - Delete single booking
@@ -116,6 +119,7 @@ vip-booking/
 - `vip_booking_create_booking` - Create new booking (logged in only)
 - `vip_booking_check_login` - Check login status (public + logged in)
 - `vip_booking_get_badge_count` - Get user's upcoming bookings count (public + logged in)
+- `vip_booking_get_badge_url` - Get badge click URL setting (public + logged in)
 
 ### 4. Rate Limiting System - `class-rate-limiter.php`
 
@@ -150,20 +154,24 @@ The `[vip_booking_badge]` shortcode displays a simple, circular red badge showin
 **Attributes:**
 - `size` - Badge size (default: "medium", options: "small", "medium", "large")
 - `show_zero` - Show badge when count is 0 (default: "yes", options: "yes" or "no")
-- `dashboard_url` - URL to navigate when badge is clicked (optional)
 
 **Examples:**
 ```
 [vip_booking_badge]
 [vip_booking_badge size="small" show_zero="no"]
-[vip_booking_badge size="large" dashboard_url="/my-bookings/"]
+[vip_booking_badge size="large"]
 ```
+
+**Click Navigation:**
+- Badge click URL is configured globally in **WordPress Admin > VIP Booking > Booking Manager** tab
+- Set once, applies to all badges site-wide
+- Typically set to your user dashboard page containing `[vip_booking_user]` shortcode
 
 **How It Works (Cache-Compatible):**
 1. Shortcode renders a static placeholder HTML (cached with page)
 2. JavaScript makes AJAX call on page load to fetch user-specific count
 3. Badge updates dynamically with current user's data
-4. Click handler navigates to dashboard URL if provided
+4. Click handler fetches badge URL from server settings and navigates
 5. No need to exclude from cache - works seamlessly with all caching plugins
 
 **Design:**
@@ -180,7 +188,7 @@ The `[vip_booking_badge]` shortcode displays a simple, circular red badge showin
 - Fully accessible (keyboard navigation with Enter/Space keys)
 
 **Interactivity:**
-- Clickable: Navigates to `dashboard_url` when specified
+- Clickable: Navigates to URL configured in admin settings
 - Keyboard accessible: Tab to focus, Enter or Space to activate
 - Hover effect: Pauses animation and scales up slightly
 - Active/click effect: Scales down for tactile feedback

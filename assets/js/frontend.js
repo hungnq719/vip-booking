@@ -60,11 +60,20 @@ jQuery(document).ready(function($) {
     // Click handler for badge navigation
     $(document).on('click', '.vip-booking-badge', function(e) {
         e.preventDefault();
-        var dashboardUrl = $(this).data('dashboard-url');
 
-        if (dashboardUrl) {
-            window.location.href = dashboardUrl;
-        }
+        // Fetch badge URL from server settings
+        $.ajax({
+            url: vipBookingVars.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_get_badge_url'
+            },
+            success: function(response) {
+                if (response.success && response.data && response.data.badge_url) {
+                    window.location.href = response.data.badge_url;
+                }
+            }
+        });
     });
 
     // Keyboard accessibility (Enter or Space key)
