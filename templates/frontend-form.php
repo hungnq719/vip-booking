@@ -315,12 +315,10 @@ var vipCardApp = (function() {
         initTimeSelector();
         bindEvents();
         
-        // Load rate limit info if logged in
         if (requireLogin && isLoggedIn) {
             loadRateLimitInfo();
         }
-        
-        // Hiển thị popup login sau 2 giây nếu chưa login
+
         if (requireLogin && !isLoggedIn) {
             setTimeout(function() {
                 showLoginModal();
@@ -455,8 +453,6 @@ var vipCardApp = (function() {
             updateStepStatus(3, 'completed');
             updateStepStatus(4, 'active');
             enableFlagSelector();
-            
-            // Rebuild time selector với cấu hình mới
             buildTimeSelector();
         } else {
             updateStepStatus(3, 'active');
@@ -596,8 +592,7 @@ var vipCardApp = (function() {
         var pkg = document.getElementById('package').value;
         
         if (!service || !store || !pkg) return;
-        
-        // Tìm cấu hình cho service-store-package này
+
         currentStoreConfig = null;
         for (var i = 0; i < vipData.length; i++) {
             if (vipData[i].service === service && vipData[i].store === store && vipData[i].package === pkg) {
@@ -605,17 +600,15 @@ var vipCardApp = (function() {
                 break;
             }
         }
-        
+
         if (!currentStoreConfig || !currentStoreConfig.opening_hours || !currentStoreConfig.closing_hours) {
-            // Fallback to default if no config
             currentStoreConfig = {
                 opening_hours: '11:00',
                 closing_hours: '02:00',
                 prebook_time: 15
             };
         }
-        
-        // Reset time picker
+
         selectedHour = null;
         selectedMinute = null;
         selectedTime = null;
@@ -765,24 +758,19 @@ var vipCardApp = (function() {
             if (isToday) {
                 var prebookMinutes = currentStoreConfig.prebook_time || 15;
                 var cutoffTime = new Date(now.getTime() + prebookMinutes * 60000);
-                
-                // Làm tròn phút lên bội số 5
+
                 var cutoffMinutes = cutoffTime.getMinutes();
                 var roundedMinutes = Math.ceil(cutoffMinutes / 5) * 5;
-                
-                // Nếu làm tròn >= 60 thì tăng giờ
+
                 var cutoffHour = cutoffTime.getHours();
                 if (roundedMinutes >= 60) {
                     cutoffHour += 1;
                     roundedMinutes = 0;
                 }
-                
-                // Nếu giờ hiện tại nhỏ hơn cutoff hour, không cho phép
+
                 if (hour < cutoffHour) return false;
-                
-                // Nếu giờ bằng cutoff hour, kiểm tra xem có phút nào khả dụng không
+
                 if (hour === cutoffHour) {
-                    // Kiểm tra xem có phút nào từ roundedMinutes đến 55 không
                     var hasAvailableMinute = false;
                     for (var m = roundedMinutes; m <= 55; m += 5) {
                         if (m <= 55) {
@@ -826,17 +814,16 @@ var vipCardApp = (function() {
             if (isToday) {
                 var prebookMinutes = currentStoreConfig.prebook_time || 15;
                 var cutoffTime = new Date(now.getTime() + prebookMinutes * 60000);
-                
-                // Làm tròn phút lên bội số 5
+
                 var cutoffMinutes = cutoffTime.getMinutes();
                 var roundedMinutes = Math.ceil(cutoffMinutes / 5) * 5;
-                
+
                 var cutoffHour = cutoffTime.getHours();
                 if (roundedMinutes >= 60) {
                     cutoffHour += 1;
                     roundedMinutes = 0;
                 }
-                
+
                 if (hour < cutoffHour || (hour === cutoffHour && minute < roundedMinutes)) {
                     return false;
                 }
@@ -857,16 +844,12 @@ var vipCardApp = (function() {
     }
     
     function enableTimeSelector() {
-        // Enable hour box
         document.getElementById('hourBox').removeAttribute('data-disabled');
         document.getElementById('minuteBox').removeAttribute('data-disabled');
-        
-        // Auto show hour picker
         showHourPicker();
     }
-    
+
     function generateCard() {
-        // Kiểm tra đăng nhập
         if (requireLogin && !isLoggedIn) {
             showLoginModal();
             return;
@@ -1017,11 +1000,8 @@ var vipCardApp = (function() {
                 var count12h = data.data.count_12h || 0;
                 var remaining2h = rateLimitConfig.limit_2h - count2h;
                 var remaining12h = rateLimitConfig.limit_12h - count12h;
-
-                // Lấy số lượt còn lại thực tế (minimum của 2 giới hạn)
                 var actualRemaining = Math.min(remaining2h, remaining12h);
 
-                // Hiển thị số lượt còn lại
                 if (actualRemaining > 0) {
                     var timesText = actualRemaining === 1 ? 'time' : 'times';
                     textEl.innerHTML = '📊 Remaining bookings: ' +
@@ -1030,7 +1010,6 @@ var vipCardApp = (function() {
                     textEl.innerHTML = '❌ No bookings available at the moment';
                 }
             } else {
-                // Đã hết lượt - hiển thị countdown
                 var waitTime2h = data.data.wait_time_2h || 0;
                 var waitTime12h = data.data.wait_time_12h || 0;
                 var maxWait = Math.max(waitTime2h, waitTime12h);
@@ -1133,7 +1112,6 @@ var vipCardApp = (function() {
         .then(function(data) {
             if (data.success) {
                 console.log('Booking saved:', data.data.booking_number);
-                // Reload rate limit info sau khi save xong
                 if (document.getElementById('rate-limit-info')) {
                     loadRateLimitInfo();
                 }
