@@ -181,6 +181,20 @@ foreach ($month_bookings as $booking_id) {
             <h2 style="margin: 0;">Booking Manager</h2>
             <button id="delete-selected-bookings" class="button button-secondary" style="border-color: #dc3232;">🗑️ Delete Selected</button>
         </div>
+
+        <div class="vip-booking-cleanup-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
+            <h3>Cleanup Settings</h3>
+            <div style="margin-bottom: 10px;">
+                <label style="display: inline-block; width: 200px;">Auto-cleanup period:</label>
+                <input type="number" id="cleanup-period" value="-90" min="-3650" max="-1" style="width: 100px; padding: 5px;">
+                <span style="color: #666; margin-left: 10px;">days (negative value, e.g., -90 for 90 days old)</span>
+            </div>
+            <button id="save-cleanup-period" class="button button-primary">Save Cleanup Settings</button>
+            <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                ℹ️ Bookings older than this period will be automatically deleted daily. Default: -90 days
+            </p>
+        </div>
+
         <table class="wp-list-table widefat fixed striped" id="bookings-table">
             <thead>
                 <tr>
@@ -260,10 +274,22 @@ foreach ($month_bookings as $booking_id) {
         
         <div class="vip-booking-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
             <h3>Settings</h3>
-            <label style="display: inline-block; width: 150px;">Exchange Rate (VND/USD):</label>
-            <input type="text" id="exchange-rate-display" value="<?php echo number_format($exchange_rate, 0, '.', ','); ?>" style="width: 200px; padding: 5px;">
-            <input type="hidden" id="exchange-rate" value="<?php echo esc_attr($exchange_rate); ?>">
-            <button id="save-settings" class="button button-primary" style="margin-left: 10px;">Save Settings</button>
+            <div style="margin-bottom: 15px;">
+                <label style="display: inline-block; width: 200px;">Exchange Rate (VND/USD):</label>
+                <input type="text" id="exchange-rate-display" value="<?php echo number_format($exchange_rate, 0, '.', ','); ?>" style="width: 200px; padding: 5px;">
+                <input type="hidden" id="exchange-rate" value="<?php echo esc_attr($exchange_rate); ?>">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: inline-block; width: 200px;">Rate Limit (2 hours):</label>
+                <input type="number" id="limit-2h" value="2" min="1" max="100" style="width: 100px; padding: 5px;">
+                <span style="color: #666; margin-left: 10px;">bookings per 2 hours</span>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: inline-block; width: 200px;">Rate Limit (12 hours):</label>
+                <input type="number" id="limit-12h" value="4" min="1" max="100" style="width: 100px; padding: 5px;">
+                <span style="color: #666; margin-left: 10px;">bookings per 12 hours</span>
+            </div>
+            <button id="save-settings" class="button button-primary">Save Settings</button>
         </div>
         
         <div class="vip-booking-flags" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">

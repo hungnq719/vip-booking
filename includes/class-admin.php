@@ -37,10 +37,32 @@ class VIP_Booking_Admin {
         if (isset($settings['exchange_rate'])) {
             update_option('vip_booking_exchange_rate', floatval($settings['exchange_rate']));
         }
+        if (isset($settings['limit_2h'])) {
+            update_option('vip_booking_limit_2h', intval($settings['limit_2h']));
+        }
+        if (isset($settings['limit_12h'])) {
+            update_option('vip_booking_limit_12h', intval($settings['limit_12h']));
+        }
     }
     public static function get_settings() {
-        return array('exchange_rate' => get_option('vip_booking_exchange_rate', 25000));
+        return array(
+            'exchange_rate' => get_option('vip_booking_exchange_rate', 25000),
+            'limit_2h' => intval(get_option('vip_booking_limit_2h', 2)),
+            'limit_12h' => intval(get_option('vip_booking_limit_12h', 4))
+        );
     }
     public static function save_flags($flags) { update_option('vip_booking_flags', $flags); }
     public static function get_flags() { return get_option('vip_booking_flags', array('🇺🇸', '🇰🇷', '🇷🇺', '🇨🇳', '🇯🇵')); }
+
+    // Cleanup period management
+    public static function save_cleanup_period($period) {
+        $period = intval($period);
+        // Validate: must be negative and reasonable (between -1 and -3650 days)
+        if ($period >= 0) $period = -90;
+        if ($period < -3650) $period = -3650;
+        update_option('vip_booking_cleanup_period', $period);
+    }
+    public static function get_cleanup_period() {
+        return intval(get_option('vip_booking_cleanup_period', -90));
+    }
 }

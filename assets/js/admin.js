@@ -7,6 +7,8 @@ jQuery(document).ready(function($) {
     // Load data for Booking Data tab
     loadFlags();
     loadData();
+    loadSettings();
+    loadCleanupPeriod();
     
     function loadFlags() {
         $.ajax({
@@ -216,14 +218,85 @@ jQuery(document).ready(function($) {
         });
     });
     
-    $('#save-settings').click(function() {
-        const exchangeRate = unformatNumber($('#exchange-rate-display').val());
+    function loadSettings() {
         $.ajax({
             url: ajaxurl,
             type: 'POST',
-            data: { action: 'vip_booking_save_settings', nonce: nonce, exchange_rate: exchangeRate },
+            data: { action: 'vip_booking_get_settings', nonce: nonce },
             success: function(response) {
-                alert(response.success ? '✅ Settings saved!' : '❌ Failed to save');
+                if (response.success && response.data) {
+                    if (response.data.exchange_rate) {
+                        $('#exchange-rate').val(response.data.exchange_rate);
+                        $('#exchange-rate-display').val(formatNumber(response.data.exchange_rate));
+                    }
+                    if (response.data.limit_2h !== undefined) {
+                        $('#limit-2h').val(response.data.limit_2h);
+                    }
+                    if (response.data.limit_12h !== undefined) {
+                        $('#limit-12h').val(response.data.limit_12h);
+                    }
+                }
+            }
+        });
+    }
+
+    function loadCleanupPeriod() {
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: { action: 'vip_booking_get_cleanup_period', nonce: nonce },
+            success: function(response) {
+                if (response.success && response.data && response.data.cleanup_period !== undefined) {
+                    $('#cleanup-period').val(response.data.cleanup_period);
+                }
+            }
+        });
+    }
+
+    $('#save-settings').click(function() {
+        const exchangeRate = unformatNumber($('#exchange-rate-display').val());
+        const limit2h = parseInt($('#limit-2h').val()) || 2;
+        const limit12h = parseInt($('#limit-12h').val()) || 4;
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_save_settings',
+                nonce: nonce,
+                exchange_rate: exchangeRate,
+                limit_2h: limit2h,
+                limit_12h: limit12h
+            },
+            success: function(response) {
+                alert(response.success ? '✅ Settings saved!' : '❌ Failed to save settings');
+            }
+        });
+    });
+
+    $('#save-cleanup-period').click(function() {
+        const cleanupPeriod = parseInt($('#cleanup-period').val()) || -90;
+
+        // Validate
+        if (cleanupPeriod >= 0) {
+            alert('⚠️ Cleanup period must be negative (e.g., -90 for 90 days old)');
+            return;
+        }
+        if (cleanupPeriod < -3650) {
+            alert('⚠️ Cleanup period cannot exceed -3650 days (10 years)');
+            return;
+        }
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_save_cleanup_period',
+                nonce: nonce,
+                cleanup_period: cleanupPeriod
+            },
+            success: function(response) {
+                alert(response.success ? '✅ Cleanup settings saved!' : '❌ Failed to save cleanup settings');
             }
         });
     });

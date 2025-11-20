@@ -15,6 +15,8 @@ class VIP_Booking_AJAX {
         add_action('wp_ajax_vip_booking_delete_booking', array($this, 'delete_booking'));
         add_action('wp_ajax_vip_booking_delete_multiple', array($this, 'delete_multiple'));
         add_action('wp_ajax_vip_booking_mark_complete', array($this, 'mark_complete'));
+        add_action('wp_ajax_vip_booking_save_cleanup_period', array($this, 'save_cleanup_period'));
+        add_action('wp_ajax_vip_booking_get_cleanup_period', array($this, 'get_cleanup_period'));
         
         // Frontend AJAX
         add_action('wp_ajax_vip_booking_check_rate_limit', array($this, 'check_rate_limit'));
@@ -42,15 +44,33 @@ class VIP_Booking_AJAX {
     public function save_settings() {
         check_ajax_referer('vip_booking_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
-        $settings = array('exchange_rate' => isset($_POST['exchange_rate']) ? $_POST['exchange_rate'] : 25000);
+        $settings = array(
+            'exchange_rate' => isset($_POST['exchange_rate']) ? $_POST['exchange_rate'] : 25000,
+            'limit_2h' => isset($_POST['limit_2h']) ? intval($_POST['limit_2h']) : 2,
+            'limit_12h' => isset($_POST['limit_12h']) ? intval($_POST['limit_12h']) : 4
+        );
         VIP_Booking_Admin::save_settings($settings);
         wp_send_json_success();
     }
-    
+
     public function get_settings() {
         check_ajax_referer('vip_booking_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
         wp_send_json_success(VIP_Booking_Admin::get_settings());
+    }
+
+    public function save_cleanup_period() {
+        check_ajax_referer('vip_booking_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
+        $period = isset($_POST['cleanup_period']) ? intval($_POST['cleanup_period']) : -90;
+        VIP_Booking_Admin::save_cleanup_period($period);
+        wp_send_json_success();
+    }
+
+    public function get_cleanup_period() {
+        check_ajax_referer('vip_booking_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
+        wp_send_json_success(array('cleanup_period' => VIP_Booking_Admin::get_cleanup_period()));
     }
     
     public function save_flags() {
