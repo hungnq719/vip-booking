@@ -95,6 +95,7 @@ foreach ($month_bookings as $booking_id) {
         <a href="#dashboard" class="nav-tab nav-tab-active" data-tab="dashboard">📊 Dashboard</a>
         <a href="#bookings" class="nav-tab" data-tab="bookings">📋 Booking Manager</a>
         <a href="#data" class="nav-tab" data-tab="data">🏪 Booking Data</a>
+        <a href="#notifications" class="nav-tab" data-tab="notifications">🔔 Notifications</a>
     </div>
     
     <!-- Tab 1: Dashboard -->
@@ -331,7 +332,103 @@ foreach ($month_bookings as $booking_id) {
             </table>
         </div>
     </div>
-    
+
+    <!-- Tab 4: Notifications -->
+    <div id="tab-notifications" class="tab-content">
+        <h2>Notification Settings</h2>
+
+        <!-- Telegram Settings -->
+        <div class="notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px;">
+            <h3 style="margin-top: 0; color: #0088cc;">📱 Telegram Notifications</h3>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="telegram-enabled" style="margin-right: 10px; width: 20px; height: 20px;">
+                    <strong>Enable Telegram Notifications</strong>
+                </label>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Bot Token:</label>
+                <input type="text" id="telegram-bot-token" placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz" style="width: 100%; max-width: 500px; padding: 8px; font-family: monospace;">
+                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                    ℹ️ Get your bot token from <a href="https://t.me/BotFather" target="_blank">@BotFather</a> on Telegram
+                </p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Chat IDs:</label>
+                <div id="telegram-chat-ids-container" style="margin-bottom: 10px;"></div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="new-telegram-chat-id" placeholder="Enter chat ID (e.g., 123456789)" style="flex: 1; max-width: 300px; padding: 8px; font-family: monospace;">
+                    <button id="add-telegram-chat-id" class="button button-secondary">➕ Add Chat ID</button>
+                </div>
+                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                    ℹ️ Get your chat ID by messaging <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> on Telegram
+                </p>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button id="test-telegram" class="button button-secondary" style="background: #0088cc; color: white; border-color: #0088cc;">🧪 Test Telegram</button>
+                <span id="telegram-test-result" style="margin-left: 10px; font-weight: bold;"></span>
+            </div>
+        </div>
+
+        <!-- Email Settings -->
+        <div class="notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px;">
+            <h3 style="margin-top: 0; color: #d63638;">📧 Email Notifications</h3>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="email-enabled" style="margin-right: 10px; width: 20px; height: 20px;">
+                    <strong>Enable Email Notifications</strong>
+                </label>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email Recipients:</label>
+                <div id="email-recipients-container" style="margin-bottom: 10px;"></div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="email" id="new-email-recipient" placeholder="Enter email address" style="flex: 1; max-width: 300px; padding: 8px;">
+                    <button id="add-email-recipient" class="button button-secondary">➕ Add Email</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button id="test-email" class="button button-secondary" style="background: #d63638; color: white; border-color: #d63638;">🧪 Test Email</button>
+                <span id="email-test-result" style="margin-left: 10px; font-weight: bold;"></span>
+            </div>
+        </div>
+
+        <!-- General Settings -->
+        <div class="notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px;">
+            <h3 style="margin-top: 0; color: #2271b1;">⚙️ General Settings</h3>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="send-card-image" style="margin-right: 10px; width: 20px; height: 20px;">
+                    <strong>Send Booking Card Image</strong>
+                </label>
+                <p style="color: #666; font-size: 12px; margin: 5px 0 0 30px;">
+                    ℹ️ Attach a visual booking card to notifications
+                </p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Notification Template:</label>
+                <textarea id="notification-template" rows="12" style="width: 100%; max-width: 600px; padding: 10px; font-family: monospace; font-size: 13px;"></textarea>
+                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                    ℹ️ Available variables: {booking_number}, {customer_name}, {service}, {store}, {package}, {nation}, {pax}, {date}, {time}, {price}, {created_at}
+                </p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button id="save-notification-settings" class="button button-primary" style="font-size: 16px; padding: 10px 30px;">💾 Save Notification Settings</button>
+            <span id="notification-save-result" style="margin-left: 10px; font-weight: bold;"></span>
+        </div>
+    </div>
+
     <div id="loading-overlay" style="display: none;">
         <div class="loading-spinner"></div>
     </div>
