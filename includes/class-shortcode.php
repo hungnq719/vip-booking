@@ -30,17 +30,18 @@ class VIP_Booking_Shortcode {
     public function render_badge($atts) {
         // Parse shortcode attributes
         $atts = shortcode_atts(array(
-            'text' => 'Upcoming Bookings',
+            'size' => 'medium', // Options: small, medium, large
             'show_zero' => 'yes',
         ), $atts);
 
+        // Sanitize size attribute
+        $valid_sizes = array('small', 'medium', 'large');
+        $size = in_array($atts['size'], $valid_sizes) ? $atts['size'] : 'medium';
+
         ob_start();
         ?>
-        <span class="vip-booking-badge-wrapper" data-show-zero="<?php echo esc_attr($atts['show_zero']); ?>">
-            <span class="vip-booking-badge-text"><?php echo esc_html($atts['text']); ?>:</span>
-            <span class="vip-booking-badge-count" data-loading="true">
-                <span class="vip-booking-badge-spinner"></span>
-            </span>
+        <span class="vip-booking-badge" data-show-zero="<?php echo esc_attr($atts['show_zero']); ?>" data-size="<?php echo esc_attr($size); ?>" data-loading="true">
+            <span class="vip-booking-badge-spinner"></span>
         </span>
         <?php
         return ob_get_clean();

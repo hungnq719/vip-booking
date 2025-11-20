@@ -1,145 +1,135 @@
-/* VIP Booking Badge Styles */
-.vip-booking-badge-wrapper {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 20px;
-    color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.4;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-    transition: all 0.3s ease;
-}
-
-.vip-booking-badge-wrapper:hover {
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    transform: translateY(-1px);
-}
-
-.vip-booking-badge-text {
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.vip-booking-badge-count {
+/* VIP Booking Badge - Simple Number Badge with Rounded Border */
+.vip-booking-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 28px;
-    height: 28px;
-    padding: 0 8px;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 14px;
-    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700;
+    border-radius: 50%;
+    box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
     transition: all 0.3s ease;
+    cursor: default;
+    position: relative;
 }
 
-.vip-booking-badge-number {
+/* Size variations */
+.vip-booking-badge[data-size="small"] {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    min-width: 24px;
+}
+
+.vip-booking-badge[data-size="medium"] {
+    width: 32px;
+    height: 32px;
     font-size: 16px;
-    font-weight: 700;
-    color: #fff;
+    min-width: 32px;
+}
+
+.vip-booking-badge[data-size="large"] {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    min-width: 44px;
+}
+
+/* Pulse animation to attract attention */
+@keyframes vip-badge-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.6);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+    }
+}
+
+/* Apply animation when count > 0 and loaded */
+.vip-booking-badge[data-count]:not([data-count="0"]):not([data-loading="true"]) {
+    animation: vip-badge-pulse 2s ease-in-out infinite;
+}
+
+/* Hover effect */
+.vip-booking-badge:hover {
+    transform: scale(1.15);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.6);
+}
+
+/* When count is 0, reduce opacity slightly */
+.vip-booking-badge[data-count="0"] {
+    opacity: 0.7;
+    animation: none;
 }
 
 /* Loading spinner */
-.vip-booking-badge-count[data-loading="true"] {
-    min-width: 28px;
+.vip-booking-badge[data-loading="true"] {
+    animation: none;
 }
 
 .vip-booking-badge-spinner {
     display: inline-block;
-    width: 16px;
-    height: 16px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-top-color: #fff;
     border-radius: 50%;
-    animation: vip-booking-spin 0.8s linear infinite;
+    animation: vip-badge-spin 0.8s linear infinite;
 }
 
-@keyframes vip-booking-spin {
+.vip-booking-badge[data-size="small"] .vip-booking-badge-spinner {
+    width: 12px;
+    height: 12px;
+    border-width: 2px;
+}
+
+.vip-booking-badge[data-size="medium"] .vip-booking-badge-spinner {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+}
+
+.vip-booking-badge[data-size="large"] .vip-booking-badge-spinner {
+    width: 20px;
+    height: 20px;
+    border-width: 3px;
+}
+
+@keyframes vip-badge-spin {
     to {
         transform: rotate(360deg);
     }
 }
 
-/* Count-specific styling */
-.vip-booking-badge-count[data-count="0"] {
-    background-color: rgba(255, 255, 255, 0.15);
-}
-
-.vip-booking-badge-count[data-count="0"] .vip-booking-badge-number {
-    opacity: 0.7;
-}
-
-/* Highlight when count > 0 */
-.vip-booking-badge-wrapper.vip-booking-badge-loaded .vip-booking-badge-count[data-count]:not([data-count="0"]) {
-    background-color: rgba(255, 255, 255, 0.3);
-    animation: vip-booking-pulse 2s ease-in-out infinite;
-}
-
-@keyframes vip-booking-pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-}
-
-/* Responsive design */
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .vip-booking-badge-wrapper {
-        font-size: 13px;
-        padding: 6px 12px;
+    .vip-booking-badge[data-size="large"] {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
     }
 
-    .vip-booking-badge-count {
-        min-width: 24px;
-        height: 24px;
-        padding: 0 6px;
-    }
-
-    .vip-booking-badge-number {
+    .vip-booking-badge[data-size="medium"] {
+        width: 28px;
+        height: 28px;
         font-size: 14px;
     }
+
+    .vip-booking-badge[data-size="small"] {
+        width: 22px;
+        height: 22px;
+        font-size: 11px;
+    }
 }
 
-/* Alternative compact style (add class 'vip-booking-badge-compact' to use) */
-.vip-booking-badge-wrapper.vip-booking-badge-compact {
-    padding: 4px 12px;
-    font-size: 12px;
-}
-
-.vip-booking-badge-wrapper.vip-booking-badge-compact .vip-booking-badge-count {
-    min-width: 22px;
-    height: 22px;
-    padding: 0 6px;
-}
-
-.vip-booking-badge-wrapper.vip-booking-badge-compact .vip-booking-badge-number {
-    font-size: 13px;
-}
-
-/* Light theme variant (add class 'vip-booking-badge-light' to use) */
-.vip-booking-badge-wrapper.vip-booking-badge-light {
-    background: #fff;
-    color: #667eea;
-    border: 2px solid #667eea;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
-}
-
-.vip-booking-badge-wrapper.vip-booking-badge-light .vip-booking-badge-count {
-    background-color: #667eea;
-}
-
-.vip-booking-badge-wrapper.vip-booking-badge-light .vip-booking-badge-number {
-    color: #fff;
-}
-
-.vip-booking-badge-wrapper.vip-booking-badge-light .vip-booking-badge-spinner {
-    border-color: rgba(102, 126, 234, 0.3);
-    border-top-color: #667eea;
+/* Print styles - hide animation */
+@media print {
+    .vip-booking-badge {
+        animation: none !important;
+    }
 }

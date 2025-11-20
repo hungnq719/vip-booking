@@ -145,16 +145,17 @@ vip-booking/
 
 **Badge Shortcode Details:**
 
-The `[vip_booking_badge]` shortcode displays a real-time count of the user's upcoming bookings. It's designed to work with full-page caching systems (like LiteSpeed Cache, WP Super Cache, etc.) by using JavaScript to fetch user-specific data after page load.
+The `[vip_booking_badge]` shortcode displays a simple, circular badge showing the user's upcoming bookings count. It's designed to work with full-page caching systems (like LiteSpeed Cache, WP Super Cache, etc.) by using JavaScript to fetch user-specific data after page load.
 
 **Attributes:**
-- `text` - Custom label text (default: "Upcoming Bookings")
+- `size` - Badge size (default: "medium", options: "small", "medium", "large")
 - `show_zero` - Show badge when count is 0 (default: "yes", options: "yes" or "no")
 
 **Examples:**
 ```
 [vip_booking_badge]
-[vip_booking_badge text="My Bookings" show_zero="no"]
+[vip_booking_badge size="small"]
+[vip_booking_badge size="large" show_zero="no"]
 ```
 
 **How It Works (Cache-Compatible):**
@@ -163,17 +164,22 @@ The `[vip_booking_badge]` shortcode displays a real-time count of the user's upc
 3. Badge updates dynamically with current user's data
 4. No need to exclude from cache - works seamlessly with all caching plugins
 
-**Styling:**
-- Default style: Gradient purple/blue badge with hover effects
-- Compact variant: Add class `vip-booking-badge-compact` for smaller badge
-- Light variant: Add class `vip-booking-badge-light` for light theme
-- Fully customizable via CSS (see `assets/css/frontend.css`)
+**Design:**
+- Simple circular badge with gradient purple/blue background
+- Displays only the number (no text label)
+- Pulse animation to attract attention when count > 0
+- Three size options:
+  - Small: 24px diameter
+  - Medium: 32px diameter (default)
+  - Large: 44px diameter
+- Responsive design (auto-scales on mobile)
+- Loading spinner while fetching data
 
 **Use Cases:**
-- Header/menu to show booking count
-- User account page
-- Sidebar widget
-- Anywhere in page content or templates
+- Navigation menu badge (e.g., next to "My Bookings" link)
+- User account icon overlay
+- Dashboard widget
+- Header notification indicator
 
 ### 6. Notification System
 
