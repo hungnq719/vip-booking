@@ -9,6 +9,7 @@
 - Configurable rate limiting system (admin can set limits)
 - Multi-language support (flag-based nationality selection)
 - Configurable automatic cleanup of old bookings (admin can set period)
+- Real-time notifications (Telegram & Email) for new bookings with card image generation
 
 **Version:** 1.0.0
 **Platform:** WordPress Plugin
@@ -28,7 +29,10 @@ vip-booking/
 │   ├── class-assets.php     # Asset enqueueing
 │   ├── class-cpt.php        # Custom Post Type registration
 │   ├── class-rate-limiter.php # Rate limiting logic
-│   └── class-shortcode.php  # Shortcode handlers
+│   ├── class-shortcode.php  # Shortcode handlers
+│   ├── class-notification-settings.php # Notification settings management
+│   ├── class-telegram-notifier.php # Telegram notification sender
+│   └── class-email-notifier.php # Email notification sender
 ├── templates/                # PHP templates
 │   ├── admin-page.php       # Admin dashboard UI
 │   ├── frontend-form.php    # Booking form (frontend)
@@ -94,6 +98,9 @@ vip-booking/
 - `vip_booking_delete_booking` - Delete single booking
 - `vip_booking_delete_multiple` - Bulk delete bookings
 - `vip_booking_mark_complete` - Mark booking as completed
+- `vip_booking_save_notification_settings` - Save notification settings
+- `vip_booking_get_notification_settings` - Load notification settings
+- `vip_booking_test_telegram` - Test Telegram bot connection
 
 **Frontend Endpoints:**
 - `vip_booking_check_rate_limit` - Check if user can book (logged in only)
@@ -125,6 +132,46 @@ vip-booking/
 - `[vip_booking]` - Booking form (requires login)
 - `[vip_booking_secret]` - Booking form (public, no login required)
 - `[vip_booking_user]` - User dashboard (displays user's bookings)
+
+### 6. Notification System
+
+**Components:**
+- `class-notification-settings.php` - Settings management and message formatting
+- `class-telegram-notifier.php` - Telegram API integration
+- `class-email-notifier.php` - Email sending with HTML formatting
+
+**Features:**
+- **Telegram Notifications:**
+  - Configurable bot token and multiple chat IDs
+  - Sends text messages with booking details
+  - Optional booking card image attachment
+  - Test connection functionality
+
+- **Email Notifications:**
+  - Multiple recipient support
+  - HTML-formatted emails with gradient design
+  - Optional booking card image attachment
+  - Uses WordPress default email (WP Mail SMTP compatible)
+
+- **Booking Card Generation:**
+  - Dynamic PNG image generation using GD library
+  - Gradient background (purple/blue theme)
+  - All booking details displayed
+  - Auto-cleanup after sending
+
+- **Customizable Template:**
+  - Template with placeholders: `{booking_number}`, `{customer_name}`, `{service}`, `{store}`, `{package}`, `{nation}`, `{pax}`, `{date}`, `{time}`, `{price}`, `{created_at}`
+  - Default template provided
+  - Reset to default option available
+
+**Notification Trigger:**
+- Automatically sent when a new booking is created
+- Fires after successful booking creation (in `class-ajax.php:create_booking()`)
+- Both Telegram and Email sent asynchronously (if enabled)
+
+**Settings Storage:**
+- Stored in `wp_options` table as `vip_booking_notification_settings`
+- All settings accessible via admin interface (Notifications tab)
 
 ---
 
@@ -404,6 +451,7 @@ console.log('AJAX Response:', response);
 - `vip_booking_limit_12h` - Integer, rate limit for 12 hour window (default: 4)
 - `vip_booking_cleanup_period` - Integer, negative value for cleanup days (default: -90)
 - `vip_booking_flags` - Serialized array of flag emojis
+- `vip_booking_notification_settings` - Serialized array of notification settings (telegram_enabled, telegram_bot_token, telegram_chat_ids, email_enabled, email_recipients, send_card_image, notification_template)
 
 ### WordPress Posts Table
 
@@ -543,22 +591,64 @@ VIP_BOOKING_PLUGIN_URL   // URL to plugin directory
 
 ---
 
+## Testing Notifications
+
+### Testing Telegram Notifications
+
+1. **Setup:**
+   - Create a bot using [@BotFather](https://t.me/BotFather) on Telegram
+   - Get your chat ID from [@userinfobot](https://t.me/userinfobot)
+   - Navigate to **WordPress Admin > VIP Booking > Notifications**
+   - Enter bot token and chat ID(s)
+   - Enable Telegram notifications
+
+2. **Test Connection:**
+   - Click "Test Telegram Connection" button
+   - Check for success message in admin panel
+   - Verify test message received in Telegram
+
+3. **Test Live Booking:**
+   - Create a new booking via frontend form
+   - Check Telegram for notification with booking details
+   - Verify card image is attached (if enabled)
+
+### Testing Email Notifications
+
+1. **Setup:**
+   - Ensure WP Mail SMTP or similar plugin is configured
+   - Navigate to **WordPress Admin > VIP Booking > Notifications**
+   - Enter recipient email address(es)
+   - Enable email notifications
+
+2. **Test Live Booking:**
+   - Create a new booking via frontend form
+   - Check recipient inbox for HTML email
+   - Verify card image is attached (if enabled)
+   - Check spam folder if not received
+
+3. **Troubleshooting:**
+   - Verify WordPress email configuration
+   - Check `debug.log` for errors
+   - Ensure `wp_mail()` function is working
+   - Test with a simple email first
+
 ## Future Enhancement Ideas
 
-- Email notifications for new bookings
 - Payment integration (Stripe, PayPal)
 - Calendar view for bookings
 - Export bookings to CSV
 - Multi-language support (WPML/Polylang)
 - REST API endpoints
 - Booking approval workflow
-- SMS notifications
+- SMS notifications (Twilio)
 - Custom booking statuses
 - Booking conflicts prevention
+- WhatsApp notifications
+- Push notifications (browser)
 
 ---
 
-**Last Updated:** 2025-11-20 (Added configurable rate limits and cleanup period)
+**Last Updated:** 2025-11-20 (Added notification system with Telegram and Email support)
 **Maintainer:** VIP Booking Development Team
 **WordPress Version Tested:** 6.x+
 **PHP Version Required:** 7.4+

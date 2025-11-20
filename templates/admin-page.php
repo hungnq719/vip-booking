@@ -98,6 +98,7 @@ foreach ($month_bookings as $booking_id) {
         <a href="#dashboard" class="nav-tab nav-tab-active" data-tab="dashboard">📊 Dashboard</a>
         <a href="#bookings" class="nav-tab" data-tab="bookings">📋 Booking Manager</a>
         <a href="#data" class="nav-tab" data-tab="data">🏪 Booking Data</a>
+        <a href="#notifications" class="nav-tab" data-tab="notifications">🔔 Notifications</a>
     </div>
     
     <!-- Tab 1: Dashboard -->
@@ -334,7 +335,93 @@ foreach ($month_bookings as $booking_id) {
             </table>
         </div>
     </div>
-    
+
+    <!-- Tab 4: Notifications -->
+    <div id="tab-notifications" class="tab-content">
+        <h2>Notification Settings</h2>
+
+        <!-- Telegram Settings -->
+        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
+            <h3 style="margin-top: 0;">📱 Telegram Notifications</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="telegram-enabled" style="width: auto;">
+                    <strong>Enable Telegram Notifications</strong>
+                </label>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;"><strong>Bot Token:</strong></label>
+                <input type="text" id="telegram-bot-token" placeholder="Enter Telegram Bot Token" style="width: 100%; max-width: 500px; padding: 8px;">
+                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                    ℹ️ Get your bot token from <a href="https://t.me/BotFather" target="_blank">@BotFather</a> on Telegram
+                </p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;"><strong>Chat IDs (one per line):</strong></label>
+                <textarea id="telegram-chat-ids" rows="4" placeholder="Enter Chat IDs (one per line)" style="width: 100%; max-width: 500px; padding: 8px;"></textarea>
+                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                    ℹ️ Get your chat ID from <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> on Telegram
+                </p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <button id="test-telegram" class="button button-secondary">🧪 Test Telegram Connection</button>
+                <span id="telegram-test-result" style="margin-left: 10px;"></span>
+            </div>
+        </div>
+
+        <!-- Email Settings -->
+        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
+            <h3 style="margin-top: 0;">📧 Email Notifications</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="email-enabled" style="width: auto;">
+                    <strong>Enable Email Notifications</strong>
+                </label>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;"><strong>Email Recipients (one per line):</strong></label>
+                <textarea id="email-recipients" rows="4" placeholder="Enter email addresses (one per line)" style="width: 100%; max-width: 500px; padding: 8px;"></textarea>
+                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                    ℹ️ Emails will be sent using your WordPress SMTP settings
+                </p>
+            </div>
+        </div>
+
+        <!-- Card Image Settings -->
+        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
+            <h3 style="margin-top: 0;">🎨 Card Image Settings</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="send-card-image" style="width: auto;">
+                    <strong>Include Booking Card Image in Notifications</strong>
+                </label>
+                <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                    ℹ️ When enabled, a visual booking card will be generated and attached to notifications
+                </p>
+            </div>
+        </div>
+
+        <!-- Template Settings -->
+        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
+            <h3 style="margin-top: 0;">📝 Notification Template</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;"><strong>Message Template:</strong></label>
+                <textarea id="notification-template" rows="12" style="width: 100%; max-width: 700px; padding: 8px; font-family: monospace;"></textarea>
+                <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                    ℹ️ Available placeholders: {booking_number}, {customer_name}, {service}, {store}, {package}, {nation}, {pax}, {date}, {time}, {price}, {created_at}
+                </p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <button id="reset-template" class="button button-secondary">🔄 Reset to Default Template</button>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div style="padding: 15px 0;">
+            <button id="save-notification-settings" class="button button-primary" style="padding: 10px 30px; font-size: 14px;">💾 Save All Notification Settings</button>
+        </div>
+    </div>
+
     <div id="loading-overlay" style="display: none;">
         <div class="loading-spinner"></div>
     </div>
