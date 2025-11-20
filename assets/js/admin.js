@@ -7,8 +7,7 @@ jQuery(document).ready(function($) {
     // Load data for Booking Data tab
     loadFlags();
     loadData();
-    loadSettings();
-    loadCleanupPeriod();
+    // Settings are now loaded via PHP in template, no need for AJAX load
     
     function loadFlags() {
         $.ajax({
@@ -259,6 +258,8 @@ jQuery(document).ready(function($) {
         const limit2h = parseInt($('#limit-2h').val()) || 2;
         const limit12h = parseInt($('#limit-12h').val()) || 4;
 
+        console.log('Saving settings:', { exchangeRate, limit2h, limit12h });
+
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -270,7 +271,16 @@ jQuery(document).ready(function($) {
                 limit_12h: limit12h
             },
             success: function(response) {
-                alert(response.success ? '✅ Settings saved!' : '❌ Failed to save settings');
+                console.log('Save response:', response);
+                if (response.success) {
+                    alert('✅ Settings saved! Please reload the page to see changes.');
+                } else {
+                    alert('❌ Failed to save settings: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('❌ AJAX error: ' + error);
             }
         });
     });
@@ -291,6 +301,8 @@ jQuery(document).ready(function($) {
         // Convert to negative for backend storage
         const cleanupPeriodNegative = -Math.abs(cleanupPeriodPositive);
 
+        console.log('Saving cleanup period:', cleanupPeriodPositive, '->', cleanupPeriodNegative);
+
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -300,7 +312,16 @@ jQuery(document).ready(function($) {
                 cleanup_period: cleanupPeriodNegative
             },
             success: function(response) {
-                alert(response.success ? '✅ Cleanup settings saved!' : '❌ Failed to save cleanup settings');
+                console.log('Cleanup save response:', response);
+                if (response.success) {
+                    alert('✅ Cleanup settings saved! Please reload the page to see changes.');
+                } else {
+                    alert('❌ Failed to save cleanup settings: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('❌ AJAX error: ' + error);
             }
         });
     });
@@ -419,217 +440,5 @@ jQuery(document).ready(function($) {
         };
         reader.readAsText(file);
         $(this).val('');
-    });
-
-    // ===== NOTIFICATION SETTINGS =====
-    let telegramChatIds = [];
-    let emailRecipients = [];
-
-    loadNotificationSettings();
-
-    function loadNotificationSettings() {
-        $.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: { action: 'vip_booking_get_notification_settings', nonce: nonce },
-            success: function(response) {
-                if (response.success && response.data) {
-                    const settings = response.data;
-
-                    $('#telegram-enabled').prop('checked', settings.telegram_enabled);
-                    $('#telegram-bot-token').val(settings.telegram_bot_token || '');
-                    telegramChatIds = settings.telegram_chat_ids || [];
-                    renderTelegramChatIds();
-
-                    $('#email-enabled').prop('checked', settings.email_enabled);
-                    emailRecipients = settings.email_recipients || [];
-                    renderEmailRecipients();
-
-                    $('#send-card-image').prop('checked', settings.send_card_image);
-                    $('#notification-template').val(settings.notification_template || '');
-                }
-            }
-        });
-    }
-
-    function renderTelegramChatIds() {
-        const container = $('#telegram-chat-ids-container');
-        container.empty();
-        telegramChatIds.forEach(function(chatId, index) {
-            const chatIdDiv = $('<div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: #f0f0f0; margin-bottom: 5px; border-radius: 4px;">' +
-                '<code style="flex: 1; font-family: monospace;">' + chatId + '</code>' +
-                '<button class="button button-small remove-chat-id" data-index="' + index + '" style="padding: 2px 8px;">❌ Remove</button>' +
-                '</div>');
-            container.append(chatIdDiv);
-        });
-    }
-
-    function renderEmailRecipients() {
-        const container = $('#email-recipients-container');
-        container.empty();
-        emailRecipients.forEach(function(email, index) {
-            const emailDiv = $('<div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: #f0f0f0; margin-bottom: 5px; border-radius: 4px;">' +
-                '<span style="flex: 1;">' + email + '</span>' +
-                '<button class="button button-small remove-email" data-index="' + index + '" style="padding: 2px 8px;">❌ Remove</button>' +
-                '</div>');
-            container.append(emailDiv);
-        });
-    }
-
-    $('#add-telegram-chat-id').click(function() {
-        const chatId = $('#new-telegram-chat-id').val().trim();
-        if (!chatId) {
-            alert('Please enter a chat ID');
-            return;
-        }
-        if (telegramChatIds.indexOf(chatId) !== -1) {
-            alert('This chat ID already exists');
-            return;
-        }
-        telegramChatIds.push(chatId);
-        renderTelegramChatIds();
-        $('#new-telegram-chat-id').val('');
-    });
-
-    $(document).on('click', '.remove-chat-id', function() {
-        const index = $(this).data('index');
-        telegramChatIds.splice(index, 1);
-        renderTelegramChatIds();
-    });
-
-    $('#add-email-recipient').click(function() {
-        const email = $('#new-email-recipient').val().trim();
-        if (!email) {
-            alert('Please enter an email address');
-            return;
-        }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            alert('Please enter a valid email address');
-            return;
-        }
-        if (emailRecipients.indexOf(email) !== -1) {
-            alert('This email address already exists');
-            return;
-        }
-        emailRecipients.push(email);
-        renderEmailRecipients();
-        $('#new-email-recipient').val('');
-    });
-
-    $(document).on('click', '.remove-email', function() {
-        const index = $(this).data('index');
-        emailRecipients.splice(index, 1);
-        renderEmailRecipients();
-    });
-
-    $('#save-notification-settings').click(function() {
-        const settings = {
-            telegram_enabled: $('#telegram-enabled').is(':checked'),
-            telegram_bot_token: $('#telegram-bot-token').val().trim(),
-            telegram_chat_ids: JSON.stringify(telegramChatIds),
-            email_enabled: $('#email-enabled').is(':checked'),
-            email_recipients: JSON.stringify(emailRecipients),
-            send_card_image: $('#send-card-image').is(':checked'),
-            notification_template: $('#notification-template').val()
-        };
-
-        $('#loading-overlay').show();
-        $.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'vip_booking_save_notification_settings',
-                nonce: nonce,
-                telegram_enabled: settings.telegram_enabled ? 'true' : 'false',
-                telegram_bot_token: settings.telegram_bot_token,
-                telegram_chat_ids: settings.telegram_chat_ids,
-                email_enabled: settings.email_enabled ? 'true' : 'false',
-                email_recipients: settings.email_recipients,
-                send_card_image: settings.send_card_image ? 'true' : 'false',
-                notification_template: settings.notification_template
-            },
-            success: function(response) {
-                $('#loading-overlay').hide();
-                const resultSpan = $('#notification-save-result');
-                if (response.success) {
-                    resultSpan.text('✅ Settings saved successfully!').css('color', '#00a32a');
-                } else {
-                    resultSpan.text('❌ Failed to save settings').css('color', '#d63638');
-                }
-                setTimeout(function() { resultSpan.text(''); }, 3000);
-            }
-        });
-    });
-
-    $('#test-telegram').click(function() {
-        const botToken = $('#telegram-bot-token').val().trim();
-        const resultSpan = $('#telegram-test-result');
-
-        if (!botToken) {
-            resultSpan.text('⚠️ Please enter bot token').css('color', '#d63638');
-            setTimeout(function() { resultSpan.text(''); }, 3000);
-            return;
-        }
-
-        if (telegramChatIds.length === 0) {
-            resultSpan.text('⚠️ Please add at least one chat ID').css('color', '#d63638');
-            setTimeout(function() { resultSpan.text(''); }, 3000);
-            return;
-        }
-
-        const chatId = telegramChatIds[0];
-
-        $('#loading-overlay').show();
-        $.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'vip_booking_test_telegram',
-                nonce: nonce,
-                bot_token: botToken,
-                chat_id: chatId
-            },
-            success: function(response) {
-                $('#loading-overlay').hide();
-                if (response.success) {
-                    resultSpan.text('✅ Test message sent!').css('color', '#00a32a');
-                } else {
-                    resultSpan.text('❌ ' + (response.data.message || 'Failed to send')).css('color', '#d63638');
-                }
-                setTimeout(function() { resultSpan.text(''); }, 5000);
-            }
-        });
-    });
-
-    $('#test-email').click(function() {
-        const resultSpan = $('#email-test-result');
-
-        if (emailRecipients.length === 0) {
-            resultSpan.text('⚠️ Please add at least one email').css('color', '#d63638');
-            setTimeout(function() { resultSpan.text(''); }, 3000);
-            return;
-        }
-
-        const email = emailRecipients[0];
-
-        $('#loading-overlay').show();
-        $.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'vip_booking_test_email',
-                nonce: nonce,
-                email: email
-            },
-            success: function(response) {
-                $('#loading-overlay').hide();
-                if (response.success) {
-                    resultSpan.text('✅ Test email sent!').css('color', '#00a32a');
-                } else {
-                    resultSpan.text('❌ ' + (response.data.message || 'Failed to send')).css('color', '#d63638');
-                }
-                setTimeout(function() { resultSpan.text(''); }, 5000);
-            }
-        });
     });
 });
