@@ -1,6 +1,6 @@
 <?php
 /**
- * Frontend Template for VIP Card Generator
+ * Frontend Template for VIP Booking
  */
 
 // Check if this is secret mode (no login required)
