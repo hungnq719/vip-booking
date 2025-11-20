@@ -11,6 +11,8 @@ if (!isset($require_login)) {
 $vip_data = get_option('vip_booking_data', array());
 $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
 $flags = get_option('vip_booking_flags', array('🇺🇸', '🇰🇷', '🇷🇺', '🇨🇳', '🇯🇵'));
+$limit_2h = intval(get_option('vip_booking_limit_2h', 2));
+$limit_12h = intval(get_option('vip_booking_limit_12h', 4));
 $is_logged_in = is_user_logged_in();
 $show_login_notice = $require_login && !$is_logged_in;
 ?>
@@ -297,6 +299,10 @@ var vipCardApp = (function() {
     var exchangeRate = <?php echo floatval($exchange_rate); ?>;
     var requireLogin = <?php echo $require_login ? 'true' : 'false'; ?>;
     var isLoggedIn = <?php echo $is_logged_in ? 'true' : 'false'; ?>;
+    var rateLimitConfig = {
+        limit_2h: <?php echo intval($limit_2h); ?>,
+        limit_12h: <?php echo intval($limit_12h); ?>
+    };
     var selectedDate = null, selectedTime = null, selectedPax = null;
     var selectedHour = null, selectedMinute = null;
     var currentTimeMode = 'hour'; // 'hour' or 'minute'
@@ -1009,12 +1015,12 @@ var vipCardApp = (function() {
             if (data.success) {
                 var count2h = data.data.count_2h || 0;
                 var count12h = data.data.count_12h || 0;
-                var remaining2h = 2 - count2h;
-                var remaining12h = 4 - count12h;
-                
+                var remaining2h = rateLimitConfig.limit_2h - count2h;
+                var remaining12h = rateLimitConfig.limit_12h - count12h;
+
                 // Lấy số lượt còn lại thực tế (minimum của 2 giới hạn)
                 var actualRemaining = Math.min(remaining2h, remaining12h);
-                
+
                 // Hiển thị số lượt còn lại
                 if (actualRemaining > 0) {
                     var timesText = actualRemaining === 1 ? 'time' : 'times';
