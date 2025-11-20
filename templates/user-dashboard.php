@@ -1,4 +1,5 @@
 <?php
+nocache_headers();
 if (!is_user_logged_in()) {
     echo '<div style="text-align:center;padding:40px;background:white;border-radius:8px;margin:20px 0;">
         <div style="font-size:48px;margin-bottom:20px;">🔐</div>
