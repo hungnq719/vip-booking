@@ -11,6 +11,7 @@
 - Flag-based nationality selection in booking forms
 - Configurable automatic cleanup of old bookings (admin can set period)
 - Real-time notifications (Telegram & Email) for new bookings with card image generation
+- Dynamic booking badge (cache-compatible, displays user's upcoming booking count)
 
 **Version:** 1.0.0
 **Platform:** WordPress Plugin
@@ -41,8 +42,11 @@ vip-booking/
 │   ├── user-dashboard.php   # User booking dashboard
 │   └── vip-template.png     # Template screenshot
 └── assets/
+    ├── css/
+    │   └── frontend.css     # Frontend styles (badge, etc.)
     └── js/
-        └── admin.js         # Admin JavaScript
+        ├── admin.js         # Admin JavaScript
+        └── frontend.js      # Frontend JavaScript (badge updates, etc.)
 ```
 
 ---
@@ -111,6 +115,7 @@ vip-booking/
 - `vip_booking_record_booking` - Record booking attempt (deprecated)
 - `vip_booking_create_booking` - Create new booking (logged in only)
 - `vip_booking_check_login` - Check login status (public + logged in)
+- `vip_booking_get_badge_count` - Get user's upcoming bookings count (public + logged in)
 
 ### 4. Rate Limiting System - `class-rate-limiter.php`
 
@@ -136,6 +141,39 @@ vip-booking/
 - `[vip_booking]` - Booking form (requires login)
 - `[vip_booking_secret]` - Booking form (public, no login required)
 - `[vip_booking_user]` - User dashboard (displays user's bookings)
+- `[vip_booking_badge]` - Dynamic badge showing upcoming bookings count
+
+**Badge Shortcode Details:**
+
+The `[vip_booking_badge]` shortcode displays a real-time count of the user's upcoming bookings. It's designed to work with full-page caching systems (like LiteSpeed Cache, WP Super Cache, etc.) by using JavaScript to fetch user-specific data after page load.
+
+**Attributes:**
+- `text` - Custom label text (default: "Upcoming Bookings")
+- `show_zero` - Show badge when count is 0 (default: "yes", options: "yes" or "no")
+
+**Examples:**
+```
+[vip_booking_badge]
+[vip_booking_badge text="My Bookings" show_zero="no"]
+```
+
+**How It Works (Cache-Compatible):**
+1. Shortcode renders a static placeholder HTML (cached with page)
+2. JavaScript makes AJAX call on page load to fetch user-specific count
+3. Badge updates dynamically with current user's data
+4. No need to exclude from cache - works seamlessly with all caching plugins
+
+**Styling:**
+- Default style: Gradient purple/blue badge with hover effects
+- Compact variant: Add class `vip-booking-badge-compact` for smaller badge
+- Light variant: Add class `vip-booking-badge-light` for light theme
+- Fully customizable via CSS (see `assets/css/frontend.css`)
+
+**Use Cases:**
+- Header/menu to show booking count
+- User account page
+- Sidebar widget
+- Anywhere in page content or templates
 
 ### 6. Notification System
 

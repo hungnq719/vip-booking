@@ -28,6 +28,8 @@ class VIP_Booking_AJAX {
         add_action('wp_ajax_vip_booking_create_booking', array($this, 'create_booking'));
         add_action('wp_ajax_vip_booking_check_login', array($this, 'check_login'));
         add_action('wp_ajax_nopriv_vip_booking_check_login', array($this, 'check_login'));
+        add_action('wp_ajax_vip_booking_get_badge_count', array($this, 'get_badge_count'));
+        add_action('wp_ajax_nopriv_vip_booking_get_badge_count', array($this, 'get_badge_count'));
     }
     
     // Admin endpoints
@@ -234,6 +236,45 @@ class VIP_Booking_AJAX {
     
     public function check_login() {
         wp_send_json_success(array('logged_in' => is_user_logged_in()));
+    }
+
+    public function get_badge_count() {
+        // No nonce check needed for public read-only endpoint
+        // Return 0 if not logged in
+        if (!is_user_logged_in()) {
+            wp_send_json_success(array('count' => 0, 'logged_in' => false));
+            return;
+        }
+
+        $user_id = get_current_user_id();
+        $current_time = time();
+
+        // Query upcoming bookings (confirmed status and future timestamp)
+        $args = array(
+            'post_type' => 'vip_booking',
+            'post_status' => 'publish',
+            'author' => $user_id,
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => '_booking_status',
+                    'value' => 'confirmed',
+                    'compare' => '='
+                ),
+                array(
+                    'key' => '_booking_timestamp',
+                    'value' => $current_time,
+                    'compare' => '>',
+                    'type' => 'NUMERIC'
+                )
+            )
+        );
+
+        $query = new WP_Query($args);
+        $count = $query->found_posts;
+
+        wp_send_json_success(array('count' => $count, 'logged_in' => true));
     }
 
     // Notification endpoints
