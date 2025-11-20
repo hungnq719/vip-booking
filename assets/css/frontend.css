@@ -3,14 +3,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
     color: #fff;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-weight: 700;
     border-radius: 50%;
-    box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 3px 12px rgba(255, 65, 108, 0.5);
     transition: all 0.3s ease;
-    cursor: default;
+    cursor: pointer;
     position: relative;
 }
 
@@ -40,27 +40,34 @@
 @keyframes vip-badge-pulse {
     0% {
         transform: scale(1);
-        box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 3px 12px rgba(255, 65, 108, 0.5);
     }
     50% {
         transform: scale(1.1);
-        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.6);
+        box-shadow: 0 5px 20px rgba(255, 65, 108, 0.7);
     }
     100% {
         transform: scale(1);
-        box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 3px 12px rgba(255, 65, 108, 0.5);
     }
 }
 
-/* Apply animation when count > 0 and loaded */
-.vip-booking-badge[data-count]:not([data-count="0"]):not([data-loading="true"]) {
+/* Apply animation always when loaded (not just when count > 0) */
+.vip-booking-badge:not([data-loading="true"]) {
     animation: vip-badge-pulse 2s ease-in-out infinite;
 }
 
-/* Hover effect */
+/* Hover effect - pause animation and scale up */
 .vip-booking-badge:hover {
+    animation-play-state: paused;
     transform: scale(1.15);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 5px 20px rgba(255, 65, 108, 0.7);
+}
+
+/* Active/click effect */
+.vip-booking-badge:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
 }
 
 /* When count is 0, reduce opacity slightly */

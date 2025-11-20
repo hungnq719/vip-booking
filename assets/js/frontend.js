@@ -27,6 +27,7 @@ jQuery(document).ready(function($) {
 
                         // Set count data attribute for styling
                         $badge.attr('data-count', count);
+                        $badge.attr('aria-label', 'You have ' + count + ' upcoming booking' + (count !== 1 ? 's' : ''));
 
                         // Hide badge if count is 0 and show_zero is 'no'
                         if (count === 0 && !showZero) {
@@ -41,6 +42,7 @@ jQuery(document).ready(function($) {
                     $badge.removeAttr('data-loading');
                     $badge.text('0');
                     $badge.attr('data-count', 0);
+                    $badge.attr('aria-label', 'View bookings');
 
                     if (!showZero) {
                         $badge.hide();
@@ -54,6 +56,24 @@ jQuery(document).ready(function($) {
     if ($('.vip-booking-badge').length > 0) {
         updateBadgeCounts();
     }
+
+    // Click handler for badge navigation
+    $(document).on('click', '.vip-booking-badge', function(e) {
+        e.preventDefault();
+        var dashboardUrl = $(this).data('dashboard-url');
+
+        if (dashboardUrl) {
+            window.location.href = dashboardUrl;
+        }
+    });
+
+    // Keyboard accessibility (Enter or Space key)
+    $(document).on('keydown', '.vip-booking-badge', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            $(this).click();
+        }
+    });
 
     // Optional: Auto-refresh every 60 seconds if on same page
     // Uncomment the following lines to enable auto-refresh

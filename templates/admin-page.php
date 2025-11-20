@@ -170,11 +170,36 @@ foreach ($month_bookings as $booking_id) {
                 </p>
             </div>
             
-            <div class="shortcode-box" style="background: #f5f5f5; padding: 15px; border-left: 4px solid #00a32a; margin-bottom: 0;">
+            <div class="shortcode-box" style="background: #f5f5f5; padding: 15px; border-left: 4px solid #00a32a; margin-bottom: 15px;">
                 <code style="font-size: 14px; color: #d63638; font-weight: bold;">[vip_booking_user]</code>
                 <p style="margin: 10px 0 0 0; color: #666;">
                     <strong>User dashboard</strong> - Displays booking history for logged-in users (with card regeneration).
                 </p>
+            </div>
+
+            <div class="shortcode-box" style="background: #f5f5f5; padding: 15px; border-left: 4px solid #d63638; margin-bottom: 0;">
+                <code style="font-size: 14px; color: #d63638; font-weight: bold;">[vip_booking_badge]</code>
+                <p style="margin: 10px 0 5px 0; color: #666;">
+                    <strong>Booking count badge</strong> - Circular red badge showing upcoming bookings count with pulse animation. Cache-compatible!
+                </p>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd;">
+                    <p style="margin: 5px 0; color: #555; font-size: 13px;">
+                        <strong>Attributes:</strong>
+                    </p>
+                    <ul style="margin: 8px 0; padding-left: 20px; color: #666; font-size: 13px;">
+                        <li><code>size</code> - Badge size: <code>small</code>, <code>medium</code> (default), <code>large</code></li>
+                        <li><code>show_zero</code> - Show badge when count is 0: <code>yes</code> (default), <code>no</code></li>
+                        <li><code>dashboard_url</code> - URL to navigate on click (e.g., your dashboard page URL)</li>
+                    </ul>
+                    <p style="margin: 10px 0 5px 0; color: #555; font-size: 13px;">
+                        <strong>Examples:</strong>
+                    </p>
+                    <div style="background: #fff; padding: 10px; border-radius: 4px; margin-top: 8px;">
+                        <code style="display: block; color: #0073aa; font-size: 12px; margin-bottom: 5px;">[vip_booking_badge]</code>
+                        <code style="display: block; color: #0073aa; font-size: 12px; margin-bottom: 5px;">[vip_booking_badge size="small" show_zero="no"]</code>
+                        <code style="display: block; color: #0073aa; font-size: 12px;">[vip_booking_badge size="large" dashboard_url="/my-bookings/"]</code>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

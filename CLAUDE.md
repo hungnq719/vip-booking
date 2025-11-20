@@ -145,40 +145,50 @@ vip-booking/
 
 **Badge Shortcode Details:**
 
-The `[vip_booking_badge]` shortcode displays a simple, circular badge showing the user's upcoming bookings count. It's designed to work with full-page caching systems (like LiteSpeed Cache, WP Super Cache, etc.) by using JavaScript to fetch user-specific data after page load.
+The `[vip_booking_badge]` shortcode displays a simple, circular red badge showing the user's upcoming bookings count. It's designed to work with full-page caching systems (like LiteSpeed Cache, WP Super Cache, etc.) by using JavaScript to fetch user-specific data after page load.
 
 **Attributes:**
 - `size` - Badge size (default: "medium", options: "small", "medium", "large")
 - `show_zero` - Show badge when count is 0 (default: "yes", options: "yes" or "no")
+- `dashboard_url` - URL to navigate when badge is clicked (optional)
 
 **Examples:**
 ```
 [vip_booking_badge]
-[vip_booking_badge size="small"]
-[vip_booking_badge size="large" show_zero="no"]
+[vip_booking_badge size="small" show_zero="no"]
+[vip_booking_badge size="large" dashboard_url="/my-bookings/"]
 ```
 
 **How It Works (Cache-Compatible):**
 1. Shortcode renders a static placeholder HTML (cached with page)
 2. JavaScript makes AJAX call on page load to fetch user-specific count
 3. Badge updates dynamically with current user's data
-4. No need to exclude from cache - works seamlessly with all caching plugins
+4. Click handler navigates to dashboard URL if provided
+5. No need to exclude from cache - works seamlessly with all caching plugins
 
 **Design:**
-- Simple circular badge with gradient purple/blue background
+- Simple circular badge with gradient red background (#ff416c → #ff4b2b)
 - Displays only the number (no text label)
-- Pulse animation to attract attention when count > 0
+- **Continuous pulse animation** to constantly attract attention
+- Animation pauses on hover, scales on click
 - Three size options:
   - Small: 24px diameter
   - Medium: 32px diameter (default)
   - Large: 44px diameter
 - Responsive design (auto-scales on mobile)
 - Loading spinner while fetching data
+- Fully accessible (keyboard navigation with Enter/Space keys)
+
+**Interactivity:**
+- Clickable: Navigates to `dashboard_url` when specified
+- Keyboard accessible: Tab to focus, Enter or Space to activate
+- Hover effect: Pauses animation and scales up slightly
+- Active/click effect: Scales down for tactile feedback
 
 **Use Cases:**
 - Navigation menu badge (e.g., next to "My Bookings" link)
-- User account icon overlay
-- Dashboard widget
+- User account icon overlay (clickable to dashboard)
+- Dashboard widget with navigation
 - Header notification indicator
 
 ### 6. Notification System

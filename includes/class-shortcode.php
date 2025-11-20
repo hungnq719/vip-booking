@@ -32,15 +32,26 @@ class VIP_Booking_Shortcode {
         $atts = shortcode_atts(array(
             'size' => 'medium', // Options: small, medium, large
             'show_zero' => 'yes',
+            'dashboard_url' => '', // URL to navigate on click
         ), $atts);
 
         // Sanitize size attribute
         $valid_sizes = array('small', 'medium', 'large');
         $size = in_array($atts['size'], $valid_sizes) ? $atts['size'] : 'medium';
 
+        // Sanitize dashboard URL
+        $dashboard_url = !empty($atts['dashboard_url']) ? esc_url($atts['dashboard_url']) : '';
+
         ob_start();
         ?>
-        <span class="vip-booking-badge" data-show-zero="<?php echo esc_attr($atts['show_zero']); ?>" data-size="<?php echo esc_attr($size); ?>" data-loading="true">
+        <span class="vip-booking-badge"
+              data-show-zero="<?php echo esc_attr($atts['show_zero']); ?>"
+              data-size="<?php echo esc_attr($size); ?>"
+              data-dashboard-url="<?php echo esc_attr($dashboard_url); ?>"
+              data-loading="true"
+              role="button"
+              tabindex="0"
+              aria-label="View bookings">
             <span class="vip-booking-badge-spinner"></span>
         </span>
         <?php
