@@ -1081,7 +1081,7 @@ var vipCardApp = (function() {
         var store = document.getElementById('store').value;
         var pkg = document.getElementById('package').value;
         var flag = document.querySelector('input[name="flag"]:checked');
-        
+
         var selectedPrice = 0;
         for (var i = 0; i < vipData.length; i++) {
             if (vipData[i].service === service && vipData[i].store === store && vipData[i].package === pkg) {
@@ -1089,7 +1089,7 @@ var vipCardApp = (function() {
                 break;
             }
         }
-        
+
         var bookingData = {
             service: service,
             store: store,
@@ -1097,16 +1097,20 @@ var vipCardApp = (function() {
             price: selectedPrice,
             nation: flag.value,
             pax: selectedPax,
-            date: selectedDate.getFullYear() + '-' + 
-                  String(selectedDate.getMonth() + 1).padStart(2, '0') + '-' + 
+            date: selectedDate.getFullYear() + '-' +
+                  String(selectedDate.getMonth() + 1).padStart(2, '0') + '-' +
                   String(selectedDate.getDate()).padStart(2, '0'),
             time: selectedTime
         };
-        
+
+        // Capture canvas image as base64
+        var canvas = document.getElementById('canvas');
+        var cardImage = canvas.toDataURL('image/png');
+
         fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'action=vip_booking_create_booking&nonce=<?php echo wp_create_nonce('vip_booking_nonce'); ?>&booking_data=' + encodeURIComponent(JSON.stringify(bookingData))
+            body: 'action=vip_booking_create_booking&nonce=<?php echo wp_create_nonce('vip_booking_nonce'); ?>&booking_data=' + encodeURIComponent(JSON.stringify(bookingData)) + '&card_image=' + encodeURIComponent(cardImage)
         })
         .then(function(response) { return response.json(); })
         .then(function(data) {

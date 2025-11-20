@@ -98,6 +98,7 @@ foreach ($month_bookings as $booking_id) {
         <a href="#dashboard" class="nav-tab nav-tab-active" data-tab="dashboard">📊 Dashboard</a>
         <a href="#bookings" class="nav-tab" data-tab="bookings">📋 Booking Manager</a>
         <a href="#data" class="nav-tab" data-tab="data">🏪 Booking Data</a>
+        <a href="#notifications" class="nav-tab" data-tab="notifications">🔔 Notifications</a>
     </div>
     
     <!-- Tab 1: Dashboard -->
@@ -180,10 +181,7 @@ foreach ($month_bookings as $booking_id) {
     
     <!-- Tab 2: Booking Manager -->
     <div id="tab-bookings" class="tab-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h2 style="margin: 0;">Booking Manager</h2>
-            <button id="delete-selected-bookings" class="button button-secondary" style="border-color: #dc3232;">🗑️ Delete Selected</button>
-        </div>
+        <h2 style="margin-bottom: 15px;">Booking Manager</h2>
 
         <div class="vip-booking-cleanup-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
             <h3>Cleanup Settings</h3>
@@ -196,6 +194,10 @@ foreach ($month_bookings as $booking_id) {
             <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
                 ℹ️ Bookings older than this number of days will be automatically deleted daily. Default: 90 days
             </p>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <button id="delete-selected-bookings" class="button button-secondary" style="border-color: #dc3232;">🗑️ Delete Selected</button>
         </div>
 
         <table class="wp-list-table widefat fixed striped" id="bookings-table">
@@ -334,7 +336,108 @@ foreach ($month_bookings as $booking_id) {
             </table>
         </div>
     </div>
-    
+
+    <!-- Tab 4: Notifications -->
+    <div id="tab-notifications" class="tab-content">
+        <h2>Notification Settings</h2>
+
+        <!-- Telegram Settings -->
+        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
+            <h3 style="margin-top: 0;">📱 Telegram Notifications</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="telegram-enabled" style="width: auto;">
+                    <strong>Enable Telegram Notifications</strong>
+                </label>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;"><strong>Bot Token:</strong></label>
+                <input type="text" id="telegram-bot-token" placeholder="Enter Telegram Bot Token" style="width: 100%; max-width: 450px; padding: 8px;">
+                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                    ℹ️ Get your bot token from <a href="https://t.me/BotFather" target="_blank">@BotFather</a> on Telegram
+                </p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 8px;"><strong>Chat IDs:</strong></label>
+                <div id="telegram-chat-ids-container"></div>
+                <button type="button" id="add-telegram-chat-id" class="button button-secondary" style="margin-top: 8px;">➕ Add Chat ID</button>
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0;">
+                    ℹ️ Get your chat ID from <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> on Telegram
+                </p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <button id="test-telegram" class="button button-secondary">🧪 Test Telegram Connection</button>
+                <span id="telegram-test-result" style="margin-left: 10px;"></span>
+            </div>
+        </div>
+
+        <!-- Email Settings -->
+        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
+            <h3 style="margin-top: 0;">📧 Email Notifications</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="email-enabled" style="width: auto;">
+                    <strong>Enable Email Notifications</strong>
+                </label>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 8px;"><strong>Email Recipients:</strong></label>
+                <div id="email-recipients-container"></div>
+                <button type="button" id="add-email-recipient" class="button button-secondary" style="margin-top: 8px;">➕ Add Recipient</button>
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0;">
+                    ℹ️ Emails will be sent using your WordPress SMTP settings
+                </p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;"><strong>Test Email Address:</strong></label>
+                <input type="email" id="test-email-address" placeholder="your-email@example.com" style="width: 100%; max-width: 450px; padding: 8px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <button id="test-email" class="button button-secondary">🧪 Test Email Connection</button>
+                <span id="email-test-result" style="margin-left: 10px;"></span>
+            </div>
+            <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin-top: 15px;">
+                <p style="margin: 0; color: #856404; font-size: 13px;">
+                    ⚠️ <strong>Important:</strong> For reliable email delivery, install and configure <a href="<?php echo admin_url('plugin-install.php?s=WP+Mail+SMTP&tab=search&type=term'); ?>" target="_blank">WP Mail SMTP</a> plugin.
+                </p>
+            </div>
+        </div>
+
+        <!-- Card Image Settings -->
+        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
+            <h3 style="margin-top: 0;">🎨 Card Image Settings</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="send-card-image" style="width: auto;">
+                    <strong>Include Booking Card Image in Notifications</strong>
+                </label>
+                <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                    ℹ️ When enabled, a visual booking card will be generated and attached to notifications
+                </p>
+            </div>
+        </div>
+
+        <!-- Template Settings -->
+        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
+            <h3 style="margin-top: 0;">📝 Notification Template</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px;"><strong>Message Template:</strong></label>
+                <textarea id="notification-template" rows="12" style="width: 100%; max-width: 700px; padding: 8px; font-family: monospace;"></textarea>
+                <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                    ℹ️ Available placeholders: {booking_number}, {customer_name}, {service}, {store}, {package}, {nation}, {pax}, {date}, {time}, {price}, {created_at}
+                </p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <button id="reset-template" class="button button-secondary">🔄 Reset to Default Template</button>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div style="padding: 15px 0;">
+            <button id="save-notification-settings" class="button button-primary" style="padding: 10px 30px; font-size: 14px;">💾 Save All Notification Settings</button>
+        </div>
+    </div>
+
     <div id="loading-overlay" style="display: none;">
         <div class="loading-spinner"></div>
     </div>
@@ -343,6 +446,10 @@ foreach ($month_bookings as $booking_id) {
 <style>
 .nav-tab-wrapper { margin-bottom: 20px; }
 .tab-content { display: none; padding: 20px 0; }
+.notification-input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.notification-input-row input { flex: 1; max-width: 450px; padding: 8px; }
+.notification-input-row .remove-btn { background: #dc3232; color: white; border: none; padding: 8px 12px; border-radius: 3px; cursor: pointer; font-size: 14px; }
+.notification-input-row .remove-btn:hover { background: #c62d2d; }
 .tab-content.active { display: block; }
 .booking-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
 .stat-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 20px; }

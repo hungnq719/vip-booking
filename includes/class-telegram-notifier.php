@@ -45,8 +45,18 @@ class VIP_Booking_Telegram_Notifier {
         $api_url = "https://api.telegram.org/bot{$bot_token}/";
 
         if ($send_card) {
-            $card_path = self::generate_booking_card($booking_id);
+            // First try to use the saved frontend-generated card
+            $saved_card_path = get_post_meta($booking_id, '_booking_card_image', true);
 
+            if ($saved_card_path && file_exists($saved_card_path)) {
+                // Use the frontend-generated card
+                $result = self::send_photo($api_url, $chat_id, $saved_card_path, $message);
+                // Don't delete the saved card - it might be needed again
+                return $result;
+            }
+
+            // Fallback: generate card if frontend card not available
+            $card_path = self::generate_booking_card($booking_id);
             if ($card_path && file_exists($card_path)) {
                 return self::send_photo($api_url, $chat_id, $card_path, $message);
             }
@@ -104,7 +114,9 @@ class VIP_Booking_Telegram_Notifier {
             'timeout' => 30
         ));
 
-        if (file_exists($photo_path)) {
+        // Only delete if it's a temporary generated file (not the saved frontend card)
+        // Temporary files have a different naming pattern
+        if (file_exists($photo_path) && strpos($photo_path, 'temp-') !== false) {
             @unlink($photo_path);
         }
 

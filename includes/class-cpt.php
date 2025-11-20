@@ -14,10 +14,11 @@ class VIP_Booking_CPT {
         ));
         
         $fields = array(
-            '_booking_service', '_booking_store', '_booking_package', 
-            '_booking_price', '_booking_nation', '_booking_pax', 
-            '_booking_date', '_booking_time', '_booking_timestamp', 
-            '_booking_status', '_booking_created_at', '_booking_number'
+            '_booking_service', '_booking_store', '_booking_package',
+            '_booking_price', '_booking_nation', '_booking_pax',
+            '_booking_date', '_booking_time', '_booking_timestamp',
+            '_booking_status', '_booking_created_at', '_booking_number',
+            '_booking_card_image'
         );
         
         foreach ($fields as $field) {

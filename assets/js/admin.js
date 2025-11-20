@@ -441,4 +441,286 @@ jQuery(document).ready(function($) {
         reader.readAsText(file);
         $(this).val('');
     });
+
+    // ===== Notification Settings =====
+
+    // Load notification settings on page load
+    loadNotificationSettings();
+
+    function loadNotificationSettings() {
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: { action: 'vip_booking_get_notification_settings', nonce: nonce },
+            success: function(response) {
+                if (response.success && response.data) {
+                    const settings = response.data;
+
+                    // Telegram settings
+                    $('#telegram-enabled').prop('checked', settings.telegram_enabled || false);
+                    $('#telegram-bot-token').val(settings.telegram_bot_token || '');
+
+                    // Load chat IDs
+                    const chatIds = settings.telegram_chat_ids || [];
+                    renderTelegramChatIds(chatIds.length > 0 ? chatIds : ['']);
+
+                    // Email settings
+                    $('#email-enabled').prop('checked', settings.email_enabled || false);
+
+                    // Load email recipients
+                    const emailRecipients = settings.email_recipients || [];
+                    renderEmailRecipients(emailRecipients.length > 0 ? emailRecipients : ['']);
+
+                    // Card image setting
+                    $('#send-card-image').prop('checked', settings.send_card_image !== false);
+
+                    // Template
+                    $('#notification-template').val(settings.notification_template || '');
+                }
+            }
+        });
+    }
+
+    // Render Telegram Chat IDs
+    function renderTelegramChatIds(chatIds) {
+        const container = $('#telegram-chat-ids-container');
+        container.empty();
+
+        chatIds.forEach(function(chatId, index) {
+            addTelegramChatIdRow(chatId, index);
+        });
+    }
+
+    function addTelegramChatIdRow(value, index) {
+        const container = $('#telegram-chat-ids-container');
+        const isFirst = container.children().length === 0;
+
+        const row = $('<div class="notification-input-row"></div>');
+        const input = $('<input type="text" placeholder="Enter Chat ID (e.g., 1869690411)" value="' + (value || '') + '">');
+
+        row.append(input);
+
+        if (!isFirst) {
+            const removeBtn = $('<button type="button" class="remove-btn">✕ Remove</button>');
+            removeBtn.click(function() {
+                row.remove();
+            });
+            row.append(removeBtn);
+        }
+
+        container.append(row);
+    }
+
+    $('#add-telegram-chat-id').click(function() {
+        addTelegramChatIdRow('', $('#telegram-chat-ids-container').children().length);
+    });
+
+    // Render Email Recipients
+    function renderEmailRecipients(recipients) {
+        const container = $('#email-recipients-container');
+        container.empty();
+
+        recipients.forEach(function(recipient, index) {
+            addEmailRecipientRow(recipient, index);
+        });
+    }
+
+    function addEmailRecipientRow(value, index) {
+        const container = $('#email-recipients-container');
+        const isFirst = container.children().length === 0;
+
+        const row = $('<div class="notification-input-row"></div>');
+        const input = $('<input type="email" placeholder="Enter email address" value="' + (value || '') + '">');
+
+        row.append(input);
+
+        if (!isFirst) {
+            const removeBtn = $('<button type="button" class="remove-btn">✕ Remove</button>');
+            removeBtn.click(function() {
+                row.remove();
+            });
+            row.append(removeBtn);
+        }
+
+        container.append(row);
+    }
+
+    $('#add-email-recipient').click(function() {
+        addEmailRecipientRow('', $('#email-recipients-container').children().length);
+    });
+
+    // Save notification settings
+    $('#save-notification-settings').click(function() {
+        // Collect Telegram chat IDs
+        const telegramChatIds = [];
+        $('#telegram-chat-ids-container input').each(function() {
+            const val = $(this).val().trim();
+            if (val !== '') {
+                telegramChatIds.push(val);
+            }
+        });
+
+        // Collect email recipients
+        const emailRecipients = [];
+        $('#email-recipients-container input').each(function() {
+            const val = $(this).val().trim();
+            if (val !== '') {
+                emailRecipients.push(val);
+            }
+        });
+
+        const settings = {
+            telegram_enabled: $('#telegram-enabled').is(':checked'),
+            telegram_bot_token: $('#telegram-bot-token').val().trim(),
+            telegram_chat_ids: telegramChatIds,
+            email_enabled: $('#email-enabled').is(':checked'),
+            email_recipients: emailRecipients,
+            send_card_image: $('#send-card-image').is(':checked'),
+            notification_template: $('#notification-template').val()
+        };
+
+        $('#loading-overlay').show();
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_save_notification_settings',
+                nonce: nonce,
+                telegram_enabled: settings.telegram_enabled ? 1 : 0,
+                telegram_bot_token: settings.telegram_bot_token,
+                telegram_chat_ids: settings.telegram_chat_ids,
+                email_enabled: settings.email_enabled ? 1 : 0,
+                email_recipients: settings.email_recipients,
+                send_card_image: settings.send_card_image ? 1 : 0,
+                notification_template: settings.notification_template
+            },
+            success: function(response) {
+                $('#loading-overlay').hide();
+                if (response.success) {
+                    alert('✅ Notification settings saved successfully!');
+                } else {
+                    alert('❌ Failed to save notification settings: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function() {
+                $('#loading-overlay').hide();
+                alert('❌ Failed to save notification settings. Please try again.');
+            }
+        });
+    });
+
+    // Test Email connection
+    $('#test-email').click(function() {
+        const testEmail = $('#test-email-address').val().trim();
+
+        if (!testEmail) {
+            alert('❌ Please enter a test email address first.');
+            return;
+        }
+
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(testEmail)) {
+            alert('❌ Please enter a valid email address.');
+            return;
+        }
+
+        $('#email-test-result').html('<span style="color: #666;">Sending test email...</span>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_test_email',
+                nonce: nonce,
+                test_email: testEmail
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#email-test-result').html('<span style="color: #00a32a; font-weight: bold;">✅ Email sent! Check inbox and spam folder.</span>');
+                    setTimeout(function() {
+                        $('#email-test-result').html('');
+                    }, 8000);
+                } else {
+                    $('#email-test-result').html('<span style="color: #d63638; font-weight: bold;">❌ ' + (response.data || 'Failed to send email') + '</span>');
+                }
+            },
+            error: function() {
+                $('#email-test-result').html('<span style="color: #d63638; font-weight: bold;">❌ Network error</span>');
+            }
+        });
+    });
+
+    // Test Telegram connection
+    $('#test-telegram').click(function() {
+        const botToken = $('#telegram-bot-token').val().trim();
+
+        // Collect chat IDs from inputs
+        const chatIds = [];
+        $('#telegram-chat-ids-container input').each(function() {
+            const val = $(this).val().trim();
+            if (val !== '') {
+                chatIds.push(val);
+            }
+        });
+
+        if (!botToken) {
+            alert('❌ Please enter a bot token first.');
+            return;
+        }
+
+        if (chatIds.length === 0) {
+            alert('❌ Please enter at least one chat ID first.');
+            return;
+        }
+
+        $('#telegram-test-result').html('<span style="color: #666;">Testing...</span>');
+
+        // Test with the first chat ID
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_test_telegram',
+                nonce: nonce,
+                bot_token: botToken,
+                chat_id: chatIds[0]
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#telegram-test-result').html('<span style="color: #00a32a; font-weight: bold;">✅ Connection successful!</span>');
+                    setTimeout(function() {
+                        $('#telegram-test-result').html('');
+                    }, 5000);
+                } else {
+                    $('#telegram-test-result').html('<span style="color: #d63638; font-weight: bold;">❌ ' + (response.data.message || 'Connection failed') + '</span>');
+                }
+            },
+            error: function() {
+                $('#telegram-test-result').html('<span style="color: #d63638; font-weight: bold;">❌ Network error</span>');
+            }
+        });
+    });
+
+    // Reset template to default
+    $('#reset-template').click(function() {
+        if (confirm('Reset to default notification template?')) {
+            const defaultTemplate = "🎯 New VIP Booking Received!\n\n" +
+                "📋 Booking Number: {booking_number}\n" +
+                "👤 Customer: {customer_name}\n" +
+                "🏪 Service: {service}\n" +
+                "📍 Store: {store}\n" +
+                "📦 Package: {package}\n" +
+                "🌍 Nationality: {nation}\n" +
+                "👥 Number of People: {pax}\n" +
+                "📅 Date: {date}\n" +
+                "🕐 Time: {time}\n" +
+                "💰 Price: {price} VND\n" +
+                "⏰ Created: {created_at}";
+
+            $('#notification-template').val(defaultTemplate);
+            alert('✅ Template reset to default. Click "Save All Notification Settings" to save.');
+        }
+    });
 });
