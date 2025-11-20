@@ -7,8 +7,7 @@ jQuery(document).ready(function($) {
     // Load data for Booking Data tab
     loadFlags();
     loadData();
-    loadSettings();
-    loadCleanupPeriod();
+    // Settings are now loaded via PHP in template, no need for AJAX load
     
     function loadFlags() {
         $.ajax({
@@ -259,6 +258,8 @@ jQuery(document).ready(function($) {
         const limit2h = parseInt($('#limit-2h').val()) || 2;
         const limit12h = parseInt($('#limit-12h').val()) || 4;
 
+        console.log('Saving settings:', { exchangeRate, limit2h, limit12h });
+
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -270,7 +271,16 @@ jQuery(document).ready(function($) {
                 limit_12h: limit12h
             },
             success: function(response) {
-                alert(response.success ? '✅ Settings saved!' : '❌ Failed to save settings');
+                console.log('Save response:', response);
+                if (response.success) {
+                    alert('✅ Settings saved! Please reload the page to see changes.');
+                } else {
+                    alert('❌ Failed to save settings: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('❌ AJAX error: ' + error);
             }
         });
     });
@@ -291,6 +301,8 @@ jQuery(document).ready(function($) {
         // Convert to negative for backend storage
         const cleanupPeriodNegative = -Math.abs(cleanupPeriodPositive);
 
+        console.log('Saving cleanup period:', cleanupPeriodPositive, '->', cleanupPeriodNegative);
+
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -300,7 +312,16 @@ jQuery(document).ready(function($) {
                 cleanup_period: cleanupPeriodNegative
             },
             success: function(response) {
-                alert(response.success ? '✅ Cleanup settings saved!' : '❌ Failed to save cleanup settings');
+                console.log('Cleanup save response:', response);
+                if (response.success) {
+                    alert('✅ Cleanup settings saved! Please reload the page to see changes.');
+                } else {
+                    alert('❌ Failed to save cleanup settings: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('❌ AJAX error: ' + error);
             }
         });
     });
