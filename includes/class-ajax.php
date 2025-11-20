@@ -260,51 +260,74 @@ class VIP_Booking_AJAX {
 
         $subject = '🎯 VIP Booking - Test Email - ' . date('Y-m-d H:i:s');
 
-        $message = '<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-        </head>
-        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px;">
-            <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                <div style="background-color: rgba(255,255,255,0.1); padding: 30px; text-align: center;">
-                    <h1 style="color: #fff; margin: 0; font-size: 28px;">✅ VIP Booking Test Email</h1>
-                </div>
-                <div style="background-color: #fff; padding: 30px;">
-                    <h2 style="color: #667eea; margin-top: 0;">Email Test Successful!</h2>
-                    <p style="color: #333; font-size: 16px; line-height: 1.6;">
-                        If you are reading this, your WordPress email system is working correctly!
-                    </p>
-                    <p style="color: #333; font-size: 16px; line-height: 1.6;">
-                        <strong>Test Details:</strong><br>
-                        🕐 Time: ' . date('Y-m-d H:i:s') . '<br>
-                        🌐 Site: ' . get_bloginfo('name') . '<br>
-                        📧 From: ' . get_option('admin_email') . '
-                    </p>
-                    <div style="background-color: #d4edda; border-left: 4px solid #00a32a; padding: 15px; margin-top: 20px;">
-                        <p style="margin: 0; color: #155724;">
-                            ✅ Your VIP Booking notification system is ready to send emails!
-                        </p>
-                    </div>
-                </div>
-                <div style="background-color: #f8f8f8; padding: 20px; text-align: center; color: #666; font-size: 12px;">
-                    This is an automated test from VIP Booking System
-                </div>
+        $current_time = date('Y-m-d H:i:s');
+        $site_name = get_bloginfo('name');
+        $admin_email = get_option('admin_email');
+
+        // Use heredoc for cleaner HTML
+        $message = <<<HTML
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px;">
+    <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="background-color: rgba(255,255,255,0.1); padding: 30px; text-align: center;">
+            <h1 style="color: #fff; margin: 0; font-size: 28px;">✅ VIP Booking Test Email</h1>
+        </div>
+        <div style="background-color: #fff; padding: 30px;">
+            <h2 style="color: #667eea; margin-top: 0;">Email Test Successful!</h2>
+            <p style="color: #333; font-size: 16px; line-height: 1.6;">
+                If you are reading this, your WordPress email system is working correctly!
+            </p>
+            <p style="color: #333; font-size: 16px; line-height: 1.6;">
+                <strong>Test Details:</strong><br>
+                🕐 Time: {$current_time}<br>
+                🌐 Site: {$site_name}<br>
+                📧 From: {$admin_email}
+            </p>
+            <div style="background-color: #d4edda; border-left: 4px solid #00a32a; padding: 15px; margin-top: 20px;">
+                <p style="margin: 0; color: #155724;">
+                    ✅ Your VIP Booking notification system is ready to send emails!
+                </p>
             </div>
-        </body>
-        </html>';
+        </div>
+        <div style="background-color: #f8f8f8; padding: 20px; text-align: center; color: #666; font-size: 12px;">
+            This is an automated test from VIP Booking System
+        </div>
+    </div>
+</body>
+</html>
+HTML;
 
         $headers = array(
             'Content-Type: text/html; charset=UTF-8',
-            'From: VIP Booking <' . get_option('admin_email') . '>'
+            'From: VIP Booking <' . $admin_email . '>'
         );
+
+        // Add error logging
+        add_action('wp_mail_failed', function($wp_error) {
+            error_log('VIP Booking - Email test failed: ' . $wp_error->get_error_message());
+        });
 
         $sent = wp_mail($test_email, $subject, $message, $headers);
 
         if ($sent) {
             wp_send_json_success(array('message' => 'Test email sent successfully! Check your inbox (and spam folder).'));
         } else {
-            wp_send_json_error('Failed to send test email. Please check your WordPress email configuration or install WP Mail SMTP plugin.');
+            // Get the last error
+            $error_message = 'Failed to send test email.';
+
+            // Check if wp_mail_failed hook captured an error
+            if (function_exists('error_get_last')) {
+                $last_error = error_get_last();
+                if ($last_error && strpos($last_error['message'], 'mail') !== false) {
+                    $error_message .= ' Error: ' . $last_error['message'];
+                }
+            }
+
+            wp_send_json_error($error_message . ' Please check your WordPress email configuration or install WP Mail SMTP plugin.');
         }
     }
 
