@@ -1,5 +1,8 @@
 <?php
 $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
+$limit_2h = intval(get_option('vip_booking_limit_2h', 2));
+$limit_12h = intval(get_option('vip_booking_limit_12h', 4));
+$cleanup_period = abs(intval(get_option('vip_booking_cleanup_period', -90)));
 
 // Get statistics with status breakdown
 $now = current_time('timestamp', 1);
@@ -186,7 +189,7 @@ foreach ($month_bookings as $booking_id) {
             <h3>Cleanup Settings</h3>
             <div style="margin-bottom: 10px;">
                 <label style="display: inline-block; width: 200px;">Auto-cleanup period:</label>
-                <input type="number" id="cleanup-period" value="90" min="1" max="3650" style="width: 100px; padding: 5px;">
+                <input type="number" id="cleanup-period" value="<?php echo esc_attr($cleanup_period); ?>" min="1" max="3650" style="width: 100px; padding: 5px;">
                 <span style="color: #666; margin-left: 10px;">days old</span>
             </div>
             <button id="save-cleanup-period" class="button button-primary">Save Cleanup Settings</button>
@@ -281,12 +284,12 @@ foreach ($month_bookings as $booking_id) {
             </div>
             <div style="margin-bottom: 15px;">
                 <label style="display: inline-block; width: 200px;">Rate Limit (2 hours):</label>
-                <input type="number" id="limit-2h" value="2" min="1" max="100" style="width: 100px; padding: 5px;">
+                <input type="number" id="limit-2h" value="<?php echo esc_attr($limit_2h); ?>" min="1" max="100" style="width: 100px; padding: 5px;">
                 <span style="color: #666; margin-left: 10px;">bookings per 2 hours</span>
             </div>
             <div style="margin-bottom: 15px;">
                 <label style="display: inline-block; width: 200px;">Rate Limit (12 hours):</label>
-                <input type="number" id="limit-12h" value="4" min="1" max="100" style="width: 100px; padding: 5px;">
+                <input type="number" id="limit-12h" value="<?php echo esc_attr($limit_12h); ?>" min="1" max="100" style="width: 100px; padding: 5px;">
                 <span style="color: #666; margin-left: 10px;">bookings per 12 hours</span>
             </div>
             <button id="save-settings" class="button button-primary">Save Settings</button>
