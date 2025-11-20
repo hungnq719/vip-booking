@@ -45,8 +45,8 @@ class VIP_Booking_I18n {
             // Rate limit
             'loading_booking_limits' => 'Loading booking limits...',
             'remaining_bookings' => '📊 Remaining bookings:',
-            'time' => 'time',
-            'times' => 'times',
+            'time_singular' => 'Time',
+            'times_plural' => 'Times',
             'no_bookings_available' => '❌ No bookings available at the moment',
             'please_refresh' => '👉 Please refresh to check availability',
             'you_can_book_again' => '✅ You can book again now! Refresh to continue.',
@@ -134,8 +134,8 @@ class VIP_Booking_I18n {
             // Rate limit
             'loading_booking_limits' => '예약 한도 로딩 중...',
             'remaining_bookings' => '📊 남은 예약:',
-            'time' => '회',
-            'times' => '회',
+            'time_singular' => '회',
+            'times_plural' => '회',
             'no_bookings_available' => '❌ 현재 예약이 불가능합니다',
             'please_refresh' => '👉 새로고침하여 가능 여부를 확인하세요',
             'you_can_book_again' => '✅ 이제 다시 예약할 수 있습니다! 계속하려면 새로고침하세요.',
@@ -223,8 +223,8 @@ class VIP_Booking_I18n {
             // Rate limit
             'loading_booking_limits' => 'Загрузка лимитов...',
             'remaining_bookings' => '📊 Осталось бронирований:',
-            'time' => 'раз',
-            'times' => 'раза',
+            'time_singular' => 'Раз',
+            'times_plural' => 'Раза',
             'no_bookings_available' => '❌ Бронирование сейчас недоступно',
             'please_refresh' => '👉 Обновите страницу для проверки',
             'you_can_book_again' => '✅ Теперь вы можете снова забронировать! Обновите страницу.',
@@ -312,8 +312,8 @@ class VIP_Booking_I18n {
             // Rate limit
             'loading_booking_limits' => '加载预约限制中...',
             'remaining_bookings' => '📊 剩余预约次数：',
-            'time' => '次',
-            'times' => '次',
+            'time_singular' => '次',
+            'times_plural' => '次',
             'no_bookings_available' => '❌ 目前无法预约',
             'please_refresh' => '👉 请刷新以检查可用性',
             'you_can_book_again' => '✅ 您现在可以再次预约！刷新以继续。',

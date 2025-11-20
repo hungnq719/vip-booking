@@ -62,13 +62,13 @@ $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
                         </div>
                         <h3 style="margin:0 0 15px 0;"><?php echo esc_html($booking_data['store']); ?></h3>
                         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;color:#fff;">
-                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['service']); ?></strong> <?php echo esc_html($booking_data['service']); ?></div>
-                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['package']); ?></strong> 💎 <?php echo esc_html($booking_data['package']); ?></div>
-                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['nation']); ?></strong> <?php echo $booking_data['nation']; ?></div>
-                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['guests']); ?></strong> <?php echo $booking_data['pax']; ?> <?php echo esc_html($i18n['pax']); ?></div>
-                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['date']); ?></strong> 🗓️ <?php echo date('M d, Y', strtotime($booking_data['date'])); ?></div>
-                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['time']); ?></strong> ⏰ <?php echo $booking_data['time']; ?></div>
-                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['price']); ?></strong> <?php echo number_format($price_vnd); ?> ₫ ~ $<?php echo $price_usd; ?></div>
+                            <div><h4 style="margin:0;font-size:16px;">🎯 <?php echo esc_html($i18n['service']); ?></h4><?php echo esc_html($booking_data['service']); ?></div>
+                            <div><h4 style="margin:0;font-size:16px;">💎 <?php echo esc_html($i18n['package']); ?></h4><?php echo esc_html($booking_data['package']); ?></div>
+                            <div><h4 style="margin:0;font-size:16px;">🌍 <?php echo esc_html($i18n['nation']); ?></h4><?php echo $booking_data['nation']; ?></div>
+                            <div><h4 style="margin:0;font-size:16px;">👥 <?php echo esc_html($i18n['guests']); ?></h4><?php echo $booking_data['pax']; ?> <?php echo esc_html($i18n['pax']); ?></div>
+                            <div><h4 style="margin:0;font-size:16px;">🗓️ <?php echo esc_html($i18n['date']); ?></h4><?php echo date('M d, Y', strtotime($booking_data['date'])); ?></div>
+                            <div><h4 style="margin:0;font-size:16px;">⏰ <?php echo esc_html($i18n['time']); ?></h4><?php echo $booking_data['time']; ?></div>
+                            <div><h4 style="margin:0;font-size:16px;">🏷️ <?php echo esc_html($i18n['price']); ?></h4><?php echo number_format($price_vnd); ?> ₫ ~ $<?php echo $price_usd; ?></div>
                         </div>
                     </div>
                     <button class="show-card-btn" onclick="showBookingCard(this)" style="padding:10px 20px;"><?php echo esc_html($i18n['view_card']); ?></button>

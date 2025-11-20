@@ -222,11 +222,11 @@ $i18n = VIP_Booking_I18n::get_translations();
 .step-content { position: relative; padding-top: 0; min-width: 0; overflow: visible; z-index: 10; }
 .step-title { margin: 0 0 15px 35px; font-size: 20px; }
 .step-select { width: 90%; max-width: 600px; margin-left: auto; margin-right: auto; display: block; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; background: #fff; color: #000; transition: border-color 0.3s; }
-.step-select:disabled { background: #e0e0e0; cursor: not-allowed; color: #999; }
+.step-select:disabled { background: #e0e0e0; color: #999; }
 .step-select:focus { outline: none; border-color: #ff9800; }
 input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; margin-top: 10px; }
 .flag-options { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 5px; padding: 5px; max-width: 600px; margin-left: auto; margin-right: auto; justify-content: center; }
-.flag-options label { cursor: pointer; font-size: 40px; transition: transform 0.2s; line-height: 1; display: inline-block; position: relative; }
+.flag-options label { font-size: 40px; transition: transform 0.2s; line-height: 1; display: inline-block; position: relative; }
 .flag-options label:hover { transform: scale(1.15); z-index: 10; }
 .flag-options input[type="radio"] { display: none; }
 .flag-options input[type="radio"]:checked + span { 
@@ -237,10 +237,10 @@ input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-
     display: inline-block;
 }
 .pax-selector { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; width: 90%; max-width: 600px; margin-left: auto; margin-right: auto; }
-.pax-option { padding: 8px 4px; text-align: center; cursor: pointer; font-size: 15px; font-weight: 600; border: 1px solid #ddd; border-radius: 8px; transition: all 0.3s; }
+.pax-option { padding: 8px 4px; text-align: center; font-size: 15px; font-weight: 600; border: 1px solid #ddd; border-radius: 8px; transition: all 0.3s; }
 .pax-option:not(:hover):not(.selected) { background: #fff; color: #000; }
 .date-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 90%; max-width: 600px; margin-left: auto; margin-right: auto; }
-.date-option { padding: 10px 6px; text-align: center; cursor: pointer; border: 1px solid #ddd; border-radius: 15px; transition: all 0.3s; }
+.date-option { padding: 10px 6px; text-align: center; border: 1px solid #ddd; border-radius: 15px; transition: all 0.3s; }
 .date-option:not(:hover):not(.selected) { background: #fff; color: #000; }
 .date-day { font-weight: bold; font-size: 11px; display: block; margin-bottom: 1px; line-height: 1; color: #ff3333; }
 .date-month { font-weight: bold; font-size: 11px; line-height: 1; margin-bottom: 1px; display: block; }
@@ -248,16 +248,16 @@ input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-
 /* New Time Picker Styles */
 .new-time-picker { width: 100%; max-width: 600px; margin: 0 auto; }
 .time-display-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px; }
-.time-box { background: #fff; border: 3px solid transparent; border-radius: 15px; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; color: #000; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.time-box.disabled { background: #e0e0e0; color: #999; cursor: not-allowed; opacity: 0.6; }
+.time-box { background: #fff; border: 3px solid transparent; border-radius: 15px; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; color: #000; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.time-box.disabled { background: #e0e0e0; color: #999; opacity: 0.6; }
 .time-box[data-active="true"] { border-color: #ff9800; box-shadow: 0 0 15px rgba(255, 152, 0, 0.5), 0 2px 8px rgba(0,0,0,0.1); }
 .time-box:not(.disabled):hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 .time-separator { font-size: 48px; font-weight: bold; color: #fff; user-select: none; }
 .time-options-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 20px; }
-.time-option-btn { background: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 12px 8px; font-size: 16px; font-weight: 600; color: #000; cursor: pointer; transition: all 0.3s ease; text-align: center; }
+.time-option-btn { background: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 12px 8px; font-size: 16px; font-weight: 600; color: #000; transition: all 0.3s ease; text-align: center; }
 .time-option-btn:hover:not(.disabled):not(.selected) { background: #ff9800; color: #fff; border-color: #ff9800; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3); }
 .time-option-btn.selected { background: #ff9800; color: #fff; border-color: #ff9800; box-shadow: 0 0 12px rgba(255, 152, 0, 0.6); }
-.time-option-btn.disabled { background: #e0e0e0; color: #999; border-color: #ccc; cursor: not-allowed; opacity: 0.5; }
+.time-option-btn.disabled { background: #e0e0e0; color: #999; border-color: #ccc; opacity: 0.5; }
 @media (min-width: 769px) {
     .time-display-container { gap: 20px; }
     .time-box { width: 120px; height: 120px; font-size: 56px; }
@@ -340,7 +340,6 @@ var vipCardApp = (function() {
         for (var i = 0; i < flags.length; i++) {
             flags[i].disabled = true;
             flags[i].parentElement.style.opacity = '0.5';
-            flags[i].parentElement.style.cursor = 'not-allowed';
             flags[i].onchange = function() {
                 if (this.disabled) return;
                 if (this.checked) {
@@ -471,7 +470,6 @@ var vipCardApp = (function() {
         for (var i = 0; i < flags.length; i++) {
             flags[i].disabled = false;
             flags[i].parentElement.style.opacity = '1';
-            flags[i].parentElement.style.cursor = 'pointer';
         }
     }
     
@@ -507,7 +505,6 @@ var vipCardApp = (function() {
             btn.setAttribute('data-pax', i);
             btn.disabled = true;
             btn.style.opacity = '0.5';
-            btn.style.cursor = 'not-allowed';
             btn.onclick = function() {
                 if (this.disabled) return;
                 var all = document.querySelectorAll('.pax-option');
@@ -527,7 +524,6 @@ var vipCardApp = (function() {
         for (var i = 0; i < btns.length; i++) {
             btns[i].disabled = false;
             btns[i].style.opacity = '1';
-            btns[i].style.cursor = 'pointer';
         }
     }
     
@@ -544,7 +540,6 @@ var vipCardApp = (function() {
             btn.className = 'date-option';
             btn.disabled = true;
             btn.style.opacity = '0.5';
-            btn.style.cursor = 'not-allowed';
             var dayName = i === 0 ? i18n.today : i === 1 ? i18n.tomorrow : days[d.getDay()];
             btn.innerHTML = '<span class="date-day">' + dayName + '</span>' +
               '<span class="date-date">' + d.getDate() + '</span>' +
@@ -570,7 +565,6 @@ var vipCardApp = (function() {
         for (var i = 0; i < btns.length; i++) {
             btns[i].disabled = false;
             btns[i].style.opacity = '1';
-            btns[i].style.cursor = 'pointer';
         }
     }
     
@@ -1012,7 +1006,7 @@ var vipCardApp = (function() {
                 var actualRemaining = Math.min(remaining2h, remaining12h);
 
                 if (actualRemaining > 0) {
-                    var timesText = actualRemaining === 1 ? i18n.time : i18n.times;
+                    var timesText = actualRemaining === 1 ? i18n.time_singular : i18n.times_plural;
                     textEl.innerHTML = i18n.remaining_bookings + ' ' +
                         '<span style="color: #4CAF50; font-size: 18px; font-weight: bold;">' + actualRemaining + '</span>' + ' ' + timesText;
                 } else {
