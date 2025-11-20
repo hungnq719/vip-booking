@@ -37,17 +37,10 @@ class VIP_Booking_CPT {
     }
     
     public function cleanup_old_bookings() {
-        // Get configurable cleanup period (default: -90 days)
         $cleanup_period = intval(get_option('vip_booking_cleanup_period', -90));
-
-        // Ensure valid negative value
         if ($cleanup_period >= 0) $cleanup_period = -90;
         if ($cleanup_period < -3650) $cleanup_period = -3650;
-
-        // Calculate timestamp using configurable period
         $cleanup_timestamp = strtotime($cleanup_period . ' days');
-
-        // Query bookings older than the configured period
         $old_bookings = get_posts(array(
             'post_type' => 'vip_booking',
             'posts_per_page' => -1,
@@ -61,13 +54,9 @@ class VIP_Booking_CPT {
                 )
             )
         ));
-
-        // Delete old bookings
         foreach ($old_bookings as $booking_id) {
             wp_delete_post($booking_id, true);
         }
-
-        // Log cleanup for debugging
         if (!empty($old_bookings)) {
             error_log('VIP Booking: Cleaned up ' . count($old_bookings) . ' old bookings (>' . abs($cleanup_period) . ' days)');
         }
