@@ -15,6 +15,9 @@ $limit_2h = intval(get_option('vip_booking_limit_2h', 2));
 $limit_12h = intval(get_option('vip_booking_limit_12h', 4));
 $is_logged_in = is_user_logged_in();
 $show_login_notice = $require_login && !$is_logged_in;
+
+// Get translations
+$i18n = VIP_Booking_I18n::get_translations();
 ?>
 
 <div id="vip-booking-container">
@@ -32,13 +35,13 @@ $show_login_notice = $require_login && !$is_logged_in;
                 <div class="step-line"></div>
             </div>
             <div class="step-content">
-                <h3 class="step-title">Choose Service</h3>
+                <h3 class="step-title"><?php echo esc_html($i18n['choose_service']); ?></h3>
                 <select id="service" class="step-select">
-                    <option value="">Select service...</option>
+                    <option value=""><?php echo esc_html($i18n['select_service']); ?></option>
                 </select>
             </div>
         </div>
-        
+
         <!-- Step 2: Store -->
         <div class="step-item" data-step="2">
             <div class="step-header">
@@ -50,13 +53,13 @@ $show_login_notice = $require_login && !$is_logged_in;
                 <div class="step-line"></div>
             </div>
             <div class="step-content">
-                <h3 class="step-title">Choose Store</h3>
+                <h3 class="step-title"><?php echo esc_html($i18n['choose_store']); ?></h3>
                 <select id="store" disabled class="step-select">
-                    <option value="">Complete previous step...</option>
+                    <option value=""><?php echo esc_html($i18n['complete_previous_step']); ?></option>
                 </select>
             </div>
         </div>
-        
+
         <!-- Step 3: Package -->
         <div class="step-item" data-step="3">
             <div class="step-header">
@@ -68,16 +71,16 @@ $show_login_notice = $require_login && !$is_logged_in;
                 <div class="step-line"></div>
             </div>
             <div class="step-content">
-                <h3 class="step-title">Service Package</h3>
+                <h3 class="step-title"><?php echo esc_html($i18n['service_package']); ?></h3>
                 <select id="package" disabled class="step-select">
-                    <option value="">Complete previous steps...</option>
+                    <option value=""><?php echo esc_html($i18n['complete_previous_steps']); ?></option>
                 </select>
                 <div id="price-display" style="display: none; text-align: center;">
                     <strong style="color: #ff9800; font-size: 18px;" id="price"></strong>
                 </div>
             </div>
         </div>
-        
+
         <!-- Step 4: Nation -->
         <div class="step-item" data-step="4">
             <div class="step-header">
@@ -89,7 +92,7 @@ $show_login_notice = $require_login && !$is_logged_in;
                 <div class="step-line"></div>
             </div>
             <div class="step-content">
-                <h3 class="step-title">Nation</h3>
+                <h3 class="step-title"><?php echo esc_html($i18n['nation']); ?></h3>
                 <div class="flag-options">
                     <?php foreach ($flags as $flag): ?>
                     <label><input type="radio" name="flag" value="<?php echo esc_attr($flag); ?>"><span><?php echo esc_html($flag); ?></span></label>
@@ -97,7 +100,7 @@ $show_login_notice = $require_login && !$is_logged_in;
                 </div>
             </div>
         </div>
-        
+
         <!-- Step 5: Pax -->
         <div class="step-item" data-step="5">
             <div class="step-header">
@@ -109,11 +112,11 @@ $show_login_notice = $require_login && !$is_logged_in;
                 <div class="step-line"></div>
             </div>
             <div class="step-content">
-                <h3 class="step-title">Number of Guests</h3>
+                <h3 class="step-title"><?php echo esc_html($i18n['number_of_guests']); ?></h3>
                 <div class="pax-selector" id="paxSelector"></div>
             </div>
         </div>
-        
+
         <!-- Step 6: Date -->
         <div class="step-item" data-step="6">
             <div class="step-header">
@@ -125,11 +128,11 @@ $show_login_notice = $require_login && !$is_logged_in;
                 <div class="step-line"></div>
             </div>
             <div class="step-content">
-                <h3 class="step-title">Date</h3>
+                <h3 class="step-title"><?php echo esc_html($i18n['date']); ?></h3>
                 <div class="date-selector" id="dateSelector"></div>
             </div>
         </div>
-        
+
         <!-- Step 7: Time -->
         <div class="step-item" data-step="7">
             <div class="step-header">
@@ -140,19 +143,19 @@ $show_login_notice = $require_login && !$is_logged_in;
                 </div>
             </div>
             <div class="step-content">
-                <h3 class="step-title">Time</h3>
+                <h3 class="step-title"><?php echo esc_html($i18n['time']); ?></h3>
                 <div class="new-time-picker">
                     <!-- Time Display -->
                     <div class="time-display-container">
-                        <div class="time-box" id="hourBox" data-active="false">
+                        <div class="time-box disabled" id="hourBox" data-active="false" data-disabled="true">
                             <span id="hourDisplay">--</span>
                         </div>
                         <div class="time-separator">:</div>
-                        <div class="time-box" id="minuteBox" data-active="false">
+                        <div class="time-box disabled" id="minuteBox" data-active="false" data-disabled="true">
                             <span id="minuteDisplay">--</span>
                         </div>
                     </div>
-                    
+
                     <!-- Time Options Grid -->
                     <div class="time-options-container" id="timeOptionsContainer" style="display: none;">
                         <!-- Hour options will be inserted here -->
@@ -160,12 +163,12 @@ $show_login_notice = $require_login && !$is_logged_in;
                 </div>
             </div>
         </div>
-        
+
         <div class="button-container">
-            <button type="button" id="generateBtn" class="generate-button">Make Reservation</button>
+            <button type="button" id="generateBtn" class="generate-button"><?php echo esc_html($i18n['make_reservation']); ?></button>
             <?php if ($require_login && $is_logged_in): ?>
             <div id="rate-limit-info" style="margin-top: 15px; padding: 10px; font-size: 14px;">
-                <span id="rate-limit-text">Loading booking limits...</span>
+                <span id="rate-limit-text"><?php echo esc_html($i18n['loading_booking_limits']); ?></span>
             </div>
             <?php endif; ?>
         </div>
@@ -180,15 +183,15 @@ $show_login_notice = $require_login && !$is_logged_in;
                     <path d="M25 40 L35 50 L55 30" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <h1 class="success-title">Successful!</h1>
-            <p class="success-message">Please save this image and present it to the receptionist upon arrival to ensure the best support and service.</p>
+            <h1 class="success-title"><?php echo esc_html($i18n['successful']); ?></h1>
+            <p class="success-message"><?php echo esc_html($i18n['success_message']); ?></p>
         </div>
-        
+
         <canvas id="canvas" width="750" height="450"></canvas>
-        
+
         <div class="save-button-container">
-            <button type="button" id="saveBtn" class="save-button">💾 Save to Photos</button>
-            <button type="button" id="backBtn" class="back-button">← Back to Form</button>
+            <button type="button" id="saveBtn" class="save-button"><?php echo esc_html($i18n['save_to_photos']); ?></button>
+            <button type="button" id="backBtn" class="back-button"><?php echo esc_html($i18n['back_to_form']); ?></button>
         </div>
     </div>
 </div>
@@ -246,8 +249,9 @@ input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-
 .new-time-picker { width: 100%; max-width: 600px; margin: 0 auto; }
 .time-display-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px; }
 .time-box { background: #fff; border: 3px solid transparent; border-radius: 15px; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; color: #000; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.time-box.disabled { background: #e0e0e0; color: #999; cursor: not-allowed; opacity: 0.6; }
 .time-box[data-active="true"] { border-color: #ff9800; box-shadow: 0 0 15px rgba(255, 152, 0, 0.5), 0 2px 8px rgba(0,0,0,0.1); }
-.time-box:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.time-box:not(.disabled):hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 .time-separator { font-size: 48px; font-weight: bold; color: #fff; user-select: none; }
 .time-options-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 20px; }
 .time-option-btn { background: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 12px 8px; font-size: 16px; font-weight: 600; color: #000; cursor: pointer; transition: all 0.3s ease; text-align: center; }
@@ -303,6 +307,7 @@ var vipCardApp = (function() {
         limit_2h: <?php echo intval($limit_2h); ?>,
         limit_12h: <?php echo intval($limit_12h); ?>
     };
+    var i18n = <?php echo VIP_Booking_I18n::get_translations_json(); ?>;
     var selectedDate = null, selectedTime = null, selectedPax = null;
     var selectedHour = null, selectedMinute = null;
     var currentTimeMode = 'hour'; // 'hour' or 'minute'
@@ -366,7 +371,7 @@ var vipCardApp = (function() {
                 services.push(vipData[i].service);
             }
         }
-        sel.innerHTML = '<option value="">Select service...</option>';
+        sel.innerHTML = '<option value="">' + i18n.select_service + '</option>';
         for (var i = 0; i < services.length; i++) {
             var opt = document.createElement('option');
             opt.value = opt.textContent = services[i];
@@ -391,7 +396,7 @@ var vipCardApp = (function() {
         var sel = document.getElementById('store');
         if (!service) {
             sel.disabled = true;
-            sel.innerHTML = '<option value="">Complete previous step...</option>';
+            sel.innerHTML = '<option value="">' + i18n.complete_previous_step + '</option>';
             updatePackageDropdown();
             return;
         }
@@ -402,7 +407,7 @@ var vipCardApp = (function() {
             }
         }
         sel.disabled = false;
-        sel.innerHTML = '<option value="">Select store...</option>';
+        sel.innerHTML = '<option value="">' + i18n.select_store + '</option>';
         for (var i = 0; i < stores.length; i++) {
             var opt = document.createElement('option');
             opt.value = opt.textContent = stores[i];
@@ -428,7 +433,7 @@ var vipCardApp = (function() {
         var sel = document.getElementById('package');
         if (!service || !store) {
             sel.disabled = true;
-            sel.innerHTML = '<option value="">Complete previous steps...</option>';
+            sel.innerHTML = '<option value="">' + i18n.complete_previous_steps + '</option>';
             document.getElementById('price-display').style.display = 'none';
             return;
         }
@@ -439,7 +444,7 @@ var vipCardApp = (function() {
             }
         }
         sel.disabled = false;
-        sel.innerHTML = '<option value="">Select package...</option>';
+        sel.innerHTML = '<option value="">' + i18n.select_package + '</option>';
         for (var i = 0; i < packages.length; i++) {
             var opt = document.createElement('option');
             opt.value = opt.textContent = packages[i];
@@ -529,8 +534,8 @@ var vipCardApp = (function() {
     function initDateSelector() {
         var cont = document.getElementById('dateSelector');
         var today = new Date();
-        var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var days = [i18n.sun, i18n.mon, i18n.tue, i18n.wed, i18n.thu, i18n.fri, i18n.sat];
+        var months = [i18n.jan, i18n.feb, i18n.mar, i18n.apr, i18n.may, i18n.jun, i18n.jul, i18n.aug, i18n.sep, i18n.oct, i18n.nov, i18n.dec];
         for (var i = 0; i < 8; i++) {
             var d = new Date(today);
             d.setDate(today.getDate() + i);
@@ -540,9 +545,9 @@ var vipCardApp = (function() {
             btn.disabled = true;
             btn.style.opacity = '0.5';
             btn.style.cursor = 'not-allowed';
-            var dayName = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : days[d.getDay()];
-            btn.innerHTML = '<span class="date-day">' + dayName + '</span>' + 
-              '<span class="date-date">' + d.getDate() + '</span>' + 
+            var dayName = i === 0 ? i18n.today : i === 1 ? i18n.tomorrow : days[d.getDay()];
+            btn.innerHTML = '<span class="date-day">' + dayName + '</span>' +
+              '<span class="date-date">' + d.getDate() + '</span>' +
               '<span class="date-month">' + months[d.getMonth()] + '</span>';
             btn.onclick = (function(date) {
                 return function() {
@@ -579,7 +584,7 @@ var vipCardApp = (function() {
         document.getElementById('minuteBox').onclick = function() {
             if (this.getAttribute('data-disabled') === 'true') return;
             if (selectedHour === null) {
-                alert('Please select hour first');
+                alert(i18n.please_select_hour);
                 return;
             }
             showMinutePicker();
@@ -844,8 +849,12 @@ var vipCardApp = (function() {
     }
     
     function enableTimeSelector() {
-        document.getElementById('hourBox').removeAttribute('data-disabled');
-        document.getElementById('minuteBox').removeAttribute('data-disabled');
+        var hourBox = document.getElementById('hourBox');
+        var minuteBox = document.getElementById('minuteBox');
+        hourBox.removeAttribute('data-disabled');
+        minuteBox.removeAttribute('data-disabled');
+        hourBox.classList.remove('disabled');
+        minuteBox.classList.remove('disabled');
         showHourPicker();
     }
 
@@ -854,24 +863,24 @@ var vipCardApp = (function() {
             showLoginModal();
             return;
         }
-        
+
         var service = document.getElementById('service').value;
         var store = document.getElementById('store').value;
         var pkg = document.getElementById('package').value;
         var flag = document.querySelector('input[name="flag"]:checked');
         if (!service || !store || !pkg || !flag || !selectedPax || !selectedDate || !selectedTime) {
             var missing = [];
-            if (!service) missing.push('Service');
-            if (!store) missing.push('Store');
-            if (!pkg) missing.push('Package');
-            if (!flag) missing.push('Nation');
-            if (!selectedPax) missing.push('Number of Guests');
-            if (!selectedDate) missing.push('Date');
-            if (!selectedTime) missing.push('Time');
-            alert('Please complete:\n- ' + missing.join('\n- '));
+            if (!service) missing.push(i18n.choose_service);
+            if (!store) missing.push(i18n.choose_store);
+            if (!pkg) missing.push(i18n.service_package);
+            if (!flag) missing.push(i18n.nation);
+            if (!selectedPax) missing.push(i18n.number_of_guests);
+            if (!selectedDate) missing.push(i18n.date);
+            if (!selectedTime) missing.push(i18n.time);
+            alert(i18n.please_complete + '\n- ' + missing.join('\n- '));
             return;
         }
-        
+
         // Check rate limit if logged in
         if (requireLogin && isLoggedIn) {
             checkRateLimitAndGenerate();
@@ -895,7 +904,7 @@ var vipCardApp = (function() {
             }
         })
         .catch(function() {
-            alert('Failed to check rate limit');
+            alert(i18n.failed_rate_limit);
         });
     }
     
@@ -925,9 +934,9 @@ var vipCardApp = (function() {
             ctx.fillStyle = grad;
             ctx.fillText(storeText, x, y);
             
-            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            var months = [i18n.jan, i18n.feb, i18n.mar, i18n.apr, i18n.may, i18n.jun, i18n.jul, i18n.aug, i18n.sep, i18n.oct, i18n.nov, i18n.dec];
             var dateStr = months[selectedDate.getMonth()] + ' ' + selectedDate.getDate();
-            var bottomText = flag.value + ' ' + selectedPax + ' Pax  ⋆  ⏰ ' + selectedTime + '  ⋆  🗓️ ' + dateStr + '  ⋆  💎 ' + pkg;
+            var bottomText = flag.value + ' ' + selectedPax + ' ' + i18n.pax + '  ⋆  ⏰ ' + selectedTime + '  ⋆  🗓️ ' + dateStr + '  ⋆  💎 ' + pkg;
             
             ctx.font = 'bold 28px Arial';
             ctx.fillStyle = '#000000';
@@ -1003,11 +1012,11 @@ var vipCardApp = (function() {
                 var actualRemaining = Math.min(remaining2h, remaining12h);
 
                 if (actualRemaining > 0) {
-                    var timesText = actualRemaining === 1 ? 'time' : 'times';
-                    textEl.innerHTML = '📊 Remaining bookings: ' +
+                    var timesText = actualRemaining === 1 ? i18n.time : i18n.times;
+                    textEl.innerHTML = i18n.remaining_bookings + ' ' +
                         '<span style="color: #4CAF50; font-size: 18px; font-weight: bold;">' + actualRemaining + '</span>' + ' ' + timesText;
                 } else {
-                    textEl.innerHTML = '❌ No bookings available at the moment';
+                    textEl.innerHTML = i18n.no_bookings_available;
                 }
             } else {
                 var waitTime2h = data.data.wait_time_2h || 0;
@@ -1017,7 +1026,7 @@ var vipCardApp = (function() {
                 if (maxWait > 0) {
                     startCountdown(maxWait);
                 } else {
-                    textEl.innerHTML = '👉 Please refresh to check availability';
+                    textEl.innerHTML = i18n.please_refresh;
                 }
             }
         });
@@ -1037,14 +1046,14 @@ var vipCardApp = (function() {
         function updateCountdown() {
             if (seconds <= 0) {
                 clearInterval(countdownInterval);
-                textEl.innerHTML = '<span style="color: #4CAF50; font-size: 16px; font-weight: bold;">✅ You can book again now! Refresh to continue.</span>';
+                textEl.innerHTML = '<span style="color: #4CAF50; font-size: 16px; font-weight: bold;">' + i18n.you_can_book_again + '</span>';
                 return;
             }
-            
+
             var hours = Math.floor(seconds / 3600);
             var minutes = Math.floor((seconds % 3600) / 60);
             var secs = seconds % 60;
-            
+
             var timeStr = '';
             if (hours > 0) {
                 timeStr = hours + 'h ' + minutes + 'm ' + secs + 's';
@@ -1053,8 +1062,8 @@ var vipCardApp = (function() {
             } else {
                 timeStr = secs + 's';
             }
-            
-            textEl.innerHTML = '⏰ Next booking available in: ' +
+
+            textEl.innerHTML = i18n.next_booking_available + ' ' +
                 '<span style="color: #f44336; font-size: 18px; font-weight: bold;">' + timeStr + '</span>';
             seconds--;
         }
@@ -1139,11 +1148,11 @@ var vipCardApp = (function() {
         modal.style.cssText = 'background: white; border-radius: 30px; padding: 40px; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6);';
         
         modal.innerHTML = '<div style="margin-bottom: 20px;">🔐</div>' +
-            '<h2 style="margin: 0 0 15px 0;">Login Required</h2>' +
-            '<p style="margin: 0 0 15px 0; font-size: 16px; color: #333; line-height: 1.6;">To proceed with your booking, please login using your Telegram or Google account.</p>' +
-            '<p style="margin: 0 0 25px 0; font-size: 14px; color: #666; line-height: 1.5;">If you have already logged in, please refresh the Booking page.</p>' +
-            '<button onclick="vipCardApp.openLoginFromModal()" style="display: inline-block; padding: 10px 20px; margin: 10px">🔑 Login Now</button>' +
-            '<button onclick="vipCardApp.closeLoginModal()" style="padding: 10px 20px; background: #666; color: #fff;">Cancel</button>';
+            '<h2 style="margin: 0 0 15px 0;">' + i18n.login_required + '</h2>' +
+            '<p style="margin: 0 0 15px 0; font-size: 16px; color: #333; line-height: 1.6;">' + i18n.login_message + '</p>' +
+            '<p style="margin: 0 0 25px 0; font-size: 14px; color: #666; line-height: 1.5;">' + i18n.login_refresh_message + '</p>' +
+            '<button onclick="vipCardApp.openLoginFromModal()" style="display: inline-block; padding: 10px 20px; margin: 10px">' + i18n.login_now + '</button>' +
+            '<button onclick="vipCardApp.closeLoginModal()" style="padding: 10px 20px; background: #666; color: #fff;">' + i18n.cancel + '</button>';
         
         overlay.appendChild(modal);
         document.body.appendChild(overlay);

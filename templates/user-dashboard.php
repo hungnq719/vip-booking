@@ -1,11 +1,15 @@
 <?php
 nocache_headers();
+
+// Get translations
+$i18n = VIP_Booking_I18n::get_translations();
+
 if (!is_user_logged_in()) {
     echo '<div style="text-align:center;padding:40px;background:white;border-radius:8px;margin:20px 0;">
         <div style="font-size:48px;margin-bottom:20px;">🔐</div>
-        <h2>Login Required</h2>
-        <p>Please login to view your booking history.</p>
-        <a href="' . wp_login_url(get_permalink()) . '" style="display:inline-block;margin-top:20px;padding:10px 20px;text-decoration:none;">Login Now</a>
+        <h2>' . esc_html($i18n['login_required']) . '</h2>
+        <p>' . esc_html($i18n['login_to_view']) . '</p>
+        <a href="' . wp_login_url(get_permalink()) . '" style="display:inline-block;margin-top:20px;padding:10px 20px;text-decoration:none;">' . esc_html($i18n['login_now']) . '</a>
     </div>';
     return;
 }
@@ -22,20 +26,20 @@ $bookings = get_posts(array(
 $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
 ?>
 <div id="user-booking-dashboard" style="max-width:1200px;margin:0 auto;padding:20px;">
-    <h1 style="text-align:center;margin-bottom:30px;">My Booking History</h1>
-   
+    <h1 style="text-align:center;margin-bottom:30px;"><?php echo esc_html($i18n['my_booking_history']); ?></h1>
+
     <?php if (!empty($bookings)): ?>
     <div style="display:grid;gap:20px;">
         <?php foreach ($bookings as $booking):
             $timestamp = get_post_meta($booking->ID, '_booking_timestamp', true);
             $is_upcoming = $timestamp > $now;
-            $status_label = $is_upcoming ? '🕐 Upcoming' : '✅ Completed';
+            $status_label = $is_upcoming ? $i18n['upcoming'] : $i18n['completed'];
             $status_bg = $is_upcoming ? '#fff' : '#4CAF50';
             $status_color = $is_upcoming ? '#000' : '#fff';
-           
+
             $price_vnd = get_post_meta($booking->ID, '_booking_price', true);
             $price_usd = number_format($price_vnd / $exchange_rate, 2);
-           
+
             $booking_data = array(
                 'id' => $booking->ID,
                 'number' => get_post_meta($booking->ID, '_booking_number', true),
@@ -53,21 +57,21 @@ $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
                 <div style="display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;">
                     <div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                            <div style="font-size:12px;">Booking #<?php echo $booking_data['number']; ?></div>
+                            <div style="font-size:12px;"><?php echo esc_html($i18n['booking']); ?><?php echo $booking_data['number']; ?></div>
                             <div style="padding:10px 20px;border-radius:.3em;background:<?php echo $status_bg; ?>;color:<?php echo $status_color; ?>;"><?php echo $status_label; ?></div>
                         </div>
                         <h3 style="margin:0 0 15px 0;"><?php echo esc_html($booking_data['store']); ?></h3>
                         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;color:#fff;">
-                            <div><strong style="color:#ff9800;">Service:</strong> <?php echo esc_html($booking_data['service']); ?></div>
-                            <div><strong style="color:#ff9800;">Package:</strong> 💎 <?php echo esc_html($booking_data['package']); ?></div>
-                            <div><strong style="color:#ff9800;">Nation:</strong> <?php echo $booking_data['nation']; ?></div>
-                            <div><strong style="color:#ff9800;">Guests:</strong> <?php echo $booking_data['pax']; ?> Pax</div>
-                            <div><strong style="color:#ff9800;">Date:</strong> 🗓️ <?php echo date('M d, Y', strtotime($booking_data['date'])); ?></div>
-                            <div><strong style="color:#ff9800;">Time:</strong> ⏰ <?php echo $booking_data['time']; ?></div>
-                            <div><strong style="color:#ff9800;">Price:</strong> <?php echo number_format($price_vnd); ?> ₫ ~ $<?php echo $price_usd; ?></div>
+                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['service']); ?></strong> <?php echo esc_html($booking_data['service']); ?></div>
+                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['package']); ?></strong> 💎 <?php echo esc_html($booking_data['package']); ?></div>
+                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['nation']); ?></strong> <?php echo $booking_data['nation']; ?></div>
+                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['guests']); ?></strong> <?php echo $booking_data['pax']; ?> <?php echo esc_html($i18n['pax']); ?></div>
+                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['date']); ?></strong> 🗓️ <?php echo date('M d, Y', strtotime($booking_data['date'])); ?></div>
+                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['time']); ?></strong> ⏰ <?php echo $booking_data['time']; ?></div>
+                            <div><strong style="color:#ff9800;"><?php echo esc_html($i18n['price']); ?></strong> <?php echo number_format($price_vnd); ?> ₫ ~ $<?php echo $price_usd; ?></div>
                         </div>
                     </div>
-                    <button class="show-card-btn" onclick="showBookingCard(this)" style="padding:10px 20px;">View Card</button>
+                    <button class="show-card-btn" onclick="showBookingCard(this)" style="padding:10px 20px;"><?php echo esc_html($i18n['view_card']); ?></button>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -75,32 +79,34 @@ $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
     <?php else: ?>
     <div style="text-align:center;padding:60px 20px;background:#000;border:3px solid #ff9800;border-radius:30px;">
         <div style="font-size:72px;margin-bottom:20px;">📭</div>
-        <h2 style="color:#ff9800;margin:0 0 10px 0;">No Bookings Yet</h2>
-        <p style="color:#999;">You haven't made any bookings yet. Start booking now!</p>
+        <h2 style="color:#ff9800;margin:0 0 10px 0;"><?php echo esc_html($i18n['no_bookings_yet']); ?></h2>
+        <p style="color:#999;"><?php echo esc_html($i18n['no_bookings_message']); ?></p>
     </div>
     <?php endif; ?>
 </div>
 <div id="card-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;">
     <div style="background:#000;border:3px solid #ff9800; border-radius:30px;padding:30px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 10px 40px rgba(0,0,0,0.6);">
-        <h2 style="text-align:center;margin:0 0 20px 0;">Your Booking Card</h2>
+        <h2 style="text-align:center;margin:0 0 20px 0;"><?php echo esc_html($i18n['your_booking_card']); ?></h2>
         <canvas id="card-canvas" width="750" height="450" style="display:block;max-width:100%;height:auto;margin:20px auto;"></canvas>
         <div class="save-button-container" style="text-align:center;margin-top:20px;display:flex;gap:10px;justify-content:center;">
-            <button onclick="saveToPhotos()" class="save-button">💾 Save to Photos</button>
-            <button onclick="closeCardModal()" class="back-button">❌ Close</button>
+            <button onclick="saveToPhotos()" class="save-button"><?php echo esc_html($i18n['save_to_photos']); ?></button>
+            <button onclick="closeCardModal()" class="back-button"><?php echo esc_html($i18n['close']); ?></button>
         </div>
     </div>
 </div>
 <script>
 var currentBookingData = null;
 var templateImageUrl = '<?php echo esc_url(VIP_BOOKING_PLUGIN_URL . 'templates/vip-template.png'); ?>';
+var i18n = <?php echo VIP_Booking_I18n::get_translations_json(); ?>;
+
 function showBookingCard(btn) {
     var card = btn.closest('.booking-card');
     var bookingData = JSON.parse(card.getAttribute('data-booking'));
     currentBookingData = bookingData;
-   
+
     var modal = document.getElementById('card-modal');
     modal.style.display = 'flex';
-   
+
     generateCardImage(bookingData);
 }
 function closeCardModal() {
@@ -109,15 +115,15 @@ function closeCardModal() {
 function generateCardImage(data) {
     var canvas = document.getElementById('card-canvas');
     var ctx = canvas.getContext('2d');
-   
+
     var img = new Image();
     img.src = templateImageUrl;
     img.crossOrigin = 'anonymous';
-   
+
     img.onload = function() {
         ctx.clearRect(0, 0, 750, 450);
         ctx.drawImage(img, 0, 0, 750, 450);
-       
+
         // Store name
         var storeText = '⋆⋆⋆✦ ' + data.store + ' ✦⋆⋆⋆';
         ctx.font = 'bold 24px Arial';
@@ -129,18 +135,18 @@ function generateCardImage(data) {
         grad.addColorStop(1, '#856641');
         ctx.fillStyle = grad;
         ctx.fillText(storeText, x, y);
-       
+
         // Bottom info
         var dateObj = new Date(data.date);
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var months = [i18n.jan, i18n.feb, i18n.mar, i18n.apr, i18n.may, i18n.jun, i18n.jul, i18n.aug, i18n.sep, i18n.oct, i18n.nov, i18n.dec];
         var dateStr = months[dateObj.getMonth()] + ' ' + dateObj.getDate();
-        var bottomText = data.nation + ' ' + data.pax + ' Pax ⋆ ⏰ ' + data.time + ' ⋆ 🗓️ ' + dateStr + ' ⋆ 💎 ' + data.package;
-       
+        var bottomText = data.nation + ' ' + data.pax + ' ' + i18n.pax + ' ⋆ ⏰ ' + data.time + ' ⋆ 🗓️ ' + dateStr + ' ⋆ 💎 ' + data.package;
+
         ctx.font = 'bold 28px Arial';
         ctx.fillStyle = '#000000';
         ctx.fillText(bottomText, 375, 370);
     };
-   
+
     img.onerror = function() {
         ctx.fillStyle = '#f0f0f0';
         ctx.fillRect(0, 0, 750, 450);
