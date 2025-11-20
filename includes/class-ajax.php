@@ -154,16 +154,16 @@ class VIP_Booking_AJAX {
     public function create_booking() {
         check_ajax_referer('vip_booking_nonce', 'nonce');
         if (!is_user_logged_in()) wp_send_json_error('Not logged in');
-        
+
         $data = json_decode(stripslashes($_POST['booking_data']), true);
-        
+
         $booking_id = wp_insert_post(array(
             'post_type' => 'vip_booking',
             'post_status' => 'publish',
             'post_author' => get_current_user_id(),
             'post_title' => 'Booking ' . time(),
         ));
-        
+
         if ($booking_id) {
             $booking_number = 'VIP-' . str_pad($booking_id, 6, '0', STR_PAD_LEFT);
 
@@ -174,7 +174,7 @@ class VIP_Booking_AJAX {
             } catch (Exception $e) {
                 $booking_timestamp = strtotime($data['date'] . ' ' . $data['time']);
             }
-            
+
             update_post_meta($booking_id, '_booking_number', $booking_number);
             update_post_meta($booking_id, '_booking_service', sanitize_text_field($data['service']));
             update_post_meta($booking_id, '_booking_store', sanitize_text_field($data['store']));
@@ -188,6 +188,15 @@ class VIP_Booking_AJAX {
             update_post_meta($booking_id, '_booking_status', 'confirmed');
             update_post_meta($booking_id, '_booking_created_at', time());
 
+            // Save frontend-generated card image
+            if (isset($_POST['card_image']) && !empty($_POST['card_image'])) {
+                $card_image_data = $_POST['card_image'];
+                $card_path = $this->save_card_image($booking_id, $card_image_data);
+                if ($card_path) {
+                    update_post_meta($booking_id, '_booking_card_image', $card_path);
+                }
+            }
+
             // Send notifications
             $this->send_booking_notifications($booking_id);
 
@@ -195,6 +204,32 @@ class VIP_Booking_AJAX {
         } else {
             wp_send_json_error('Failed to create booking');
         }
+    }
+
+    private function save_card_image($booking_id, $base64_image) {
+        // Remove data:image/png;base64, prefix if present
+        if (strpos($base64_image, ',') !== false) {
+            $base64_image = explode(',', $base64_image)[1];
+        }
+
+        // Decode base64
+        $image_data = base64_decode($base64_image);
+        if ($image_data === false) {
+            return false;
+        }
+
+        // Save to uploads directory
+        $upload_dir = wp_upload_dir();
+        $filename = 'booking-card-' . $booking_id . '-' . time() . '.png';
+        $filepath = $upload_dir['path'] . '/' . $filename;
+
+        // Write file
+        $saved = file_put_contents($filepath, $image_data);
+        if ($saved === false) {
+            return false;
+        }
+
+        return $filepath;
     }
     
     public function check_login() {

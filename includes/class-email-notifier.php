@@ -29,9 +29,18 @@ class VIP_Booking_Email_Notifier {
         $attachments = array();
 
         if ($settings['send_card_image']) {
-            $card_path = self::generate_booking_card($booking_id);
-            if ($card_path && file_exists($card_path)) {
-                $attachments[] = $card_path;
+            // First try to use the saved frontend-generated card
+            $saved_card_path = get_post_meta($booking_id, '_booking_card_image', true);
+
+            if ($saved_card_path && file_exists($saved_card_path)) {
+                // Use the frontend-generated card
+                $attachments[] = $saved_card_path;
+            } else {
+                // Fallback: generate card if frontend card not available
+                $card_path = self::generate_booking_card($booking_id);
+                if ($card_path && file_exists($card_path)) {
+                    $attachments[] = $card_path;
+                }
             }
         }
 
@@ -51,9 +60,11 @@ class VIP_Booking_Email_Notifier {
             }
         }
 
+        // Clean up temporary generated attachments (not the saved frontend card)
         if (!empty($attachments)) {
             foreach ($attachments as $attachment) {
-                if (file_exists($attachment)) {
+                // Only delete temporary generated files
+                if (file_exists($attachment) && strpos($attachment, 'temp-') !== false) {
                     @unlink($attachment);
                 }
             }
