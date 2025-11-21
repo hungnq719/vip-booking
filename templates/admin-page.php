@@ -370,33 +370,16 @@ foreach ($month_bookings as $booking_id) {
         </div>
         
         <div class="vip-booking-toolbar">
-            <button id="add-row" class="button button-primary">➕ Add New Row</button>
+            <button id="add-store" class="button button-primary">➕ Add New Store</button>
             <button id="save-changes" class="button button-primary">💾 Save Changes</button>
-            <button id="delete-selected" class="button button-secondary">🗑️ Delete Selected</button>
             <button id="reset-all" class="button button-secondary" style="background: #dc3232; border-color: #dc3232; color: white;">🔄 Reset All Data</button>
             <button id="export-csv" class="button button-secondary">📤 Export CSV</button>
             <button id="import-csv" class="button button-secondary">📥 Import CSV</button>
             <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
         </div>
-        
-        <div class="vip-booking-table-container">
-            <table class="wp-list-table widefat fixed striped" id="vip-booking-table">
-                <thead>
-                    <tr>
-                        <th class="check-column" style="width: 30px;"><input type="checkbox" id="select-all"></th>
-                        <th style="width: 100px;">Service</th>
-                        <th style="width: 150px;">Store Name</th>
-                        <th style="width: 80px;">Store ID</th>
-                        <th style="width: 100px;">Service Package</th>
-                        <th style="width: 100px;">Price (VND)</th>
-                        <th style="width: 80px;">Opening</th>
-                        <th style="width: 80px;">Closing</th>
-                        <th style="width: 50px;">Prebook</th>
-                        <th style="width: 30px;">Delete</th>
-                    </tr>
-                </thead>
-                <tbody id="vip-booking-tbody"></tbody>
-            </table>
+
+        <div id="stores-container" class="stores-accordion">
+            <!-- Store accordions will be dynamically rendered here -->
         </div>
     </div>
 
@@ -526,12 +509,37 @@ foreach ($month_bookings as $booking_id) {
 .status-upcoming { background: #fff3cd; color: #856404; }
 .status-completed { background: #d4edda; color: #155724; }
 .vip-booking-toolbar { position: sticky; top: 32px; padding: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; z-index: 99 }
-.vip-booking-table-container { overflow-x: auto; width: 100%; }
-#vip-booking-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
-#vip-booking-table th, #vip-booking-table td { padding: 8px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#vip-booking-table input[type="text"], #vip-booking-table input[type="time"], #vip-booking-table input[type="number"] { width: 100%; box-sizing: border-box; padding: 4px 6px; font-size: 13px; }
-#vip-booking-table .check-column { text-align: center; padding: 8px 2px; }
-#vip-booking-table .delete-row { padding: 2px 6px; min-width: auto; }
+.stores-accordion { margin-top: 20px; }
+.store-section { background: white; border: 1px solid #ddd; margin-bottom: 15px; border-radius: 5px; overflow: hidden; }
+.store-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
+.store-header:hover { background: linear-gradient(135deg, #5568d3 0%, #653a8a 100%); }
+.store-header-left { display: flex; align-items: center; gap: 15px; flex: 1; }
+.store-header-icon { font-size: 20px; transition: transform 0.3s; }
+.store-header-icon.collapsed { transform: rotate(-90deg); }
+.store-header-info { display: flex; gap: 25px; align-items: center; flex-wrap: wrap; }
+.store-info-item { display: flex; flex-direction: column; }
+.store-info-label { font-size: 11px; opacity: 0.8; text-transform: uppercase; }
+.store-info-value { font-size: 14px; font-weight: bold; }
+.store-header-actions { display: flex; gap: 8px; }
+.store-header-actions button { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: all 0.2s; }
+.store-header-actions button:hover { background: rgba(255,255,255,0.3); }
+.store-body { padding: 20px; display: none; background: #f9f9f9; }
+.store-body.active { display: block; }
+.store-fixed-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; padding: 15px; background: white; border-radius: 5px; border: 1px solid #ddd; }
+.store-field { display: flex; flex-direction: column; }
+.store-field label { font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; }
+.store-field input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+.packages-section h4 { margin-top: 0; margin-bottom: 10px; color: #333; }
+.packages-table { width: 100%; border-collapse: collapse; background: white; border-radius: 5px; overflow: hidden; }
+.packages-table th { background: #f0f0f0; padding: 10px; text-align: left; font-size: 12px; font-weight: bold; color: #666; border-bottom: 2px solid #ddd; }
+.packages-table td { padding: 10px; border-bottom: 1px solid #eee; }
+.packages-table tr:last-child td { border-bottom: none; }
+.packages-table input { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px; }
+.packages-table .delete-package-btn { background: #dc3232; color: white; border: none; padding: 6px 12px; border-radius: 3px; cursor: pointer; font-size: 12px; }
+.packages-table .delete-package-btn:hover { background: #c62d2d; }
+.add-package-btn { margin-top: 10px; padding: 8px 15px; background: #2271b1; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
+.add-package-btn:hover { background: #135e96; }
+.empty-store-message { text-align: center; padding: 30px; color: #666; font-style: italic; }
 #bookings-table .check-column { text-align: center; padding-left: 5px; }
 #bookings-table .booking-checkbox { margin: 0 auto; display: block; }
 #bookings-table #select-all-bookings { margin: 0 auto; display: block; }
