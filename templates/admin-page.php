@@ -366,7 +366,7 @@ foreach ($month_bookings as $booking_id) {
             <div id="flags-container" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; padding: 15px; background: rgba(90,108,125,0.03); border-radius: 6px;"></div>
             <div style="display: flex; gap: 10px; align-items: center;">
                 <input type="text" id="new-flag" placeholder="Enter flag emoji (e.g., 🇻🇳)" style="width: 220px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 15px;" maxlength="4">
-                <button id="add-flag" class="button button-secondary" style="padding: 10px 16px; border-radius: 6px; transition: all 0.3s;">➕ Add Flag</button>
+                <button id="add-flag" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">➕ Add Flag</button>
                 <button id="save-flags" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Flags</button>
             </div>
         </div>
@@ -408,13 +408,13 @@ foreach ($month_bookings as $booking_id) {
             <div style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;"><strong>Chat IDs:</strong></label>
                 <div id="telegram-chat-ids-container"></div>
-                <button type="button" id="add-telegram-chat-id" class="button button-secondary" style="margin-top: 8px; padding: 8px 16px; border-radius: 5px; transition: all 0.3s;">➕ Add Chat ID</button>
+                <button type="button" id="add-telegram-chat-id" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; margin-top: 8px; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">➕ Add Chat ID</button>
                 <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                     ℹ️ Get your chat ID from <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> on Telegram
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <button id="test-telegram" class="button button-secondary" style="padding: 8px 16px; border-radius: 5px; transition: all 0.3s;">🧪 Test Telegram Connection</button>
+                <button id="test-telegram" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">🧪 Test Telegram Connection</button>
                 <span id="telegram-test-result" style="margin-left: 10px;"></span>
             </div>
         </div>
@@ -431,7 +431,7 @@ foreach ($month_bookings as $booking_id) {
             <div style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;"><strong>Email Recipients:</strong></label>
                 <div id="email-recipients-container"></div>
-                <button type="button" id="add-email-recipient" class="button button-secondary" style="margin-top: 8px; padding: 8px 16px; border-radius: 5px; transition: all 0.3s;">➕ Add Recipient</button>
+                <button type="button" id="add-email-recipient" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; margin-top: 8px; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">➕ Add Recipient</button>
                 <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                     ℹ️ Emails will be sent using your WordPress SMTP settings
                 </p>
@@ -441,7 +441,7 @@ foreach ($month_bookings as $booking_id) {
                 <input type="email" id="test-email-address" placeholder="your-email@example.com" style="width: 100%; max-width: 450px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: all 0.2s;">
             </div>
             <div style="margin-bottom: 15px;">
-                <button id="test-email" class="button button-secondary" style="padding: 8px 16px; border-radius: 5px; transition: all 0.3s;">🧪 Test Email Connection</button>
+                <button id="test-email" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">🧪 Test Email Connection</button>
                 <span id="email-test-result" style="margin-left: 10px;"></span>
             </div>
             <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin-top: 15px;">
@@ -476,7 +476,7 @@ foreach ($month_bookings as $booking_id) {
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <button id="reset-template" class="button button-secondary" style="padding: 8px 16px; border-radius: 5px; transition: all 0.3s;">🔄 Reset to Default Template</button>
+                <button id="reset-template" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">🔄 Reset to Default Template</button>
             </div>
         </div>
 
@@ -572,7 +572,7 @@ foreach ($month_bookings as $booking_id) {
 .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 #telegram-bot-token:focus, #test-email-address:focus, #notification-template:focus { border-color: #5a6c7d; outline: none; box-shadow: 0 0 0 3px rgba(90,108,125,0.1); }
-#add-telegram-chat-id:hover, #add-email-recipient:hover, #test-telegram:hover, #test-email:hover, #reset-template:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+#add-telegram-chat-id:hover, #add-email-recipient:hover, #test-telegram:hover, #test-email:hover, #reset-template:hover, #add-flag:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
 #save-notification-settings:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
 #add-store:hover, #save-changes:hover, #export-csv:hover, #import-csv:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
 #reset-all:hover { background: linear-gradient(135deg, #c62d2d 0%, #b02727 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(220,50,50,0.4); }
