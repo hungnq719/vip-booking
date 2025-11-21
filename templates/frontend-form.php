@@ -8,6 +8,11 @@ if (!isset($require_login)) {
     $require_login = true; // Default: require login
 }
 
+// Check if storeid is provided
+if (!isset($storeid)) {
+    $storeid = '';
+}
+
 $vip_data = get_option('vip_booking_data', array());
 $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
 $flags = get_option('vip_booking_flags', array('🇺🇸', '🇰🇷', '🇷🇺', '🇨🇳', '🇯🇵'));
@@ -303,6 +308,7 @@ var vipCardApp = (function() {
     var exchangeRate = <?php echo floatval($exchange_rate); ?>;
     var requireLogin = <?php echo $require_login ? 'true' : 'false'; ?>;
     var isLoggedIn = <?php echo $is_logged_in ? 'true' : 'false'; ?>;
+    var preselectedStoreId = <?php echo json_encode($storeid); ?>;
     var rateLimitConfig = {
         limit_2h: <?php echo intval($limit_2h); ?>,
         limit_12h: <?php echo intval($limit_12h); ?>
@@ -319,7 +325,12 @@ var vipCardApp = (function() {
         initDateSelector();
         initTimeSelector();
         bindEvents();
-        
+
+        // Handle preselected store ID
+        if (preselectedStoreId) {
+            handlePreselectedStore();
+        }
+
         if (requireLogin && isLoggedIn) {
             loadRateLimitInfo();
         }
@@ -329,6 +340,50 @@ var vipCardApp = (function() {
                 showLoginModal();
             }, 2000);
         }
+    }
+
+    function handlePreselectedStore() {
+        // Find the store by store_id
+        var matchingStore = null;
+        for (var i = 0; i < vipData.length; i++) {
+            if (vipData[i].store_id === preselectedStoreId) {
+                matchingStore = vipData[i];
+                break;
+            }
+        }
+
+        if (!matchingStore) {
+            console.warn('Store ID not found:', preselectedStoreId);
+            return;
+        }
+
+        // Auto-select service and store
+        var serviceSelect = document.getElementById('service');
+        var storeSelect = document.getElementById('store');
+
+        serviceSelect.value = matchingStore.service;
+        serviceSelect.disabled = true;
+
+        // Update store dropdown
+        updateStoreDropdown();
+
+        // Auto-select store
+        storeSelect.value = matchingStore.store;
+        storeSelect.disabled = true;
+
+        // Update package dropdown
+        updatePackageDropdown();
+
+        // Hide/disable Steps 1 and 2
+        var step1 = document.querySelector('.step-item[data-step="1"]');
+        var step2 = document.querySelector('.step-item[data-step="2"]');
+        if (step1) step1.style.display = 'none';
+        if (step2) step2.style.display = 'none';
+
+        // Mark steps as completed and activate step 3
+        updateStepStatus(1, 'completed');
+        updateStepStatus(2, 'completed');
+        updateStepStatus(3, 'active');
     }
     
     function bindEvents() {

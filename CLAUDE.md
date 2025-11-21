@@ -147,6 +147,38 @@ vip-booking/
 - `[vip_booking_user]` - User dashboard (displays user's bookings)
 - `[vip_booking_badge]` - Dynamic badge showing upcoming bookings count
 
+**Booking Form Shortcode Attributes:**
+
+Both `[vip_booking]` and `[vip_booking_secret]` support the following attribute:
+
+- `storeid` - Pre-select a specific store and skip Steps 1 and 2 (optional)
+
+**Store ID Feature:**
+
+When the `storeid` attribute is provided, the booking form will:
+1. Automatically find and select the matching store by Store ID
+2. Hide and disable Step 1 (Service selection)
+3. Hide and disable Step 2 (Store selection)
+4. Start directly from Step 3 (Package selection)
+5. Service and Store dropdowns are disabled to prevent changes
+
+**Examples:**
+```
+[vip_booking storeid="S1"]
+[vip_booking_secret storeid="STORE-VIP"]
+```
+
+**Use Cases:**
+- Store-specific booking pages (e.g., one page per location)
+- Direct links to specific store bookings
+- Simplified booking flow when store is already known
+- QR codes for in-store booking
+
+**Requirements:**
+1. Store ID must be configured in **WordPress Admin > VIP Booking > Booking Data** tab
+2. Each store must have a unique Store ID
+3. Store ID is case-sensitive and must match exactly
+
 **Badge Shortcode Details:**
 
 The `[vip_booking_badge]` shortcode displays a simple, circular red badge showing the user's upcoming bookings count. It's designed to work with full-page caching systems (like LiteSpeed Cache, WP Super Cache, etc.) by using JavaScript to fetch user-specific data after page load.
@@ -561,7 +593,30 @@ Navigate to **WordPress Admin > VIP Booking > Booking Manager** tab:
 update_option('vip_booking_cleanup_period', -90); // Negative value, e.g., -90 for 90 days old
 ```
 
-### 3. Add New AJAX Endpoint
+### 3. Configure Store IDs for Direct Booking
+
+**Method:** Use Admin UI
+
+Navigate to **WordPress Admin > VIP Booking > Booking Data** tab:
+1. Add or edit a store row in the booking data table
+2. Enter a unique Store ID in the "Store ID" column (e.g., "S1", "STORE-VIP", "HQ")
+3. Click "💾 Save Changes"
+4. Use the Store ID in shortcodes: `[vip_booking storeid="S1"]`
+
+**Best Practices:**
+- Use short, memorable IDs (e.g., "S1", "S2", "MAIN", "VIP")
+- Keep IDs consistent across your site
+- Document your Store IDs for reference
+- Test the shortcode with the Store ID to ensure it works correctly
+
+**Use Case Example:**
+```
+Store 1: ID = "S1" → Page: /book-store-1/ → Shortcode: [vip_booking storeid="S1"]
+Store 2: ID = "S2" → Page: /book-store-2/ → Shortcode: [vip_booking storeid="S2"]
+VIP Location: ID = "VIP" → Page: /vip-booking/ → Shortcode: [vip_booking storeid="VIP"]
+```
+
+### 4. Add New AJAX Endpoint
 
 **File:** `includes/class-ajax.php`
 
@@ -579,7 +634,7 @@ public function new_action() {
 }
 ```
 
-### 4. Add New Shortcode
+### 5. Add New Shortcode
 
 **File:** `includes/class-shortcode.php`
 
@@ -595,7 +650,7 @@ public function render_custom($atts) {
 }
 ```
 
-### 5. Debug AJAX Issues
+### 6. Debug AJAX Issues
 
 **Enable WordPress Debug:**
 ```php

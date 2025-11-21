@@ -139,6 +139,7 @@ jQuery(document).ready(function($) {
                 <td class="check-column" style="padding: 8px 2px;"><input type="checkbox" class="row-checkbox"></td>
                 <td><input type="text" name="service[]" value="${data ? data.service : ''}" placeholder="Karaoke" style="width:100%; box-sizing:border-box;"></td>
                 <td><input type="text" name="store[]" value="${data ? data.store : ''}" placeholder="Store name" style="width:100%; box-sizing:border-box;"></td>
+                <td><input type="text" name="store_id[]" value="${data ? data.store_id : ''}" placeholder="S1" style="width:100%; box-sizing:border-box;"></td>
                 <td><input type="text" name="package[]" value="${data ? data.package : ''}" placeholder="VIP" style="width:100%; box-sizing:border-box;"></td>
                 <td><input type="text" name="price[]" class="price-input" value="${data && data.price ? formatNumber(data.price) : ''}" placeholder="0" data-raw-value="${data ? data.price : ''}" style="width:100%; box-sizing:border-box;"></td>
                 <td><input type="time" name="opening_hours[]" value="${openingTime}" style="width:100%; box-sizing:border-box;"></td>
@@ -197,6 +198,7 @@ jQuery(document).ready(function($) {
             data.push({
                 service: $row.find('input[name="service[]"]').val(),
                 store: $row.find('input[name="store[]"]').val(),
+                store_id: $row.find('input[name="store_id[]"]').val(),
                 package: $row.find('input[name="package[]"]').val(),
                 price: $row.find('input[name="price[]"]').attr('data-raw-value') || unformatNumber($row.find('input[name="price[]"]').val()),
                 opening_hours: $row.find('input[name="opening_hours[]"]').val(),

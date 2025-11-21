@@ -364,6 +364,7 @@ foreach ($month_bookings as $booking_id) {
                         <th class="check-column" style="width: 30px;"><input type="checkbox" id="select-all"></th>
                         <th style="width: 100px;">Service</th>
                         <th style="width: 150px;">Store Name</th>
+                        <th style="width: 80px;">Store ID</th>
                         <th style="width: 100px;">Service Package</th>
                         <th style="width: 100px;">Price (VND)</th>
                         <th style="width: 80px;">Opening</th>
