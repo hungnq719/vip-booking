@@ -510,36 +510,40 @@ foreach ($month_bookings as $booking_id) {
 .status-completed { background: #d4edda; color: #155724; }
 .vip-booking-toolbar { position: sticky; top: 32px; padding: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; z-index: 99 }
 .stores-accordion { margin-top: 20px; }
-.store-section { background: white; border: 1px solid #ddd; margin-bottom: 15px; border-radius: 5px; overflow: hidden; }
-.store-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
-.store-header:hover { background: linear-gradient(135deg, #5568d3 0%, #653a8a 100%); }
+.store-section { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border: none; margin-bottom: 20px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s; }
+.store-section:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.15); transform: translateY(-2px); }
+.store-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 18px 25px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.store-header:hover { background: linear-gradient(135deg, #5568d3 0%, #653a8a 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 .store-header-left { display: flex; align-items: center; gap: 15px; flex: 1; }
 .store-header-icon { font-size: 20px; transition: transform 0.3s; }
 .store-header-icon.collapsed { transform: rotate(-90deg); }
 .store-header-info { display: flex; gap: 25px; align-items: center; flex-wrap: wrap; }
 .store-info-item { display: flex; flex-direction: column; }
-.store-info-label { font-size: 11px; opacity: 0.8; text-transform: uppercase; }
-.store-info-value { font-size: 14px; font-weight: bold; }
+.store-info-label { font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; }
+.store-info-value { font-size: 14px; font-weight: bold; margin-top: 2px; }
 .store-header-actions { display: flex; gap: 8px; }
-.store-header-actions button { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: all 0.2s; }
-.store-header-actions button:hover { background: rgba(255,255,255,0.3); }
-.store-body { padding: 20px; display: none; background: #f9f9f9; }
+.store-header-actions button { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 7px 14px; border-radius: 5px; cursor: pointer; font-size: 12px; transition: all 0.2s; font-weight: 500; }
+.store-header-actions button:hover { background: rgba(255,255,255,0.35); transform: scale(1.05); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.store-body { padding: 25px; display: none; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); }
 .store-body.active { display: block; }
-.store-fixed-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; padding: 15px; background: white; border-radius: 5px; border: 1px solid #ddd; }
+.store-fixed-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; padding: 20px; background: white; border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 .store-field { display: flex; flex-direction: column; }
-.store-field label { font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; }
-.store-field input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
-.packages-section h4 { margin-top: 0; margin-bottom: 10px; color: #333; }
-.packages-table { width: 100%; border-collapse: collapse; background: white; border-radius: 5px; overflow: hidden; }
-.packages-table th { background: #f0f0f0; padding: 10px; text-align: left; font-size: 12px; font-weight: bold; color: #666; border-bottom: 2px solid #ddd; }
-.packages-table td { padding: 10px; border-bottom: 1px solid #eee; }
+.store-field label { font-size: 12px; font-weight: bold; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+.store-field input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: all 0.2s; }
+.store-field input:focus { border-color: #667eea; outline: none; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+.packages-section h4 { margin-top: 0; margin-bottom: 12px; color: #333; font-size: 15px; }
+.packages-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.packages-table th { background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%); padding: 12px 10px; text-align: left; font-size: 12px; font-weight: bold; color: #555; border-bottom: 2px solid #ddd; text-transform: uppercase; letter-spacing: 0.3px; }
+.packages-table td { padding: 12px 10px; border-bottom: 1px solid #f0f0f0; }
 .packages-table tr:last-child td { border-bottom: none; }
-.packages-table input { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px; }
-.packages-table .delete-package-btn { background: #dc3232; color: white; border: none; padding: 6px 12px; border-radius: 3px; cursor: pointer; font-size: 12px; }
-.packages-table .delete-package-btn:hover { background: #c62d2d; }
-.add-package-btn { margin-top: 10px; padding: 8px 15px; background: #2271b1; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
-.add-package-btn:hover { background: #135e96; }
-.empty-store-message { text-align: center; padding: 30px; color: #666; font-style: italic; }
+.packages-table tr:hover { background: #f8f9fa; }
+.packages-table input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; transition: all 0.2s; }
+.packages-table input:focus { border-color: #667eea; outline: none; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+.packages-table .delete-package-btn { cursor: pointer; font-size: 16px; transition: all 0.2s; opacity: 0.7; display: inline-block; }
+.packages-table .delete-package-btn:hover { opacity: 1; transform: scale(1.2); }
+.add-package-btn { margin-top: 12px; padding: 10px 18px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.add-package-btn:hover { background: linear-gradient(135deg, #5568d3 0%, #653a8a 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.empty-store-message { text-align: center; padding: 40px; color: #666; font-style: italic; font-size: 15px; }
 #bookings-table .check-column { text-align: center; padding-left: 5px; }
 #bookings-table .booking-checkbox { margin: 0 auto; display: block; }
 #bookings-table #select-all-bookings { margin: 0 auto; display: block; }

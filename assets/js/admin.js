@@ -160,8 +160,8 @@ jQuery(document).ready(function($) {
                     </div>
                 </div>
                 <div class="store-header-actions">
-                    <button class="edit-store-btn" data-store-index="${storeIndex}" onclick="event.stopPropagation();">✏️ Edit Store</button>
-                    <button class="delete-store-btn" data-store-index="${storeIndex}" onclick="event.stopPropagation();">🗑️ Delete</button>
+                    <button class="edit-store-btn" data-store-index="${storeIndex}">✏️ Edit Store</button>
+                    <button class="delete-store-btn" data-store-index="${storeIndex}">🗑️ Delete</button>
                 </div>
             </div>
         `);
@@ -203,10 +203,10 @@ jQuery(document).ready(function($) {
             <table class="packages-table">
                 <thead>
                     <tr>
-                        <th style="width: 40%;">Service Package</th>
+                        <th style="width: 45%;">Service Package</th>
                         <th style="width: 30%;">Price (VND)</th>
                         <th style="width: 20%;">Prebook (min)</th>
-                        <th style="width: 10%;">Actions</th>
+                        <th style="width: 5%; text-align: center;">Delete</th>
                     </tr>
                 </thead>
                 <tbody class="packages-tbody"></tbody>
@@ -251,7 +251,7 @@ jQuery(document).ready(function($) {
                 <td><input type="text" class="package-name" value="${pkg.package || ''}" placeholder="VIP Package"></td>
                 <td><input type="text" class="package-price price-input" value="${formatNumber(pkg.price)}" data-raw-value="${pkg.price}" placeholder="0"></td>
                 <td><input type="number" class="package-prebook" value="${pkg.prebook_time || '15'}" min="0" placeholder="15"></td>
-                <td><button class="delete-package-btn" data-store-index="${storeIndex}" data-package-index="${pkgIndex}">❌</button></td>
+                <td style="text-align: center;"><span class="delete-package-btn" data-store-index="${storeIndex}" data-package-index="${pkgIndex}">❌</span></td>
             </tr>
         `);
     }
