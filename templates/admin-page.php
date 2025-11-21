@@ -372,11 +372,11 @@ foreach ($month_bookings as $booking_id) {
         </div>
         
         <div class="vip-booking-toolbar">
-            <button id="add-store" class="button button-primary">➕ Add New Store</button>
-            <button id="save-changes" class="button button-primary">💾 Save Changes</button>
-            <button id="reset-all" class="button button-secondary" style="background: #dc3232; border-color: #dc3232; color: white;">🔄 Reset All Data</button>
-            <button id="export-csv" class="button button-secondary">📤 Export CSV</button>
-            <button id="import-csv" class="button button-secondary">📥 Import CSV</button>
+            <button id="add-store" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">➕ Add New Store</button>
+            <button id="save-changes" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Changes</button>
+            <button id="reset-all" class="button button-secondary" style="background: linear-gradient(135deg, #dc3232 0%, #c62d2d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(220,50,50,0.3); transition: all 0.3s;">🔄 Reset All Data</button>
+            <button id="export-csv" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">📤 Export CSV</button>
+            <button id="import-csv" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">📥 Import CSV</button>
             <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
         </div>
 
@@ -502,10 +502,11 @@ foreach ($month_bookings as $booking_id) {
 .booking-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
 .stat-card { background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 20px; transition: all 0.3s; border: 1px solid rgba(84,110,122,0.1); }
 .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); border-color: rgba(84,110,122,0.2); }
-.stat-icon { font-size: 48px; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
-.stat-label { color: #546e7a; font-size: 13px; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-.stat-value { font-size: 36px; font-weight: bold; background: linear-gradient(135deg, #546e7a 0%, #78909c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.stat-breakdown { display: flex; gap: 12px; margin-top: 10px; font-size: 12px; }
+.stat-icon { font-size: 48px; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); flex-shrink: 0; }
+.stat-info { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
+.stat-label { color: #546e7a; font-size: 13px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-value { font-size: 36px; font-weight: bold; background: linear-gradient(135deg, #546e7a 0%, #78909c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; line-height: 1.2; }
+.stat-breakdown { display: flex; gap: 12px; margin: 0; font-size: 12px; flex-wrap: wrap; }
 .stat-upcoming { color: #d63638; font-weight: 600; padding: 4px 10px; background: rgba(214,54,56,0.1); border-radius: 12px; }
 .stat-completed { color: #00a32a; font-weight: 600; padding: 4px 10px; background: rgba(0,163,42,0.1); border-radius: 12px; }
 .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
@@ -573,6 +574,8 @@ foreach ($month_bookings as $booking_id) {
 #telegram-bot-token:focus, #test-email-address:focus, #notification-template:focus { border-color: #5a6c7d; outline: none; box-shadow: 0 0 0 3px rgba(90,108,125,0.1); }
 #add-telegram-chat-id:hover, #add-email-recipient:hover, #test-telegram:hover, #test-email:hover, #reset-template:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 #save-notification-settings:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
+#add-store:hover, #save-changes:hover, #export-csv:hover, #import-csv:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
+#reset-all:hover { background: linear-gradient(135deg, #c62d2d 0%, #b02727 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(220,50,50,0.4); }
 </style>
 
 <script>
