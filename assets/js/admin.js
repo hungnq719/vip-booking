@@ -160,8 +160,7 @@ jQuery(document).ready(function($) {
                     </div>
                 </div>
                 <div class="store-header-actions">
-                    <button class="edit-store-btn" data-store-index="${storeIndex}">✏️ Edit Store</button>
-                    <button class="delete-store-btn" data-store-index="${storeIndex}">🗑️ Delete</button>
+                    <button class="delete-store-btn" data-store-index="${storeIndex}">🗑️ Delete Store</button>
                 </div>
             </div>
         `);
@@ -394,22 +393,6 @@ jQuery(document).ready(function($) {
         const newStore = $('.store-section').last();
         newStore.find('.store-body').addClass('active');
         newStore.find('.store-header-icon').removeClass('collapsed');
-    });
-
-    // Edit store (toggle accordion)
-    $(document).on('click', '.edit-store-btn', function(e) {
-        e.stopPropagation();
-        const $section = $(this).closest('.store-section');
-        const $body = $section.find('.store-body');
-        const $icon = $section.find('.store-header-icon');
-
-        if ($body.hasClass('active')) {
-            $body.removeClass('active');
-            $icon.addClass('collapsed');
-        } else {
-            $body.addClass('active');
-            $icon.removeClass('collapsed');
-        }
     });
 
     // Delete store
