@@ -19,7 +19,7 @@ jQuery(document).ready(function($) {
                     if (response.success && response.data) {
                         // Check if user is logged in
                         if (!response.data.logged_in) {
-                            // Hide badge completely for non-logged-in users
+                            // Keep badge hidden for non-logged-in users
                             $badge.hide();
                             return;
                         }
@@ -36,11 +36,11 @@ jQuery(document).ready(function($) {
                         $badge.attr('data-count', count);
                         $badge.attr('aria-label', 'You have ' + count + ' upcoming booking' + (count !== 1 ? 's' : ''));
 
-                        // Hide badge if count is 0 and show_zero is 'no'
+                        // Show badge with proper display style, or hide if count is 0 and show_zero is 'no'
                         if (count === 0 && !showZero) {
                             $badge.hide();
                         } else {
-                            $badge.show();
+                            $badge.css('display', 'inline-flex').show();
                         }
                     }
                 },

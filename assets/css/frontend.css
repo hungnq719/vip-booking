@@ -1,6 +1,6 @@
 /* VIP Booking Badge - Simple Number Badge with Rounded Border */
 .vip-booking-badge {
-    display: inline-flex;
+    display: none; /* Hidden by default until login status is confirmed */
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
