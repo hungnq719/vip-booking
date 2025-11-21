@@ -341,7 +341,9 @@ var vipCardApp = (function() {
             loadRateLimitInfo();
         }
 
-        if (requireLogin && !isLoggedIn) {
+        // Only show auto-popup if NOT using storeid attribute
+        // When storeid is used, login popup will show on reservation submit instead
+        if (requireLogin && !isLoggedIn && !preselectedStoreId) {
             setTimeout(function() {
                 showLoginModal();
             }, 2000);
