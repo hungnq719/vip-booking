@@ -232,37 +232,38 @@ foreach ($month_bookings as $booking_id) {
     <div id="tab-bookings" class="tab-content">
         <h2 style="margin-bottom: 15px;">Booking Manager</h2>
 
-        <div class="vip-booking-cleanup-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
-            <h3>Cleanup Settings</h3>
-            <div style="margin-bottom: 10px;">
-                <label style="display: inline-block; width: 200px;">Auto-cleanup period:</label>
-                <input type="number" id="cleanup-period" value="<?php echo esc_attr($cleanup_period); ?>" min="1" max="3650" style="width: 100px; padding: 5px;">
-                <span style="color: #666; margin-left: 10px;">days old</span>
+        <div class="vip-booking-cleanup-settings" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 20px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">⚙️</span> Cleanup Settings</h3>
+            <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
+                <label style="font-weight: 600; color: #555; min-width: 160px;">Auto-cleanup period:</label>
+                <input type="number" id="cleanup-period" value="<?php echo esc_attr($cleanup_period); ?>" min="1" max="3650" style="width: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                <span style="color: #666;">days old</span>
             </div>
-            <button id="save-cleanup-period" class="button button-primary">Save Cleanup Settings</button>
-            <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+            <button id="save-cleanup-period" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Cleanup Settings</button>
+            <p style="color: #666; font-size: 12px; margin: 12px 0 0 0; padding: 12px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                 ℹ️ Bookings older than this number of days will be automatically deleted daily. Default: 90 days
             </p>
         </div>
 
-        <div class="vip-booking-badge-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
-            <h3>🔴 Booking Badge Settings</h3>
-            <div style="margin-bottom: 10px;">
-                <label style="display: inline-block; width: 200px;">Badge click URL:</label>
-                <input type="url" id="badge-url" value="<?php echo esc_attr(get_option('vip_booking_badge_url', '')); ?>" placeholder="https://yoursite.com/my-bookings/" style="width: 400px; padding: 5px;">
+        <div class="vip-booking-badge-settings" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 20px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">🔴</span> Booking Badge Settings</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; color: #555; margin-bottom: 8px;">Badge click URL:</label>
+                <input type="url" id="badge-url" value="<?php echo esc_attr(get_option('vip_booking_badge_url', '')); ?>" placeholder="https://yoursite.com/my-bookings/" style="width: 100%; max-width: 500px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
             </div>
-            <button id="save-badge-url" class="button button-primary">Save Badge Settings</button>
-            <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
-                ℹ️ Set the URL where users will be redirected when clicking the booking badge. Usually your user dashboard page with <code>[vip_booking_user]</code> shortcode.<br>
-                🌍 <strong>Multilingual support:</strong> Badge automatically detects page language (ko, en, zh, ru, etc.) and prepends it to the URL. Just set the base URL here (e.g., <code>/my-bookings/</code>).
+            <button id="save-badge-url" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Badge Settings</button>
+            <p style="color: #666; font-size: 12px; margin: 12px 0 0 0; padding: 12px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
+                ℹ️ Set the URL where users will be redirected when clicking the booking badge. Usually your user dashboard page with <code style="background: rgba(90,108,125,0.1); padding: 2px 6px; border-radius: 3px;">[vip_booking_user]</code> shortcode.<br>
+                🌍 <strong>Multilingual support:</strong> Badge automatically detects page language (ko, en, zh, ru, etc.) and prepends it to the URL. Just set the base URL here (e.g., <code style="background: rgba(90,108,125,0.1); padding: 2px 6px; border-radius: 3px;">/my-bookings/</code>).
             </p>
         </div>
 
-        <div style="margin-bottom: 10px;">
-            <button id="delete-selected-bookings" class="button button-secondary" style="border-color: #dc3232;">🗑️ Delete Selected</button>
+        <div class="bookings-toolbar" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+            <button id="delete-selected-bookings" class="button button-secondary" style="background: linear-gradient(135deg, #dc3232 0%, #c62d2d 100%); border: none; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 6px rgba(220,50,50,0.3); transition: all 0.3s;">🗑️ Delete Selected</button>
         </div>
 
-        <table class="wp-list-table widefat fixed striped" id="bookings-table">
+        <div class="bookings-table-wrapper">
+            <table class="wp-list-table widefat fixed striped" id="bookings-table">
             <thead>
                 <tr>
                     <th class="check-column" style="width:30px"><input type="checkbox" id="select-all-bookings"></th>
@@ -333,6 +334,7 @@ foreach ($month_bookings as $booking_id) {
                 <?php endforeach; endif; ?>
             </tbody>
         </table>
+        </div>
     </div>
     
     <!-- Tab 3: Booking Data -->
@@ -544,9 +546,24 @@ foreach ($month_bookings as $booking_id) {
 .add-package-btn { margin-top: 12px; padding: 10px 18px; background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .add-package-btn:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 .empty-store-message { text-align: center; padding: 40px; color: #666; font-style: italic; font-size: 15px; }
-#bookings-table .check-column { text-align: center; padding-left: 5px; }
-#bookings-table .booking-checkbox { margin: 0 auto; display: block; }
-#bookings-table #select-all-bookings { margin: 0 auto; display: block; }
+.bookings-table-wrapper { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+#bookings-table { margin: 0; border: none; border-radius: 0; }
+#bookings-table thead tr { background: linear-gradient(135deg, #546e7a 0%, #78909c 100%); }
+#bookings-table thead th { color: white; padding: 15px 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: none; text-align: left; }
+#bookings-table tbody tr { transition: all 0.2s; border-bottom: 1px solid #f0f0f0; }
+#bookings-table tbody tr:hover { background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%); transform: scale(1.002); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+#bookings-table tbody tr:last-child { border-bottom: none; }
+#bookings-table tbody td { padding: 15px 12px; font-size: 13px; vertical-align: middle; border: none; }
+#bookings-table .check-column { text-align: center; padding: 15px 8px; width: 40px; }
+#bookings-table .booking-checkbox { margin: 0 auto; display: block; width: 18px; height: 18px; cursor: pointer; }
+#bookings-table #select-all-bookings { margin: 0 auto; display: block; width: 18px; height: 18px; cursor: pointer; }
+.delete-booking-btn { background: transparent !important; border: none !important; padding: 6px 10px !important; cursor: pointer; font-size: 18px; opacity: 0.6; transition: all 0.2s; }
+.delete-booking-btn:hover { opacity: 1; transform: scale(1.3); background: transparent !important; }
+.status-badge { padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+.status-upcoming { background: linear-gradient(135deg, #fff3cd 0%, #ffe89d 100%); color: #856404; border: 1px solid #ffeaa7; }
+.status-completed { background: linear-gradient(135deg, #d4edda 0%, #b8e6c0 100%); color: #155724; border: 1px solid #a3d9b1; }
+.bookings-toolbar button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(220,50,50,0.4); }
+.vip-booking-cleanup-settings button:hover, .vip-booking-badge-settings button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
 .flag-item { font-size: 40px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
 .flag-item:hover { border-color: #ff4444; transform: scale(1.15); }
 #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999; }
