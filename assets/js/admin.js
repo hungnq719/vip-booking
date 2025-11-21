@@ -128,6 +128,26 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // Save which stores are currently expanded
+    function saveExpandedState() {
+        const expandedIndices = [];
+        $('.store-section').each(function(index) {
+            if ($(this).find('.store-body').hasClass('active')) {
+                expandedIndices.push(index);
+            }
+        });
+        return expandedIndices;
+    }
+
+    // Restore expanded state after re-rendering
+    function restoreExpandedState(expandedIndices) {
+        expandedIndices.forEach(function(index) {
+            const $section = $('.store-section').eq(index);
+            $section.find('.store-body').addClass('active');
+            $section.find('.store-header-icon').removeClass('collapsed');
+        });
+    }
+
     function renderStoreSection(store, storeIndex) {
         const section = $('<div class="store-section" data-store-index="' + storeIndex + '"></div>');
 
@@ -402,8 +422,17 @@ jQuery(document).ready(function($) {
         const storeName = storesData[storeIndex].store_name || 'Unnamed Store';
 
         if (confirm(`Delete store "${storeName}" and all its packages?`)) {
+            // Save expanded state before deletion
+            const expandedIndices = saveExpandedState();
+
             storesData.splice(storeIndex, 1);
             renderStores();
+
+            // Restore expanded state (adjust indices after deletion)
+            const adjustedIndices = expandedIndices
+                .filter(idx => idx !== storeIndex)
+                .map(idx => idx > storeIndex ? idx - 1 : idx);
+            restoreExpandedState(adjustedIndices);
         }
     });
 
@@ -439,8 +468,14 @@ jQuery(document).ready(function($) {
         }
 
         if (confirm('Delete this package?')) {
+            // Save expanded state before re-rendering
+            const expandedIndices = saveExpandedState();
+
             storesData[storeIndex].packages.splice(pkgIndex, 1);
             renderStores();
+
+            // Restore expanded state after re-rendering
+            restoreExpandedState(expandedIndices);
         }
     });
     
@@ -464,6 +499,9 @@ jQuery(document).ready(function($) {
         console.log('Saving stores:', storesData);
         console.log('Flattened data:', flatData);
 
+        // Save expanded state before saving
+        const expandedIndices = saveExpandedState();
+
         $('#loading-overlay').show();
         $.ajax({
             url: ajaxurl,
@@ -474,7 +512,18 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     alert('✅ Data saved!');
                     // Reload to reflect any changes
-                    loadData();
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: { action: 'vip_booking_get_data', nonce: nonce },
+                        success: function(response) {
+                            const data = response.success ? (response.data || []) : [];
+                            storesData = groupDataByStore(data);
+                            renderStores();
+                            // Restore expanded state after reload
+                            restoreExpandedState(expandedIndices);
+                        }
+                    });
                 } else {
                     alert('❌ Failed to save');
                 }
@@ -736,6 +785,10 @@ jQuery(document).ready(function($) {
                 // Group flat data into stores
                 storesData = groupDataByStore(flatData);
                 renderStores();
+
+                // Expand all stores after import so user can see what was imported
+                const allIndices = storesData.map((_, idx) => idx);
+                restoreExpandedState(allIndices);
 
                 let message = `✅ Successfully imported ${importCount} row(s) into ${storesData.length} store(s)!`;
                 if (errorCount > 0) {
