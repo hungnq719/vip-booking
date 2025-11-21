@@ -65,4 +65,13 @@ class VIP_Booking_Admin {
     public static function get_cleanup_period() {
         return intval(get_option('vip_booking_cleanup_period', -90));
     }
+
+    // Badge URL management
+    public static function save_badge_url($url) {
+        $url = esc_url_raw($url);
+        update_option('vip_booking_badge_url', $url);
+    }
+    public static function get_badge_url() {
+        return get_option('vip_booking_badge_url', '');
+    }
 }

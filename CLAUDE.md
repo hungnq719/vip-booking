@@ -11,6 +11,7 @@
 - Flag-based nationality selection in booking forms
 - Configurable automatic cleanup of old bookings (admin can set period)
 - Real-time notifications (Telegram & Email) for new bookings with card image generation
+- Dynamic booking badge (cache-compatible, displays user's upcoming booking count)
 
 **Version:** 1.0.0
 **Platform:** WordPress Plugin
@@ -41,8 +42,11 @@ vip-booking/
 │   ├── user-dashboard.php   # User booking dashboard
 │   └── vip-template.png     # Template screenshot
 └── assets/
+    ├── css/
+    │   └── frontend.css     # Frontend styles (badge, etc.)
     └── js/
-        └── admin.js         # Admin JavaScript
+        ├── admin.js         # Admin JavaScript
+        └── frontend.js      # Frontend JavaScript (badge updates, etc.)
 ```
 
 ---
@@ -86,6 +90,8 @@ vip-booking/
 - `get_flags()` - Gets flags (default: 🇺🇸, 🇰🇷, 🇷🇺, 🇨🇳, 🇯🇵)
 - `save_cleanup_period($period)` - Saves cleanup period (must be negative, e.g., -90)
 - `get_cleanup_period()` - Gets cleanup period (default: -90)
+- `save_badge_url($url)` - Saves badge click URL
+- `get_badge_url()` - Gets badge click URL (default: empty string)
 
 ### 3. AJAX Handlers - `class-ajax.php`
 
@@ -96,6 +102,7 @@ vip-booking/
 - `vip_booking_get_settings` - Load settings (exchange_rate, limit_2h, limit_12h)
 - `vip_booking_save_cleanup_period` - Save cleanup period setting
 - `vip_booking_get_cleanup_period` - Load cleanup period setting
+- `vip_booking_save_badge_url` - Save badge click URL setting
 - `vip_booking_save_flags` - Save nationality flags
 - `vip_booking_get_flags` - Load flags
 - `vip_booking_delete_booking` - Delete single booking
@@ -111,6 +118,8 @@ vip-booking/
 - `vip_booking_record_booking` - Record booking attempt (deprecated)
 - `vip_booking_create_booking` - Create new booking (logged in only)
 - `vip_booking_check_login` - Check login status (public + logged in)
+- `vip_booking_get_badge_count` - Get user's upcoming bookings count (public + logged in)
+- `vip_booking_get_badge_url` - Get badge click URL setting (public + logged in)
 
 ### 4. Rate Limiting System - `class-rate-limiter.php`
 
@@ -136,6 +145,107 @@ vip-booking/
 - `[vip_booking]` - Booking form (requires login)
 - `[vip_booking_secret]` - Booking form (public, no login required)
 - `[vip_booking_user]` - User dashboard (displays user's bookings)
+- `[vip_booking_badge]` - Dynamic badge showing upcoming bookings count
+
+**Booking Form Shortcode Attributes:**
+
+Both `[vip_booking]` and `[vip_booking_secret]` support the following attribute:
+
+- `storeid` - Pre-select a specific store and skip Steps 1 and 2 (optional)
+
+**Store ID Feature:**
+
+When the `storeid` attribute is provided, the booking form will:
+1. Automatically find and select the matching store by Store ID
+2. Hide and disable Step 1 (Service selection)
+3. Hide and disable Step 2 (Store selection)
+4. Start directly from Step 3 (Package selection)
+5. Service and Store dropdowns are disabled to prevent changes
+
+**Examples:**
+```
+[vip_booking storeid="S1"]
+[vip_booking_secret storeid="STORE-VIP"]
+```
+
+**Use Cases:**
+- Store-specific booking pages (e.g., one page per location)
+- Direct links to specific store bookings
+- Simplified booking flow when store is already known
+- QR codes for in-store booking
+
+**Requirements:**
+1. Store ID must be configured in **WordPress Admin > VIP Booking > Booking Data** tab
+2. Each store must have a unique Store ID
+3. Store ID is case-sensitive and must match exactly
+
+**Badge Shortcode Details:**
+
+The `[vip_booking_badge]` shortcode displays a simple, circular red badge showing the user's upcoming bookings count. It's designed to work with full-page caching systems (like LiteSpeed Cache, WP Super Cache, etc.) by using JavaScript to fetch user-specific data after page load.
+
+**Attributes:**
+- `size` - Badge size (default: "medium", options: "small", "medium", "large")
+- `show_zero` - Show badge when count is 0 (default: "yes", options: "yes" or "no")
+
+**Examples:**
+```
+[vip_booking_badge]
+[vip_booking_badge size="small" show_zero="no"]
+[vip_booking_badge size="large"]
+```
+
+**Click Navigation:**
+- Badge click URL is configured globally in **WordPress Admin > VIP Booking > Booking Manager** tab
+- Set once, applies to all badges site-wide
+- Typically set to your user dashboard page containing `[vip_booking_user]` shortcode
+- **Language-Aware Navigation**: Automatically detects current page language and prepends to URL
+  - Example: Korean page → `/ko/my-bookings/`, English page → `/en/my-bookings/`
+  - Supports multilingual plugins (WPML, Polylang, etc.)
+  - Detection methods: URL path, query string, HTML lang attribute
+
+**How It Works (Cache-Compatible):**
+1. Shortcode renders a static placeholder HTML (cached with page)
+2. JavaScript makes AJAX call on page load to check login status
+3. **Badge only displays for logged-in users** - hidden completely for guests
+4. Badge updates dynamically with current user's booking count
+5. Click handler fetches badge URL from server settings
+6. Detects current page language and prepends to URL
+7. Navigates to language-specific dashboard
+8. No need to exclude from cache - works seamlessly with all caching plugins
+
+**Design:**
+- Simple circular badge with gradient red background (#ff416c → #ff4b2b)
+- Displays only the number (no text label)
+- **Visible only for logged-in users** - automatically hidden for guests
+- **Fast "tada" animation** (1.2s) - bouncy with rotation to grab attention
+- Animation pauses on hover, scales on click
+- Three size options:
+  - Small: 24px diameter
+  - Medium: 32px diameter (default)
+  - Large: 44px diameter
+- Responsive design (auto-scales on mobile)
+- Loading spinner while fetching data
+- Fully accessible (keyboard navigation with Enter/Space keys)
+
+**Interactivity:**
+- Clickable: Navigates to language-aware URL configured in admin settings
+- Keyboard accessible: Tab to focus, Enter or Space to activate
+- Hover effect: Pauses animation and scales up slightly
+- Active/click effect: Scales down for tactile feedback
+
+**Language Detection:**
+- Automatically detects language from:
+  1. URL path (e.g., `/ko/page/` → detects Korean)
+  2. Query parameter (e.g., `?lang=ko`)
+  3. HTML lang attribute (e.g., `<html lang="ko-KR">`)
+- Supported languages: ko, en, zh, ru, ja, vi, th, id, es, fr, de, it, pt
+- Console logs detection for debugging
+
+**Use Cases:**
+- Navigation menu badge (e.g., next to "My Bookings" link)
+- User account icon overlay (clickable to dashboard)
+- Dashboard widget with navigation
+- Header notification indicator
 
 ### 6. Notification System
 
@@ -483,7 +593,30 @@ Navigate to **WordPress Admin > VIP Booking > Booking Manager** tab:
 update_option('vip_booking_cleanup_period', -90); // Negative value, e.g., -90 for 90 days old
 ```
 
-### 3. Add New AJAX Endpoint
+### 3. Configure Store IDs for Direct Booking
+
+**Method:** Use Admin UI
+
+Navigate to **WordPress Admin > VIP Booking > Booking Data** tab:
+1. Add or edit a store row in the booking data table
+2. Enter a unique Store ID in the "Store ID" column (e.g., "S1", "STORE-VIP", "HQ")
+3. Click "💾 Save Changes"
+4. Use the Store ID in shortcodes: `[vip_booking storeid="S1"]`
+
+**Best Practices:**
+- Use short, memorable IDs (e.g., "S1", "S2", "MAIN", "VIP")
+- Keep IDs consistent across your site
+- Document your Store IDs for reference
+- Test the shortcode with the Store ID to ensure it works correctly
+
+**Use Case Example:**
+```
+Store 1: ID = "S1" → Page: /book-store-1/ → Shortcode: [vip_booking storeid="S1"]
+Store 2: ID = "S2" → Page: /book-store-2/ → Shortcode: [vip_booking storeid="S2"]
+VIP Location: ID = "VIP" → Page: /vip-booking/ → Shortcode: [vip_booking storeid="VIP"]
+```
+
+### 4. Add New AJAX Endpoint
 
 **File:** `includes/class-ajax.php`
 
@@ -501,7 +634,7 @@ public function new_action() {
 }
 ```
 
-### 4. Add New Shortcode
+### 5. Add New Shortcode
 
 **File:** `includes/class-shortcode.php`
 
@@ -517,7 +650,7 @@ public function render_custom($atts) {
 }
 ```
 
-### 5. Debug AJAX Issues
+### 6. Debug AJAX Issues
 
 **Enable WordPress Debug:**
 ```php

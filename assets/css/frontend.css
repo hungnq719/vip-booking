@@ -1,0 +1,163 @@
+/* VIP Booking Badge - Simple Number Badge with Rounded Border */
+.vip-booking-badge {
+    display: none; /* Hidden by default until login status is confirmed */
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700;
+    border-radius: 50%;
+    box-shadow: 0 3px 12px rgba(255, 65, 108, 0.5);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Size variations */
+.vip-booking-badge[data-size="small"] {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    min-width: 24px;
+}
+
+.vip-booking-badge[data-size="medium"] {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    min-width: 32px;
+}
+
+.vip-booking-badge[data-size="large"] {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    min-width: 44px;
+}
+
+/* Tada animation to attract attention - fast and bouncy */
+@keyframes vip-badge-tada {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    10% {
+        transform: scale(0.9) rotate(-3deg);
+    }
+    20% {
+        transform: scale(0.9) rotate(-3deg);
+    }
+    30% {
+        transform: scale(1.1) rotate(3deg);
+    }
+    40% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+    50% {
+        transform: scale(1.1) rotate(3deg);
+    }
+    60% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+    70% {
+        transform: scale(1.1) rotate(3deg);
+    }
+    80% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+    90% {
+        transform: scale(1.1) rotate(3deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Apply animation always when loaded - fast tada style */
+.vip-booking-badge:not([data-loading="true"]) {
+    animation: vip-badge-tada 1.2s ease-in-out infinite;
+}
+
+/* Hover effect - pause animation and scale up */
+.vip-booking-badge:hover {
+    animation-play-state: paused;
+    transform: scale(1.15);
+    box-shadow: 0 5px 20px rgba(255, 65, 108, 0.7);
+}
+
+/* Active/click effect */
+.vip-booking-badge:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
+}
+
+/* When count is 0, reduce opacity slightly */
+.vip-booking-badge[data-count="0"] {
+    opacity: 0.7;
+    animation: none;
+}
+
+/* Loading spinner */
+.vip-booking-badge[data-loading="true"] {
+    animation: none;
+}
+
+.vip-booking-badge-spinner {
+    display: inline-block;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: vip-badge-spin 0.8s linear infinite;
+}
+
+.vip-booking-badge[data-size="small"] .vip-booking-badge-spinner {
+    width: 12px;
+    height: 12px;
+    border-width: 2px;
+}
+
+.vip-booking-badge[data-size="medium"] .vip-booking-badge-spinner {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+}
+
+.vip-booking-badge[data-size="large"] .vip-booking-badge-spinner {
+    width: 20px;
+    height: 20px;
+    border-width: 3px;
+}
+
+@keyframes vip-badge-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .vip-booking-badge[data-size="large"] {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+    }
+
+    .vip-booking-badge[data-size="medium"] {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+    }
+
+    .vip-booking-badge[data-size="small"] {
+        width: 22px;
+        height: 22px;
+        font-size: 11px;
+    }
+}
+
+/* Print styles - hide animation */
+@media print {
+    .vip-booking-badge {
+        animation: none !important;
+    }
+}

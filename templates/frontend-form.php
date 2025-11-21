@@ -8,6 +8,11 @@ if (!isset($require_login)) {
     $require_login = true; // Default: require login
 }
 
+// Check if storeid is provided
+if (!isset($storeid)) {
+    $storeid = '';
+}
+
 $vip_data = get_option('vip_booking_data', array());
 $exchange_rate = get_option('vip_booking_exchange_rate', 25000);
 $flags = get_option('vip_booking_flags', array('🇺🇸', '🇰🇷', '🇷🇺', '🇨🇳', '🇯🇵'));
@@ -198,6 +203,8 @@ $i18n = VIP_Booking_I18n::get_translations();
 
 <style>
 #vip-booking-container { margin: 20px auto; padding: 20px 10px; max-width: 800px; overflow-x: hidden; }
+#booking-form { opacity: 1; transition: opacity 0.5s ease-in-out; }
+#result-page { opacity: 0; transition: opacity 0.5s ease-in-out; }
 .login-button:hover { background: #f57c00 !important; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4); }
 .booking-steps { position: relative; }
 .step-item { display: block; margin-bottom: 20px; position: relative; }
@@ -253,7 +260,7 @@ input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-
 .time-box[data-active="true"] { border-color: #ff9800; box-shadow: 0 0 15px rgba(255, 152, 0, 0.5), 0 2px 8px rgba(0,0,0,0.1); }
 .time-box:not(.disabled):hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 .time-separator { font-size: 48px; font-weight: bold; color: #fff; user-select: none; }
-.time-options-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 20px; }
+.time-options-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 20px; opacity: 1; transition: opacity 0.5s ease-in-out; }
 .time-option-btn { background: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 12px 8px; font-size: 16px; font-weight: 600; color: #000; transition: all 0.3s ease; text-align: center; }
 .time-option-btn:hover:not(.disabled):not(.selected) { background: #ff9800; color: #fff; border-color: #ff9800; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3); }
 .time-option-btn.selected { background: #ff9800; color: #fff; border-color: #ff9800; box-shadow: 0 0 12px rgba(255, 152, 0, 0.6); }
@@ -303,6 +310,7 @@ var vipCardApp = (function() {
     var exchangeRate = <?php echo floatval($exchange_rate); ?>;
     var requireLogin = <?php echo $require_login ? 'true' : 'false'; ?>;
     var isLoggedIn = <?php echo $is_logged_in ? 'true' : 'false'; ?>;
+    var preselectedStoreId = <?php echo json_encode($storeid); ?>;
     var rateLimitConfig = {
         limit_2h: <?php echo intval($limit_2h); ?>,
         limit_12h: <?php echo intval($limit_12h); ?>
@@ -319,16 +327,72 @@ var vipCardApp = (function() {
         initDateSelector();
         initTimeSelector();
         bindEvents();
-        
+
+        // Handle preselected store ID
+        if (preselectedStoreId) {
+            handlePreselectedStore();
+        }
+
         if (requireLogin && isLoggedIn) {
             loadRateLimitInfo();
         }
 
-        if (requireLogin && !isLoggedIn) {
-            setTimeout(function() {
-                showLoginModal();
-            }, 2000);
+        // Auto-popup disabled - login modal only shows when clicking Make Reservation
+    }
+
+    function handlePreselectedStore() {
+        // Find the store by store_id
+        var matchingStore = null;
+        for (var i = 0; i < vipData.length; i++) {
+            if (vipData[i].store_id === preselectedStoreId) {
+                matchingStore = vipData[i];
+                break;
+            }
         }
+
+        if (!matchingStore) {
+            console.warn('Store ID not found:', preselectedStoreId);
+            return;
+        }
+
+        // Auto-select service and store
+        var serviceSelect = document.getElementById('service');
+        var storeSelect = document.getElementById('store');
+
+        serviceSelect.value = matchingStore.service;
+        serviceSelect.disabled = true;
+
+        // Update store dropdown
+        updateStoreDropdown();
+
+        // Auto-select store
+        storeSelect.value = matchingStore.store;
+        storeSelect.disabled = true;
+
+        // Update package dropdown
+        updatePackageDropdown();
+
+        // Hide/disable Steps 1 and 2
+        var step1 = document.querySelector('.step-item[data-step="1"]');
+        var step2 = document.querySelector('.step-item[data-step="2"]');
+        if (step1) step1.style.display = 'none';
+        if (step2) step2.style.display = 'none';
+
+        // Renumber visible steps (subtract 2 from original numbers)
+        for (var i = 3; i <= 7; i++) {
+            var step = document.querySelector('.step-item[data-step="' + i + '"]');
+            if (step) {
+                var stepNumber = step.querySelector('.step-number');
+                if (stepNumber) {
+                    stepNumber.textContent = (i - 2);
+                }
+            }
+        }
+
+        // Mark steps as completed and activate step 3
+        updateStepStatus(1, 'completed');
+        updateStepStatus(2, 'completed');
+        updateStepStatus(3, 'active');
     }
     
     function bindEvents() {
@@ -620,15 +684,17 @@ var vipCardApp = (function() {
     
     function showHourPicker() {
         currentTimeMode = 'hour';
-        
+
         // Update active states
         document.getElementById('hourBox').setAttribute('data-active', 'true');
         document.getElementById('minuteBox').setAttribute('data-active', 'false');
-        
-        // Generate hour options (0-23)
+
+        // Generate hour options (0-23) with fade transition
         var container = document.getElementById('timeOptionsContainer');
-        container.innerHTML = '';
-        container.style.display = 'grid';
+        container.style.opacity = '0';
+        setTimeout(function() {
+            container.innerHTML = '';
+            container.style.display = 'grid';
         
         for (var h = 0; h < 24; h++) {
             var btn = document.createElement('button');
@@ -650,46 +716,60 @@ var vipCardApp = (function() {
                 if (this.className.indexOf('disabled') > -1) return;
                 selectHour(parseInt(this.getAttribute('data-value')));
             };
-            
+
             container.appendChild(btn);
         }
+
+        // Fade in the options
+        setTimeout(function() {
+            container.style.opacity = '1';
+        }, 50);
+        }, 500);
     }
-    
+
     function showMinutePicker() {
         currentTimeMode = 'minute';
-        
+
         // Update active states
         document.getElementById('hourBox').setAttribute('data-active', 'false');
         document.getElementById('minuteBox').setAttribute('data-active', 'true');
-        
-        // Generate minute options (0, 5, 10, ..., 55)
+
+        // Generate minute options (0, 5, 10, ..., 55) with fade transition
         var container = document.getElementById('timeOptionsContainer');
-        container.innerHTML = '';
-        container.style.display = 'grid';
-        
+        container.style.opacity = '0';
+        setTimeout(function() {
+            container.innerHTML = '';
+            container.style.display = 'grid';
+
         for (var m = 0; m < 60; m += 5) {
             var btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'time-option-btn';
             btn.textContent = (m < 10 ? '0' : '') + m;
             btn.setAttribute('data-value', m);
-            
+
             // Check if this minute is available
             if (!isMinuteAvailable(selectedHour, m)) {
                 btn.className += ' disabled';
             }
-            
+
             if (selectedMinute === m) {
                 btn.className += ' selected';
             }
-            
+
             btn.onclick = function() {
                 if (this.className.indexOf('disabled') > -1) return;
                 selectMinute(parseInt(this.getAttribute('data-value')));
             };
-            
+
             container.appendChild(btn);
         }
+
+        // Fade in the options
+        setTimeout(function() {
+            container.style.opacity = '1';
+        }, 50);
+        }, 500);
     }
     
     function selectHour(hour) {
@@ -726,13 +806,15 @@ var vipCardApp = (function() {
         
         // Update selectedTime
         selectedTime = (selectedHour < 10 ? '0' : '') + selectedHour + ':' + (selectedMinute < 10 ? '0' : '') + selectedMinute;
-        
+
         // Mark step as completed
         updateStepStatus(7, 'completed');
-        
-        // Hide time options after selection
+
+        // Fade out and hide time options after selection
+        var container = document.getElementById('timeOptionsContainer');
+        container.style.opacity = '0';
         setTimeout(function() {
-            document.getElementById('timeOptionsContainer').style.display = 'none';
+            container.style.display = 'none';
             document.getElementById('hourBox').setAttribute('data-active', 'false');
             document.getElementById('minuteBox').setAttribute('data-active', 'false');
         }, 500);
@@ -935,11 +1017,26 @@ var vipCardApp = (function() {
             ctx.font = 'bold 28px Arial';
             ctx.fillStyle = '#000000';
             ctx.fillText(bottomText, 375, 370);
-            
-            document.getElementById('booking-form').style.display = 'none';
-            document.getElementById('result-page').style.display = 'block';
-            window.scrollTo(0, 0);
-            
+
+            // Hide form and show results with smooth transition
+            var bookingForm = document.getElementById('booking-form');
+            var resultPage = document.getElementById('result-page');
+
+            bookingForm.style.opacity = '0';
+            setTimeout(function() {
+                bookingForm.style.display = 'none';
+                resultPage.style.display = 'block';
+                setTimeout(function() {
+                    resultPage.style.opacity = '1';
+                }, 50);
+
+                // Smooth scroll to top of container
+                var container = document.getElementById('vip-booking-container');
+                if (container) {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 500);
+
             // Save booking and update rate limit
             if (requireLogin && isLoggedIn) {
                 saveBookingToDatabase();
@@ -952,10 +1049,25 @@ var vipCardApp = (function() {
             ctx.font = '20px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('Template image not found', 375, 225);
-            
-            document.getElementById('booking-form').style.display = 'none';
-            document.getElementById('result-page').style.display = 'block';
-            window.scrollTo(0, 0);
+
+            // Hide form and show results with smooth transition
+            var bookingForm = document.getElementById('booking-form');
+            var resultPage = document.getElementById('result-page');
+
+            bookingForm.style.opacity = '0';
+            setTimeout(function() {
+                bookingForm.style.display = 'none';
+                resultPage.style.display = 'block';
+                setTimeout(function() {
+                    resultPage.style.opacity = '1';
+                }, 50);
+
+                // Smooth scroll to top of container
+                var container = document.getElementById('vip-booking-container');
+                if (container) {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 500);
         };
     }
     
@@ -982,9 +1094,24 @@ var vipCardApp = (function() {
     }
     
     function backToForm() {
-        document.getElementById('result-page').style.display = 'none';
-        document.getElementById('booking-form').style.display = 'block';
-        window.scrollTo(0, 0);
+        var resultPage = document.getElementById('result-page');
+        var bookingForm = document.getElementById('booking-form');
+
+        // Fade out results
+        resultPage.style.opacity = '0';
+        setTimeout(function() {
+            resultPage.style.display = 'none';
+            bookingForm.style.display = 'block';
+            setTimeout(function() {
+                bookingForm.style.opacity = '1';
+            }, 50);
+
+            // Smooth scroll to top of container
+            var container = document.getElementById('vip-booking-container');
+            if (container) {
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 500);
     }
     
     function loadRateLimitInfo() {

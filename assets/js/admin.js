@@ -139,6 +139,7 @@ jQuery(document).ready(function($) {
                 <td class="check-column" style="padding: 8px 2px;"><input type="checkbox" class="row-checkbox"></td>
                 <td><input type="text" name="service[]" value="${data ? data.service : ''}" placeholder="Karaoke" style="width:100%; box-sizing:border-box;"></td>
                 <td><input type="text" name="store[]" value="${data ? data.store : ''}" placeholder="Store name" style="width:100%; box-sizing:border-box;"></td>
+                <td><input type="text" name="store_id[]" value="${data ? data.store_id : ''}" placeholder="S1" style="width:100%; box-sizing:border-box;"></td>
                 <td><input type="text" name="package[]" value="${data ? data.package : ''}" placeholder="VIP" style="width:100%; box-sizing:border-box;"></td>
                 <td><input type="text" name="price[]" class="price-input" value="${data && data.price ? formatNumber(data.price) : ''}" placeholder="0" data-raw-value="${data ? data.price : ''}" style="width:100%; box-sizing:border-box;"></td>
                 <td><input type="time" name="opening_hours[]" value="${openingTime}" style="width:100%; box-sizing:border-box;"></td>
@@ -197,6 +198,7 @@ jQuery(document).ready(function($) {
             data.push({
                 service: $row.find('input[name="service[]"]').val(),
                 store: $row.find('input[name="store[]"]').val(),
+                store_id: $row.find('input[name="store_id[]"]').val(),
                 package: $row.find('input[name="package[]"]').val(),
                 price: $row.find('input[name="price[]"]').attr('data-raw-value') || unformatNumber($row.find('input[name="price[]"]').val()),
                 opening_hours: $row.find('input[name="opening_hours[]"]').val(),
@@ -325,7 +327,35 @@ jQuery(document).ready(function($) {
             }
         });
     });
-    
+
+    $('#save-badge-url').click(function() {
+        const badgeUrl = $('#badge-url').val().trim();
+
+        console.log('Saving badge URL:', badgeUrl);
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_save_badge_url',
+                nonce: nonce,
+                badge_url: badgeUrl
+            },
+            success: function(response) {
+                console.log('Badge URL save response:', response);
+                if (response.success) {
+                    alert('✅ Badge settings saved!');
+                } else {
+                    alert('❌ Failed to save badge settings: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('❌ AJAX error: ' + error);
+            }
+        });
+    });
+
     $('#export-csv').click(function() {
         const data = [];
         $('#vip-booking-tbody tr').each(function() {
@@ -333,6 +363,7 @@ jQuery(document).ready(function($) {
             data.push({
                 service: $row.find('input[name="service[]"]').val(),
                 store: $row.find('input[name="store[]"]').val(),
+                store_id: $row.find('input[name="store_id[]"]').val(),
                 package: $row.find('input[name="package[]"]').val(),
                 price: $row.find('input[name="price[]"]').attr('data-raw-value') || unformatNumber($row.find('input[name="price[]"]').val()),
                 opening_hours: $row.find('input[name="opening_hours[]"]').val(),
@@ -340,10 +371,10 @@ jQuery(document).ready(function($) {
                 prebook_time: $row.find('input[name="prebook_time[]"]').val()
             });
         });
-        
-        let csvContent = "Service,Store Name,Service Package,Price,Opening Hours,Closing Hours,Prebook Time\n";
+
+        let csvContent = "Service,Store Name,Store ID,Service Package,Price,Opening Hours,Closing Hours,Prebook Time\n";
         data.forEach(function(row) {
-            csvContent += `"${row.service}","${row.store}","${row.package}","${row.price}","${row.opening_hours}","${row.closing_hours}","${row.prebook_time}"\n`;
+            csvContent += `"${row.service}","${row.store}","${row.store_id}","${row.package}","${row.price}","${row.opening_hours}","${row.closing_hours}","${row.prebook_time}"\n`;
         });
         
         const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -403,20 +434,38 @@ jQuery(document).ready(function($) {
                 
                 // Debug every row
                 console.log('Row', i, 'raw values:', values);
-                
-                // Must have at least 7 columns
+
+                // Support both old format (7 columns) and new format (8 columns with Store ID)
                 if (values.length >= 7) {
-                    console.log('Row', i, '- Opening raw:', values[4], '- Closing raw:', values[5]);
-                    
-                    addRow({
-                        service: values[0] || '',
-                        store: values[1] || '',
-                        package: values[2] || '',
-                        price: values[3] || '',
-                        opening_hours: values[4] || '',
-                        closing_hours: values[5] || '',
-                        prebook_time: values[6] || '15'
-                    });
+                    // Check if this is the new format (8 columns) or old format (7 columns)
+                    const hasStoreId = values.length >= 8;
+
+                    if (hasStoreId) {
+                        console.log('Row', i, '- Opening raw:', values[5], '- Closing raw:', values[6]);
+                        addRow({
+                            service: values[0] || '',
+                            store: values[1] || '',
+                            store_id: values[2] || '',
+                            package: values[3] || '',
+                            price: values[4] || '',
+                            opening_hours: values[5] || '',
+                            closing_hours: values[6] || '',
+                            prebook_time: values[7] || '15'
+                        });
+                    } else {
+                        // Old format without Store ID
+                        console.log('Row', i, '- Opening raw:', values[4], '- Closing raw:', values[5]);
+                        addRow({
+                            service: values[0] || '',
+                            store: values[1] || '',
+                            store_id: '',
+                            package: values[2] || '',
+                            price: values[3] || '',
+                            opening_hours: values[4] || '',
+                            closing_hours: values[5] || '',
+                            prebook_time: values[6] || '15'
+                        });
+                    }
                     importCount++;
                 } else {
                     console.warn('Row', i, 'only has', values.length, 'columns:', values);

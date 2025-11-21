@@ -10,6 +10,12 @@ class VIP_Booking_Assets {
         }
         if (file_exists(VIP_BOOKING_PLUGIN_DIR . 'assets/js/frontend.js')) {
             wp_enqueue_script('vip-booking-frontend', VIP_BOOKING_PLUGIN_URL . 'assets/js/frontend.js', array('jquery'), VIP_BOOKING_VERSION, true);
+
+            // Localize script for AJAX
+            wp_localize_script('vip-booking-frontend', 'vipBookingVars', array(
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('vip_booking_nonce')
+            ));
         }
     }
 }

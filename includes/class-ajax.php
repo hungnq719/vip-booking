@@ -17,6 +17,9 @@ class VIP_Booking_AJAX {
         add_action('wp_ajax_vip_booking_mark_complete', array($this, 'mark_complete'));
         add_action('wp_ajax_vip_booking_save_cleanup_period', array($this, 'save_cleanup_period'));
         add_action('wp_ajax_vip_booking_get_cleanup_period', array($this, 'get_cleanup_period'));
+        add_action('wp_ajax_vip_booking_save_badge_url', array($this, 'save_badge_url'));
+        add_action('wp_ajax_vip_booking_get_badge_url', array($this, 'get_badge_url'));
+        add_action('wp_ajax_nopriv_vip_booking_get_badge_url', array($this, 'get_badge_url'));
         add_action('wp_ajax_vip_booking_save_notification_settings', array($this, 'save_notification_settings'));
         add_action('wp_ajax_vip_booking_get_notification_settings', array($this, 'get_notification_settings'));
         add_action('wp_ajax_vip_booking_test_telegram', array($this, 'test_telegram'));
@@ -28,6 +31,8 @@ class VIP_Booking_AJAX {
         add_action('wp_ajax_vip_booking_create_booking', array($this, 'create_booking'));
         add_action('wp_ajax_vip_booking_check_login', array($this, 'check_login'));
         add_action('wp_ajax_nopriv_vip_booking_check_login', array($this, 'check_login'));
+        add_action('wp_ajax_vip_booking_get_badge_count', array($this, 'get_badge_count'));
+        add_action('wp_ajax_nopriv_vip_booking_get_badge_count', array($this, 'get_badge_count'));
     }
     
     // Admin endpoints
@@ -76,7 +81,20 @@ class VIP_Booking_AJAX {
         if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
         wp_send_json_success(array('cleanup_period' => VIP_Booking_Admin::get_cleanup_period()));
     }
-    
+
+    public function save_badge_url() {
+        check_ajax_referer('vip_booking_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
+        $badge_url = isset($_POST['badge_url']) ? sanitize_text_field($_POST['badge_url']) : '';
+        VIP_Booking_Admin::save_badge_url($badge_url);
+        wp_send_json_success();
+    }
+
+    public function get_badge_url() {
+        // Public endpoint - no nonce or permission check needed
+        wp_send_json_success(array('badge_url' => VIP_Booking_Admin::get_badge_url()));
+    }
+
     public function save_flags() {
         check_ajax_referer('vip_booking_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
@@ -234,6 +252,45 @@ class VIP_Booking_AJAX {
     
     public function check_login() {
         wp_send_json_success(array('logged_in' => is_user_logged_in()));
+    }
+
+    public function get_badge_count() {
+        // No nonce check needed for public read-only endpoint
+        // Return 0 if not logged in
+        if (!is_user_logged_in()) {
+            wp_send_json_success(array('count' => 0, 'logged_in' => false));
+            return;
+        }
+
+        $user_id = get_current_user_id();
+        $current_time = time();
+
+        // Query upcoming bookings (confirmed status and future timestamp)
+        $args = array(
+            'post_type' => 'vip_booking',
+            'post_status' => 'publish',
+            'author' => $user_id,
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => '_booking_status',
+                    'value' => 'confirmed',
+                    'compare' => '='
+                ),
+                array(
+                    'key' => '_booking_timestamp',
+                    'value' => $current_time,
+                    'compare' => '>',
+                    'type' => 'NUMERIC'
+                )
+            )
+        );
+
+        $query = new WP_Query($args);
+        $count = $query->found_posts;
+
+        wp_send_json_success(array('count' => $count, 'logged_in' => true));
     }
 
     // Notification endpoints
