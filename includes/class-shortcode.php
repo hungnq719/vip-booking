@@ -43,12 +43,9 @@ class VIP_Booking_Shortcode {
         <span class="vip-booking-badge"
               data-show-zero="<?php echo esc_attr($atts['show_zero']); ?>"
               data-size="<?php echo esc_attr($size); ?>"
-              data-loading="true"
               role="button"
               tabindex="0"
-              aria-label="View bookings">
-            <span class="vip-booking-badge-spinner"></span>
-        </span>
+              aria-label="View bookings"></span>
         <?php
         return ob_get_clean();
     }
