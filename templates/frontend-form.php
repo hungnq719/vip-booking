@@ -997,11 +997,10 @@ var vipCardApp = (function() {
             ctx.font = 'bold 28px Arial';
             ctx.fillStyle = '#000000';
             ctx.fillText(bottomText, 375, 370);
-            
+
             document.getElementById('booking-form').style.display = 'none';
             document.getElementById('result-page').style.display = 'block';
-            window.scrollTo(0, 0);
-            
+
             // Save booking and update rate limit
             if (requireLogin && isLoggedIn) {
                 saveBookingToDatabase();
@@ -1014,10 +1013,9 @@ var vipCardApp = (function() {
             ctx.font = '20px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('Template image not found', 375, 225);
-            
+
             document.getElementById('booking-form').style.display = 'none';
             document.getElementById('result-page').style.display = 'block';
-            window.scrollTo(0, 0);
         };
     }
     
