@@ -17,6 +17,13 @@ jQuery(document).ready(function($) {
                 },
                 success: function(response) {
                     if (response.success && response.data) {
+                        // Check if user is logged in
+                        if (!response.data.logged_in) {
+                            // Hide badge completely for non-logged-in users
+                            $badge.hide();
+                            return;
+                        }
+
                         var count = parseInt(response.data.count) || 0;
 
                         // Remove loading state
@@ -38,15 +45,8 @@ jQuery(document).ready(function($) {
                     }
                 },
                 error: function() {
-                    // On error, show 0
-                    $badge.removeAttr('data-loading');
-                    $badge.text('0');
-                    $badge.attr('data-count', 0);
-                    $badge.attr('aria-label', 'View bookings');
-
-                    if (!showZero) {
-                        $badge.hide();
-                    }
+                    // On error, hide badge
+                    $badge.hide();
                 }
             });
         });

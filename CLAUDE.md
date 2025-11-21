@@ -173,16 +173,18 @@ The `[vip_booking_badge]` shortcode displays a simple, circular red badge showin
 
 **How It Works (Cache-Compatible):**
 1. Shortcode renders a static placeholder HTML (cached with page)
-2. JavaScript makes AJAX call on page load to fetch user-specific count
-3. Badge updates dynamically with current user's data
-4. Click handler fetches badge URL from server settings
-5. Detects current page language and prepends to URL
-6. Navigates to language-specific dashboard
-7. No need to exclude from cache - works seamlessly with all caching plugins
+2. JavaScript makes AJAX call on page load to check login status
+3. **Badge only displays for logged-in users** - hidden completely for guests
+4. Badge updates dynamically with current user's booking count
+5. Click handler fetches badge URL from server settings
+6. Detects current page language and prepends to URL
+7. Navigates to language-specific dashboard
+8. No need to exclude from cache - works seamlessly with all caching plugins
 
 **Design:**
 - Simple circular badge with gradient red background (#ff416c → #ff4b2b)
 - Displays only the number (no text label)
+- **Visible only for logged-in users** - automatically hidden for guests
 - **Fast "tada" animation** (1.2s) - bouncy with rotation to grab attention
 - Animation pauses on hover, scales on click
 - Three size options:
