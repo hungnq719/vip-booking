@@ -218,6 +218,12 @@ $i18n = VIP_Booking_I18n::get_translations();
 .step-item.completed .step-check { display: block; }
 .pulse-ring { position: absolute; width: 100%; height: 100%; border: 2px solid #ff9800; border-radius: 50%; animation: pulse 2s infinite; opacity: 0; display: none; }
 .step-item.active .pulse-ring { display: block; }
+/* Renumber steps when in storeid mode */
+.booking-steps.storeid-mode { counter-reset: step-counter 0; }
+.booking-steps.storeid-mode .step-item[data-step]:not([style*="display: none"]) { counter-increment: step-counter; }
+.booking-steps.storeid-mode .step-item[data-step]:not([style*="display: none"]) .step-number::before { content: counter(step-counter); }
+.booking-steps.storeid-mode .step-item[data-step]:not([style*="display: none"]) .step-number { font-size: 0; }
+.booking-steps.storeid-mode .step-item[data-step]:not([style*="display: none"]) .step-number::before { font-size: 10px; }
 @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
 @keyframes modalSlideIn { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
@@ -379,6 +385,10 @@ var vipCardApp = (function() {
         var step2 = document.querySelector('.step-item[data-step="2"]');
         if (step1) step1.style.display = 'none';
         if (step2) step2.style.display = 'none';
+
+        // Add class to container for step renumbering
+        var container = document.querySelector('.booking-steps');
+        if (container) container.classList.add('storeid-mode');
 
         // Mark steps as completed and activate step 3
         updateStepStatus(1, 'completed');

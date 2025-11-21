@@ -363,6 +363,7 @@ jQuery(document).ready(function($) {
             data.push({
                 service: $row.find('input[name="service[]"]').val(),
                 store: $row.find('input[name="store[]"]').val(),
+                store_id: $row.find('input[name="store_id[]"]').val(),
                 package: $row.find('input[name="package[]"]').val(),
                 price: $row.find('input[name="price[]"]').attr('data-raw-value') || unformatNumber($row.find('input[name="price[]"]').val()),
                 opening_hours: $row.find('input[name="opening_hours[]"]').val(),
@@ -370,10 +371,10 @@ jQuery(document).ready(function($) {
                 prebook_time: $row.find('input[name="prebook_time[]"]').val()
             });
         });
-        
-        let csvContent = "Service,Store Name,Service Package,Price,Opening Hours,Closing Hours,Prebook Time\n";
+
+        let csvContent = "Service,Store Name,Store ID,Service Package,Price,Opening Hours,Closing Hours,Prebook Time\n";
         data.forEach(function(row) {
-            csvContent += `"${row.service}","${row.store}","${row.package}","${row.price}","${row.opening_hours}","${row.closing_hours}","${row.prebook_time}"\n`;
+            csvContent += `"${row.service}","${row.store}","${row.store_id}","${row.package}","${row.price}","${row.opening_hours}","${row.closing_hours}","${row.prebook_time}"\n`;
         });
         
         const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -433,20 +434,38 @@ jQuery(document).ready(function($) {
                 
                 // Debug every row
                 console.log('Row', i, 'raw values:', values);
-                
-                // Must have at least 7 columns
+
+                // Support both old format (7 columns) and new format (8 columns with Store ID)
                 if (values.length >= 7) {
-                    console.log('Row', i, '- Opening raw:', values[4], '- Closing raw:', values[5]);
-                    
-                    addRow({
-                        service: values[0] || '',
-                        store: values[1] || '',
-                        package: values[2] || '',
-                        price: values[3] || '',
-                        opening_hours: values[4] || '',
-                        closing_hours: values[5] || '',
-                        prebook_time: values[6] || '15'
-                    });
+                    // Check if this is the new format (8 columns) or old format (7 columns)
+                    const hasStoreId = values.length >= 8;
+
+                    if (hasStoreId) {
+                        console.log('Row', i, '- Opening raw:', values[5], '- Closing raw:', values[6]);
+                        addRow({
+                            service: values[0] || '',
+                            store: values[1] || '',
+                            store_id: values[2] || '',
+                            package: values[3] || '',
+                            price: values[4] || '',
+                            opening_hours: values[5] || '',
+                            closing_hours: values[6] || '',
+                            prebook_time: values[7] || '15'
+                        });
+                    } else {
+                        // Old format without Store ID
+                        console.log('Row', i, '- Opening raw:', values[4], '- Closing raw:', values[5]);
+                        addRow({
+                            service: values[0] || '',
+                            store: values[1] || '',
+                            store_id: '',
+                            package: values[2] || '',
+                            price: values[3] || '',
+                            opening_hours: values[4] || '',
+                            closing_hours: values[5] || '',
+                            prebook_time: values[6] || '15'
+                        });
+                    }
                     importCount++;
                 } else {
                     console.warn('Row', i, 'only has', values.length, 'columns:', values);
