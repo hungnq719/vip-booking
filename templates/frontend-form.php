@@ -218,12 +218,6 @@ $i18n = VIP_Booking_I18n::get_translations();
 .step-item.completed .step-check { display: block; }
 .pulse-ring { position: absolute; width: 100%; height: 100%; border: 2px solid #ff9800; border-radius: 50%; animation: pulse 2s infinite; opacity: 0; display: none; }
 .step-item.active .pulse-ring { display: block; }
-/* Renumber steps when in storeid mode */
-.booking-steps.storeid-mode { counter-reset: step-counter 0; }
-.booking-steps.storeid-mode .step-item[data-step]:not([style*="display: none"]) { counter-increment: step-counter; }
-.booking-steps.storeid-mode .step-item[data-step]:not([style*="display: none"]) .step-number::before { content: counter(step-counter); }
-.booking-steps.storeid-mode .step-item[data-step]:not([style*="display: none"]) .step-number { font-size: 0; }
-.booking-steps.storeid-mode .step-item[data-step]:not([style*="display: none"]) .step-number::before { font-size: 10px; }
 @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
 @keyframes modalSlideIn { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
@@ -341,13 +335,7 @@ var vipCardApp = (function() {
             loadRateLimitInfo();
         }
 
-        // Only show auto-popup if NOT using storeid attribute
-        // When storeid is used, login popup will show on reservation submit instead
-        if (requireLogin && !isLoggedIn && !preselectedStoreId) {
-            setTimeout(function() {
-                showLoginModal();
-            }, 2000);
-        }
+        // Auto-popup disabled - login modal only shows when clicking Make Reservation
     }
 
     function handlePreselectedStore() {
@@ -388,9 +376,16 @@ var vipCardApp = (function() {
         if (step1) step1.style.display = 'none';
         if (step2) step2.style.display = 'none';
 
-        // Add class to container for step renumbering
-        var container = document.querySelector('.booking-steps');
-        if (container) container.classList.add('storeid-mode');
+        // Renumber visible steps (subtract 2 from original numbers)
+        for (var i = 3; i <= 7; i++) {
+            var step = document.querySelector('.step-item[data-step="' + i + '"]');
+            if (step) {
+                var stepNumber = step.querySelector('.step-number');
+                if (stepNumber) {
+                    stepNumber.textContent = (i - 2);
+                }
+            }
+        }
 
         // Mark steps as completed and activate step 3
         updateStepStatus(1, 'completed');
