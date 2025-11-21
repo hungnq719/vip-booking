@@ -1092,9 +1092,24 @@ var vipCardApp = (function() {
     }
     
     function backToForm() {
-        document.getElementById('result-page').style.display = 'none';
-        document.getElementById('booking-form').style.display = 'block';
-        window.scrollTo(0, 0);
+        var resultPage = document.getElementById('result-page');
+        var bookingForm = document.getElementById('booking-form');
+
+        // Fade out results
+        resultPage.style.opacity = '0';
+        setTimeout(function() {
+            resultPage.style.display = 'none';
+            bookingForm.style.display = 'block';
+            setTimeout(function() {
+                bookingForm.style.opacity = '1';
+            }, 50);
+
+            // Smooth scroll to top of container
+            var container = document.getElementById('vip-booking-container');
+            if (container) {
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 300);
     }
     
     function loadRateLimitInfo() {
