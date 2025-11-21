@@ -103,7 +103,7 @@ foreach ($month_bookings as $booking_id) {
     
     <!-- Tab 1: Dashboard -->
     <div id="tab-dashboard" class="tab-content active">
-        <h2>Dashboard Overview</h2>
+        <h2 style="margin-bottom: 25px; color: #546e7a;">📊 Dashboard Overview</h2>
         <div class="booking-stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">📊</div>
@@ -339,35 +339,35 @@ foreach ($month_bookings as $booking_id) {
     
     <!-- Tab 3: Booking Data -->
     <div id="tab-data" class="tab-content">
-        <h2>Booking Data Management</h2>
-        
-        <div class="vip-booking-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
-            <h3>Settings</h3>
-            <div style="margin-bottom: 15px;">
-                <label style="display: inline-block; width: 200px;">Exchange Rate (VND/USD):</label>
-                <input type="text" id="exchange-rate-display" value="<?php echo number_format($exchange_rate, 0, '.', ','); ?>" style="width: 200px; padding: 5px;">
+        <h2 style="margin-bottom: 25px; color: #546e7a;">🏪 Booking Data Management</h2>
+
+        <div class="vip-booking-settings" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 20px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">⚙️</span> General Settings</h3>
+            <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
+                <label style="font-weight: 600; color: #555; min-width: 180px;">Exchange Rate (VND/USD):</label>
+                <input type="text" id="exchange-rate-display" value="<?php echo number_format($exchange_rate, 0, '.', ','); ?>" style="width: 180px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
                 <input type="hidden" id="exchange-rate" value="<?php echo esc_attr($exchange_rate); ?>">
             </div>
-            <div style="margin-bottom: 15px;">
-                <label style="display: inline-block; width: 200px;">Rate Limit (2 hours):</label>
-                <input type="number" id="limit-2h" value="<?php echo esc_attr($limit_2h); ?>" min="1" max="100" style="width: 100px; padding: 5px;">
-                <span style="color: #666; margin-left: 10px;">bookings per 2 hours</span>
+            <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
+                <label style="font-weight: 600; color: #555; min-width: 180px;">Rate Limit (2 hours):</label>
+                <input type="number" id="limit-2h" value="<?php echo esc_attr($limit_2h); ?>" min="1" max="100" style="width: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                <span style="color: #666;">bookings per 2 hours</span>
             </div>
-            <div style="margin-bottom: 15px;">
-                <label style="display: inline-block; width: 200px;">Rate Limit (12 hours):</label>
-                <input type="number" id="limit-12h" value="<?php echo esc_attr($limit_12h); ?>" min="1" max="100" style="width: 100px; padding: 5px;">
-                <span style="color: #666; margin-left: 10px;">bookings per 12 hours</span>
+            <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
+                <label style="font-weight: 600; color: #555; min-width: 180px;">Rate Limit (12 hours):</label>
+                <input type="number" id="limit-12h" value="<?php echo esc_attr($limit_12h); ?>" min="1" max="100" style="width: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                <span style="color: #666;">bookings per 12 hours</span>
             </div>
-            <button id="save-settings" class="button button-primary">Save Settings</button>
+            <button id="save-settings" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Settings</button>
         </div>
-        
-        <div class="vip-booking-flags" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
-            <h3>Nation Flags</h3>
-            <div id="flags-container" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; padding: 10px;"></div>
+
+        <div class="vip-booking-flags" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 20px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">🚩</span> Nation Flags</h3>
+            <div id="flags-container" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; padding: 15px; background: rgba(90,108,125,0.03); border-radius: 6px;"></div>
             <div style="display: flex; gap: 10px; align-items: center;">
-                <input type="text" id="new-flag" placeholder="Enter flag emoji (e.g., 🇻🇳)" style="width: 200px; padding: 8px; font-size: 15px;" maxlength="4">
-                <button id="add-flag" class="button button-secondary">➕ Add Flag</button>
-                <button id="save-flags" class="button button-primary">💾 Save Flags</button>
+                <input type="text" id="new-flag" placeholder="Enter flag emoji (e.g., 🇻🇳)" style="width: 220px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 15px;" maxlength="4">
+                <button id="add-flag" class="button button-secondary" style="padding: 10px 16px; border-radius: 6px; transition: all 0.3s;">➕ Add Flag</button>
+                <button id="save-flags" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Flags</button>
             </div>
         </div>
         
@@ -387,11 +387,11 @@ foreach ($month_bookings as $booking_id) {
 
     <!-- Tab 4: Notifications -->
     <div id="tab-notifications" class="tab-content">
-        <h2>Notification Settings</h2>
+        <h2 style="margin-bottom: 25px; color: #546e7a;">🔔 Notification Settings</h2>
 
         <!-- Telegram Settings -->
-        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
-            <h3 style="margin-top: 0;">📱 Telegram Notifications</h3>
+        <div class="vip-notification-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">📱</span> Telegram Notifications</h3>
             <div style="margin-bottom: 15px;">
                 <label style="display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="telegram-enabled" style="width: auto;">
@@ -399,29 +399,29 @@ foreach ($month_bookings as $booking_id) {
                 </label>
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px;"><strong>Bot Token:</strong></label>
-                <input type="text" id="telegram-bot-token" placeholder="Enter Telegram Bot Token" style="width: 100%; max-width: 450px; padding: 8px;">
-                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;"><strong>Bot Token:</strong></label>
+                <input type="text" id="telegram-bot-token" placeholder="Enter Telegram Bot Token" style="width: 100%; max-width: 450px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: all 0.2s;">
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                     ℹ️ Get your bot token from <a href="https://t.me/BotFather" target="_blank">@BotFather</a> on Telegram
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 8px;"><strong>Chat IDs:</strong></label>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;"><strong>Chat IDs:</strong></label>
                 <div id="telegram-chat-ids-container"></div>
-                <button type="button" id="add-telegram-chat-id" class="button button-secondary" style="margin-top: 8px;">➕ Add Chat ID</button>
-                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0;">
+                <button type="button" id="add-telegram-chat-id" class="button button-secondary" style="margin-top: 8px; padding: 8px 16px; border-radius: 5px; transition: all 0.3s;">➕ Add Chat ID</button>
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                     ℹ️ Get your chat ID from <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> on Telegram
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <button id="test-telegram" class="button button-secondary">🧪 Test Telegram Connection</button>
+                <button id="test-telegram" class="button button-secondary" style="padding: 8px 16px; border-radius: 5px; transition: all 0.3s;">🧪 Test Telegram Connection</button>
                 <span id="telegram-test-result" style="margin-left: 10px;"></span>
             </div>
         </div>
 
         <!-- Email Settings -->
-        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
-            <h3 style="margin-top: 0;">📧 Email Notifications</h3>
+        <div class="vip-notification-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">📧</span> Email Notifications</h3>
             <div style="margin-bottom: 15px;">
                 <label style="display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="email-enabled" style="width: auto;">
@@ -429,19 +429,19 @@ foreach ($month_bookings as $booking_id) {
                 </label>
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 8px;"><strong>Email Recipients:</strong></label>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;"><strong>Email Recipients:</strong></label>
                 <div id="email-recipients-container"></div>
-                <button type="button" id="add-email-recipient" class="button button-secondary" style="margin-top: 8px;">➕ Add Recipient</button>
-                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0;">
+                <button type="button" id="add-email-recipient" class="button button-secondary" style="margin-top: 8px; padding: 8px 16px; border-radius: 5px; transition: all 0.3s;">➕ Add Recipient</button>
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                     ℹ️ Emails will be sent using your WordPress SMTP settings
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px;"><strong>Test Email Address:</strong></label>
-                <input type="email" id="test-email-address" placeholder="your-email@example.com" style="width: 100%; max-width: 450px; padding: 8px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;"><strong>Test Email Address:</strong></label>
+                <input type="email" id="test-email-address" placeholder="your-email@example.com" style="width: 100%; max-width: 450px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: all 0.2s;">
             </div>
             <div style="margin-bottom: 15px;">
-                <button id="test-email" class="button button-secondary">🧪 Test Email Connection</button>
+                <button id="test-email" class="button button-secondary" style="padding: 8px 16px; border-radius: 5px; transition: all 0.3s;">🧪 Test Email Connection</button>
                 <span id="email-test-result" style="margin-left: 10px;"></span>
             </div>
             <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin-top: 15px;">
@@ -452,8 +452,8 @@ foreach ($month_bookings as $booking_id) {
         </div>
 
         <!-- Card Image Settings -->
-        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
-            <h3 style="margin-top: 0;">🎨 Card Image Settings</h3>
+        <div class="vip-notification-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">🎨</span> Card Image Settings</h3>
             <div style="margin-bottom: 15px;">
                 <label style="display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="send-card-image" style="width: auto;">
@@ -466,23 +466,23 @@ foreach ($month_bookings as $booking_id) {
         </div>
 
         <!-- Template Settings -->
-        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
-            <h3 style="margin-top: 0;">📝 Notification Template</h3>
+        <div class="vip-notification-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">📝</span> Notification Template</h3>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px;"><strong>Message Template:</strong></label>
-                <textarea id="notification-template" rows="12" style="width: 100%; max-width: 700px; padding: 8px; font-family: monospace;"></textarea>
-                <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;"><strong>Message Template:</strong></label>
+                <textarea id="notification-template" rows="12" style="width: 100%; max-width: 700px; padding: 10px; font-family: monospace; border: 1px solid #ddd; border-radius: 5px; font-size: 13px; transition: all 0.2s;"></textarea>
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                     ℹ️ Available placeholders: {booking_number}, {customer_name}, {service}, {store}, {package}, {nation}, {pax}, {date}, {time}, {price}, {created_at}
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <button id="reset-template" class="button button-secondary">🔄 Reset to Default Template</button>
+                <button id="reset-template" class="button button-secondary" style="padding: 8px 16px; border-radius: 5px; transition: all 0.3s;">🔄 Reset to Default Template</button>
             </div>
         </div>
 
         <!-- Save Button -->
         <div style="padding: 15px 0;">
-            <button id="save-notification-settings" class="button button-primary" style="padding: 10px 30px; font-size: 14px;">💾 Save All Notification Settings</button>
+            <button id="save-notification-settings" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 12px 30px; border-radius: 6px; font-weight: 500; font-size: 14px; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s; cursor: pointer;">💾 Save All Notification Settings</button>
         </div>
     </div>
 
@@ -500,13 +500,14 @@ foreach ($month_bookings as $booking_id) {
 .notification-input-row .remove-btn:hover { background: #c62d2d; }
 .tab-content.active { display: block; }
 .booking-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
-.stat-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 20px; }
-.stat-icon { font-size: 48px; opacity: 0.8; }
-.stat-label { color: #666; font-size: 14px; margin-bottom: 5px; }
-.stat-value { font-size: 32px; font-weight: bold; color: #2271b1; }
-.stat-breakdown { display: flex; gap: 12px; margin-top: 8px; font-size: 12px; }
-.stat-upcoming { color: #d63638; font-weight: 600; }
-.stat-completed { color: #00a32a; font-weight: 600; }
+.stat-card { background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 20px; transition: all 0.3s; border: 1px solid rgba(84,110,122,0.1); }
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); border-color: rgba(84,110,122,0.2); }
+.stat-icon { font-size: 48px; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+.stat-label { color: #546e7a; font-size: 13px; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-value { font-size: 36px; font-weight: bold; background: linear-gradient(135deg, #546e7a 0%, #78909c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.stat-breakdown { display: flex; gap: 12px; margin-top: 10px; font-size: 12px; }
+.stat-upcoming { color: #d63638; font-weight: 600; padding: 4px 10px; background: rgba(214,54,56,0.1); border-radius: 12px; }
+.stat-completed { color: #00a32a; font-weight: 600; padding: 4px 10px; background: rgba(0,163,42,0.1); border-radius: 12px; }
 .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
 .status-upcoming { background: #fff3cd; color: #856404; }
 .status-completed { background: #d4edda; color: #155724; }
@@ -569,6 +570,9 @@ foreach ($month_bookings as $booking_id) {
 #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999; }
 .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+#telegram-bot-token:focus, #test-email-address:focus, #notification-template:focus { border-color: #5a6c7d; outline: none; box-shadow: 0 0 0 3px rgba(90,108,125,0.1); }
+#add-telegram-chat-id:hover, #add-email-recipient:hover, #test-telegram:hover, #test-email:hover, #reset-template:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+#save-notification-settings:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
 </style>
 
 <script>
