@@ -161,13 +161,35 @@ foreach ($month_bookings as $booking_id) {
                 <p style="margin: 10px 0 0 0; color: #666;">
                     <strong>Standard booking form</strong> - Requires users to be logged in before booking.
                 </p>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd;">
+                    <p style="margin: 5px 0; color: #555; font-size: 13px;">
+                        <strong>Optional Attribute:</strong>
+                    </p>
+                    <ul style="margin: 8px 0; padding-left: 20px; color: #666; font-size: 13px;">
+                        <li><code>storeid</code> - Pre-select store and skip Steps 1-2 (e.g., <code>[vip_booking storeid="S1"]</code>)</li>
+                    </ul>
+                    <p style="margin: 10px 0 5px 0; color: #555; font-size: 13px;">
+                        💡 <strong>Direct booking:</strong> When <code>storeid</code> is provided, the form starts directly from Step 3 (Package selection) with the specified store already selected. Perfect for store-specific landing pages, QR codes, and direct booking links.
+                    </p>
+                </div>
             </div>
-            
+
             <div class="shortcode-box" style="background: #f5f5f5; padding: 15px; border-left: 4px solid #d63638; margin-bottom: 15px;">
                 <code style="font-size: 14px; color: #d63638; font-weight: bold;">[vip_booking_secret]</code>
                 <p style="margin: 10px 0 0 0; color: #666;">
                     <strong>Guest booking form</strong> - Allows bookings WITHOUT login (use with caution).
                 </p>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd;">
+                    <p style="margin: 5px 0; color: #555; font-size: 13px;">
+                        <strong>Optional Attribute:</strong>
+                    </p>
+                    <ul style="margin: 8px 0; padding-left: 20px; color: #666; font-size: 13px;">
+                        <li><code>storeid</code> - Pre-select store and skip Steps 1-2 (e.g., <code>[vip_booking_secret storeid="VIP"]</code>)</li>
+                    </ul>
+                    <p style="margin: 10px 0 5px 0; color: #555; font-size: 13px;">
+                        💡 <strong>Direct booking:</strong> When <code>storeid</code> is provided, the form starts directly from Step 3 (Package selection) with the specified store already selected. Perfect for store-specific landing pages, QR codes, and direct booking links.
+                    </p>
+                </div>
             </div>
             
             <div class="shortcode-box" style="background: #f5f5f5; padding: 15px; border-left: 4px solid #00a32a; margin-bottom: 15px;">

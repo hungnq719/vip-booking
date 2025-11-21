@@ -923,7 +923,7 @@ VIP_BOOKING_PLUGIN_URL   // URL to plugin directory
 
 ---
 
-**Last Updated:** 2025-11-20 (Added multi-language UI support with automatic language detection for 4 languages: English, Korean, Russian, Chinese. Improved user dashboard with inline labels, H2/H3 header formatting, and disabled time picker until all booking steps completed)
+**Last Updated:** 2025-11-21 (Added Store ID field with storeid shortcode attribute for direct booking. Removed auto-login popup - login only required on submission. Added smooth 500ms transitions for form/results/time-picker state changes. Fixed step numbering for storeid mode. Improved scroll behavior - scrolls to container top instead of page top. Added CSV import/export support for Store ID field with backward compatibility.)
 **Maintainer:** VIP Booking Development Team
 **WordPress Version Tested:** 6.x+
 **PHP Version Required:** 7.4+
