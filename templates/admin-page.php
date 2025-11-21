@@ -103,7 +103,7 @@ foreach ($month_bookings as $booking_id) {
     
     <!-- Tab 1: Dashboard -->
     <div id="tab-dashboard" class="tab-content active">
-        <h2>Dashboard Overview</h2>
+        <h2 style="margin-bottom: 25px; color: #546e7a;">📊 Dashboard Overview</h2>
         <div class="booking-stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">📊</div>
@@ -232,37 +232,38 @@ foreach ($month_bookings as $booking_id) {
     <div id="tab-bookings" class="tab-content">
         <h2 style="margin-bottom: 15px;">Booking Manager</h2>
 
-        <div class="vip-booking-cleanup-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
-            <h3>Cleanup Settings</h3>
-            <div style="margin-bottom: 10px;">
-                <label style="display: inline-block; width: 200px;">Auto-cleanup period:</label>
-                <input type="number" id="cleanup-period" value="<?php echo esc_attr($cleanup_period); ?>" min="1" max="3650" style="width: 100px; padding: 5px;">
-                <span style="color: #666; margin-left: 10px;">days old</span>
+        <div class="vip-booking-cleanup-settings" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 20px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">⚙️</span> Cleanup Settings</h3>
+            <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
+                <label style="font-weight: 600; color: #555; min-width: 160px;">Auto-cleanup period:</label>
+                <input type="number" id="cleanup-period" value="<?php echo esc_attr($cleanup_period); ?>" min="1" max="3650" style="width: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                <span style="color: #666;">days old</span>
             </div>
-            <button id="save-cleanup-period" class="button button-primary">Save Cleanup Settings</button>
-            <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+            <button id="save-cleanup-period" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Cleanup Settings</button>
+            <p style="color: #666; font-size: 12px; margin: 12px 0 0 0; padding: 12px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                 ℹ️ Bookings older than this number of days will be automatically deleted daily. Default: 90 days
             </p>
         </div>
 
-        <div class="vip-booking-badge-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
-            <h3>🔴 Booking Badge Settings</h3>
-            <div style="margin-bottom: 10px;">
-                <label style="display: inline-block; width: 200px;">Badge click URL:</label>
-                <input type="url" id="badge-url" value="<?php echo esc_attr(get_option('vip_booking_badge_url', '')); ?>" placeholder="https://yoursite.com/my-bookings/" style="width: 400px; padding: 5px;">
+        <div class="vip-booking-badge-settings" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 20px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">🔴</span> Booking Badge Settings</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; color: #555; margin-bottom: 8px;">Badge click URL:</label>
+                <input type="url" id="badge-url" value="<?php echo esc_attr(get_option('vip_booking_badge_url', '')); ?>" placeholder="https://yoursite.com/my-bookings/" style="width: 100%; max-width: 500px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
             </div>
-            <button id="save-badge-url" class="button button-primary">Save Badge Settings</button>
-            <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
-                ℹ️ Set the URL where users will be redirected when clicking the booking badge. Usually your user dashboard page with <code>[vip_booking_user]</code> shortcode.<br>
-                🌍 <strong>Multilingual support:</strong> Badge automatically detects page language (ko, en, zh, ru, etc.) and prepends it to the URL. Just set the base URL here (e.g., <code>/my-bookings/</code>).
+            <button id="save-badge-url" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Badge Settings</button>
+            <p style="color: #666; font-size: 12px; margin: 12px 0 0 0; padding: 12px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
+                ℹ️ Set the URL where users will be redirected when clicking the booking badge. Usually your user dashboard page with <code style="background: rgba(90,108,125,0.1); padding: 2px 6px; border-radius: 3px;">[vip_booking_user]</code> shortcode.<br>
+                🌍 <strong>Multilingual support:</strong> Badge automatically detects page language (ko, en, zh, ru, etc.) and prepends it to the URL. Just set the base URL here (e.g., <code style="background: rgba(90,108,125,0.1); padding: 2px 6px; border-radius: 3px;">/my-bookings/</code>).
             </p>
         </div>
 
-        <div style="margin-bottom: 10px;">
-            <button id="delete-selected-bookings" class="button button-secondary" style="border-color: #dc3232;">🗑️ Delete Selected</button>
+        <div class="bookings-toolbar" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+            <button id="delete-selected-bookings" class="button button-secondary" style="background: linear-gradient(135deg, #dc3232 0%, #c62d2d 100%); border: none; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 6px rgba(220,50,50,0.3); transition: all 0.3s;">🗑️ Delete Selected</button>
         </div>
 
-        <table class="wp-list-table widefat fixed striped" id="bookings-table">
+        <div class="bookings-table-wrapper">
+            <table class="wp-list-table widefat fixed striped" id="bookings-table">
             <thead>
                 <tr>
                     <th class="check-column" style="width:30px"><input type="checkbox" id="select-all-bookings"></th>
@@ -333,80 +334,64 @@ foreach ($month_bookings as $booking_id) {
                 <?php endforeach; endif; ?>
             </tbody>
         </table>
+        </div>
     </div>
     
     <!-- Tab 3: Booking Data -->
     <div id="tab-data" class="tab-content">
-        <h2>Booking Data Management</h2>
-        
-        <div class="vip-booking-settings" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
-            <h3>Settings</h3>
-            <div style="margin-bottom: 15px;">
-                <label style="display: inline-block; width: 200px;">Exchange Rate (VND/USD):</label>
-                <input type="text" id="exchange-rate-display" value="<?php echo number_format($exchange_rate, 0, '.', ','); ?>" style="width: 200px; padding: 5px;">
+        <h2 style="margin-bottom: 25px; color: #546e7a;">🏪 Booking Data Management</h2>
+
+        <div class="vip-booking-settings" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 20px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">⚙️</span> General Settings</h3>
+            <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
+                <label style="font-weight: 600; color: #555; min-width: 180px;">Exchange Rate (VND/USD):</label>
+                <input type="text" id="exchange-rate-display" value="<?php echo number_format($exchange_rate, 0, '.', ','); ?>" style="width: 180px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
                 <input type="hidden" id="exchange-rate" value="<?php echo esc_attr($exchange_rate); ?>">
             </div>
-            <div style="margin-bottom: 15px;">
-                <label style="display: inline-block; width: 200px;">Rate Limit (2 hours):</label>
-                <input type="number" id="limit-2h" value="<?php echo esc_attr($limit_2h); ?>" min="1" max="100" style="width: 100px; padding: 5px;">
-                <span style="color: #666; margin-left: 10px;">bookings per 2 hours</span>
+            <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
+                <label style="font-weight: 600; color: #555; min-width: 180px;">Rate Limit (2 hours):</label>
+                <input type="number" id="limit-2h" value="<?php echo esc_attr($limit_2h); ?>" min="1" max="100" style="width: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                <span style="color: #666;">bookings per 2 hours</span>
             </div>
-            <div style="margin-bottom: 15px;">
-                <label style="display: inline-block; width: 200px;">Rate Limit (12 hours):</label>
-                <input type="number" id="limit-12h" value="<?php echo esc_attr($limit_12h); ?>" min="1" max="100" style="width: 100px; padding: 5px;">
-                <span style="color: #666; margin-left: 10px;">bookings per 12 hours</span>
+            <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
+                <label style="font-weight: 600; color: #555; min-width: 180px;">Rate Limit (12 hours):</label>
+                <input type="number" id="limit-12h" value="<?php echo esc_attr($limit_12h); ?>" min="1" max="100" style="width: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                <span style="color: #666;">bookings per 12 hours</span>
             </div>
-            <button id="save-settings" class="button button-primary">Save Settings</button>
+            <button id="save-settings" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Settings</button>
         </div>
-        
-        <div class="vip-booking-flags" style="background: white; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
-            <h3>Nation Flags</h3>
-            <div id="flags-container" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; padding: 10px;"></div>
+
+        <div class="vip-booking-flags" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 20px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 8px;"><span style="font-size: 20px;">🚩</span> Nation Flags</h3>
+            <div id="flags-container" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; padding: 15px; background: rgba(90,108,125,0.03); border-radius: 6px;"></div>
             <div style="display: flex; gap: 10px; align-items: center;">
-                <input type="text" id="new-flag" placeholder="Enter flag emoji (e.g., 🇻🇳)" style="width: 200px; padding: 8px; font-size: 15px;" maxlength="4">
-                <button id="add-flag" class="button button-secondary">➕ Add Flag</button>
-                <button id="save-flags" class="button button-primary">💾 Save Flags</button>
+                <input type="text" id="new-flag" placeholder="Enter flag emoji (e.g., 🇻🇳)" style="width: 220px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 15px;" maxlength="4">
+                <button id="add-flag" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">➕ Add Flag</button>
+                <button id="save-flags" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Flags</button>
             </div>
         </div>
         
         <div class="vip-booking-toolbar">
-            <button id="add-row" class="button button-primary">➕ Add New Row</button>
-            <button id="save-changes" class="button button-primary">💾 Save Changes</button>
-            <button id="delete-selected" class="button button-secondary">🗑️ Delete Selected</button>
-            <button id="reset-all" class="button button-secondary" style="background: #dc3232; border-color: #dc3232; color: white;">🔄 Reset All Data</button>
-            <button id="export-csv" class="button button-secondary">📤 Export CSV</button>
-            <button id="import-csv" class="button button-secondary">📥 Import CSV</button>
+            <button id="add-store" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">➕ Add New Store</button>
+            <button id="save-changes" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">💾 Save Changes</button>
+            <button id="reset-all" class="button button-secondary" style="background: linear-gradient(135deg, #dc3232 0%, #c62d2d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(220,50,50,0.3); transition: all 0.3s;">🔄 Reset All Data</button>
+            <button id="export-csv" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">📤 Export CSV</button>
+            <button id="import-csv" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">📥 Import CSV</button>
             <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
         </div>
-        
-        <div class="vip-booking-table-container">
-            <table class="wp-list-table widefat fixed striped" id="vip-booking-table">
-                <thead>
-                    <tr>
-                        <th class="check-column" style="width: 30px;"><input type="checkbox" id="select-all"></th>
-                        <th style="width: 100px;">Service</th>
-                        <th style="width: 150px;">Store Name</th>
-                        <th style="width: 80px;">Store ID</th>
-                        <th style="width: 100px;">Service Package</th>
-                        <th style="width: 100px;">Price (VND)</th>
-                        <th style="width: 80px;">Opening</th>
-                        <th style="width: 80px;">Closing</th>
-                        <th style="width: 50px;">Prebook</th>
-                        <th style="width: 30px;">Delete</th>
-                    </tr>
-                </thead>
-                <tbody id="vip-booking-tbody"></tbody>
-            </table>
+
+        <div id="stores-container" class="stores-accordion">
+            <!-- Store accordions will be dynamically rendered here -->
         </div>
     </div>
 
     <!-- Tab 4: Notifications -->
     <div id="tab-notifications" class="tab-content">
-        <h2>Notification Settings</h2>
+        <h2 style="margin-bottom: 25px; color: #546e7a;">🔔 Notification Settings</h2>
 
         <!-- Telegram Settings -->
-        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
-            <h3 style="margin-top: 0;">📱 Telegram Notifications</h3>
+        <div class="vip-notification-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">📱</span> Telegram Notifications</h3>
             <div style="margin-bottom: 15px;">
                 <label style="display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="telegram-enabled" style="width: auto;">
@@ -414,29 +399,29 @@ foreach ($month_bookings as $booking_id) {
                 </label>
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px;"><strong>Bot Token:</strong></label>
-                <input type="text" id="telegram-bot-token" placeholder="Enter Telegram Bot Token" style="width: 100%; max-width: 450px; padding: 8px;">
-                <p style="color: #666; font-size: 12px; margin: 5px 0 0 0;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;"><strong>Bot Token:</strong></label>
+                <input type="text" id="telegram-bot-token" placeholder="Enter Telegram Bot Token" style="width: 100%; max-width: 450px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: all 0.2s;">
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                     ℹ️ Get your bot token from <a href="https://t.me/BotFather" target="_blank">@BotFather</a> on Telegram
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 8px;"><strong>Chat IDs:</strong></label>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;"><strong>Chat IDs:</strong></label>
                 <div id="telegram-chat-ids-container"></div>
-                <button type="button" id="add-telegram-chat-id" class="button button-secondary" style="margin-top: 8px;">➕ Add Chat ID</button>
-                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0;">
+                <button type="button" id="add-telegram-chat-id" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; margin-top: 8px; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">➕ Add Chat ID</button>
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                     ℹ️ Get your chat ID from <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> on Telegram
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <button id="test-telegram" class="button button-secondary">🧪 Test Telegram Connection</button>
+                <button id="test-telegram" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">🧪 Test Telegram Connection</button>
                 <span id="telegram-test-result" style="margin-left: 10px;"></span>
             </div>
         </div>
 
         <!-- Email Settings -->
-        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
-            <h3 style="margin-top: 0;">📧 Email Notifications</h3>
+        <div class="vip-notification-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">📧</span> Email Notifications</h3>
             <div style="margin-bottom: 15px;">
                 <label style="display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="email-enabled" style="width: auto;">
@@ -444,19 +429,19 @@ foreach ($month_bookings as $booking_id) {
                 </label>
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 8px;"><strong>Email Recipients:</strong></label>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;"><strong>Email Recipients:</strong></label>
                 <div id="email-recipients-container"></div>
-                <button type="button" id="add-email-recipient" class="button button-secondary" style="margin-top: 8px;">➕ Add Recipient</button>
-                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0;">
+                <button type="button" id="add-email-recipient" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; margin-top: 8px; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">➕ Add Recipient</button>
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                     ℹ️ Emails will be sent using your WordPress SMTP settings
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px;"><strong>Test Email Address:</strong></label>
-                <input type="email" id="test-email-address" placeholder="your-email@example.com" style="width: 100%; max-width: 450px; padding: 8px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;"><strong>Test Email Address:</strong></label>
+                <input type="email" id="test-email-address" placeholder="your-email@example.com" style="width: 100%; max-width: 450px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: all 0.2s;">
             </div>
             <div style="margin-bottom: 15px;">
-                <button id="test-email" class="button button-secondary">🧪 Test Email Connection</button>
+                <button id="test-email" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">🧪 Test Email Connection</button>
                 <span id="email-test-result" style="margin-left: 10px;"></span>
             </div>
             <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin-top: 15px;">
@@ -467,8 +452,8 @@ foreach ($month_bookings as $booking_id) {
         </div>
 
         <!-- Card Image Settings -->
-        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
-            <h3 style="margin-top: 0;">🎨 Card Image Settings</h3>
+        <div class="vip-notification-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">🎨</span> Card Image Settings</h3>
             <div style="margin-bottom: 15px;">
                 <label style="display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="send-card-image" style="width: auto;">
@@ -481,23 +466,23 @@ foreach ($month_bookings as $booking_id) {
         </div>
 
         <!-- Template Settings -->
-        <div class="vip-notification-section" style="background: white; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;">
-            <h3 style="margin-top: 0;">📝 Notification Template</h3>
+        <div class="vip-notification-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">📝</span> Notification Template</h3>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px;"><strong>Message Template:</strong></label>
-                <textarea id="notification-template" rows="12" style="width: 100%; max-width: 700px; padding: 8px; font-family: monospace;"></textarea>
-                <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;"><strong>Message Template:</strong></label>
+                <textarea id="notification-template" rows="12" style="width: 100%; max-width: 700px; padding: 10px; font-family: monospace; border: 1px solid #ddd; border-radius: 5px; font-size: 13px; transition: all 0.2s;"></textarea>
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
                     ℹ️ Available placeholders: {booking_number}, {customer_name}, {service}, {store}, {package}, {nation}, {pax}, {date}, {time}, {price}, {created_at}
                 </p>
             </div>
             <div style="margin-bottom: 15px;">
-                <button id="reset-template" class="button button-secondary">🔄 Reset to Default Template</button>
+                <button id="reset-template" class="button button-secondary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 500; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s;">🔄 Reset to Default Template</button>
             </div>
         </div>
 
         <!-- Save Button -->
         <div style="padding: 15px 0;">
-            <button id="save-notification-settings" class="button button-primary" style="padding: 10px 30px; font-size: 14px;">💾 Save All Notification Settings</button>
+            <button id="save-notification-settings" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 12px 30px; border-radius: 6px; font-weight: 500; font-size: 14px; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s; cursor: pointer;">💾 Save All Notification Settings</button>
         </div>
     </div>
 
@@ -515,31 +500,82 @@ foreach ($month_bookings as $booking_id) {
 .notification-input-row .remove-btn:hover { background: #c62d2d; }
 .tab-content.active { display: block; }
 .booking-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
-.stat-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 20px; }
-.stat-icon { font-size: 48px; opacity: 0.8; }
-.stat-label { color: #666; font-size: 14px; margin-bottom: 5px; }
-.stat-value { font-size: 32px; font-weight: bold; color: #2271b1; }
-.stat-breakdown { display: flex; gap: 12px; margin-top: 8px; font-size: 12px; }
-.stat-upcoming { color: #d63638; font-weight: 600; }
-.stat-completed { color: #00a32a; font-weight: 600; }
+.stat-card { background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 20px; transition: all 0.3s; border: 1px solid rgba(84,110,122,0.1); }
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); border-color: rgba(84,110,122,0.2); }
+.stat-icon { font-size: 48px; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); flex-shrink: 0; }
+.stat-info { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
+.stat-label { color: #546e7a; font-size: 13px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-value { font-size: 36px; font-weight: bold; background: linear-gradient(135deg, #546e7a 0%, #78909c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; line-height: 1.2; }
+.stat-breakdown { display: flex; gap: 12px; margin: 0; font-size: 12px; flex-wrap: wrap; }
+.stat-upcoming { color: #d63638; font-weight: 600; padding: 4px 10px; background: rgba(214,54,56,0.1); border-radius: 12px; }
+.stat-completed { color: #00a32a; font-weight: 600; padding: 4px 10px; background: rgba(0,163,42,0.1); border-radius: 12px; }
 .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
 .status-upcoming { background: #fff3cd; color: #856404; }
 .status-completed { background: #d4edda; color: #155724; }
 .vip-booking-toolbar { position: sticky; top: 32px; padding: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; z-index: 99 }
-.vip-booking-table-container { overflow-x: auto; width: 100%; }
-#vip-booking-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
-#vip-booking-table th, #vip-booking-table td { padding: 8px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#vip-booking-table input[type="text"], #vip-booking-table input[type="time"], #vip-booking-table input[type="number"] { width: 100%; box-sizing: border-box; padding: 4px 6px; font-size: 13px; }
-#vip-booking-table .check-column { text-align: center; padding: 8px 2px; }
-#vip-booking-table .delete-row { padding: 2px 6px; min-width: auto; }
-#bookings-table .check-column { text-align: center; padding-left: 5px; }
-#bookings-table .booking-checkbox { margin: 0 auto; display: block; }
-#bookings-table #select-all-bookings { margin: 0 auto; display: block; }
+.stores-accordion { margin-top: 20px; }
+.store-section { background: linear-gradient(135deg, #f5f7fa 0%, #e3e8ec 100%); border: none; margin-bottom: 20px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s; }
+.store-section:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.12); transform: translateY(-2px); }
+.store-header { background: linear-gradient(135deg, #546e7a 0%, #78909c 100%); color: white; padding: 18px 25px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.store-header:hover { background: linear-gradient(135deg, #465a65 0%, #607d8b 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.store-header-left { display: flex; align-items: center; gap: 15px; flex: 1; }
+.store-header-icon { font-size: 20px; transition: transform 0.3s; }
+.store-header-icon.collapsed { transform: rotate(-90deg); }
+.store-header-info { display: flex; gap: 25px; align-items: center; flex-wrap: wrap; }
+.store-info-item { display: flex; flex-direction: column; }
+.store-info-label { font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; }
+.store-info-value { font-size: 14px; font-weight: bold; margin-top: 2px; }
+.store-header-actions { display: flex; gap: 8px; }
+.store-header-actions button { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.25); padding: 7px 14px; border-radius: 5px; cursor: pointer; font-size: 12px; transition: all 0.2s; font-weight: 500; }
+.store-header-actions button:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.store-body { padding: 25px; display: none; background: linear-gradient(135deg, #fafbfc 0%, #f0f2f4 100%); }
+.store-body.active { display: block; }
+.store-fixed-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; padding: 20px; background: white; border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.store-field { display: flex; flex-direction: column; }
+.store-field label { font-size: 12px; font-weight: bold; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+.store-field input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: all 0.2s; }
+.store-field input:focus { border-color: #5a6c7d; outline: none; box-shadow: 0 0 0 3px rgba(90,108,125,0.1); }
+.packages-section h4 { margin-top: 0; margin-bottom: 12px; color: #333; font-size: 15px; }
+.packages-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.packages-table th { background: linear-gradient(135deg, #f5f6f7 0%, #e8eaed 100%); padding: 12px 10px; text-align: left; font-size: 12px; font-weight: bold; color: #555; border-bottom: 2px solid #ddd; text-transform: uppercase; letter-spacing: 0.3px; }
+.packages-table td { padding: 12px 10px; border-bottom: 1px solid #f0f0f0; }
+.packages-table tr:last-child td { border-bottom: none; }
+.packages-table tr:hover { background: #f8f9fa; }
+.packages-table input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; transition: all 0.2s; }
+.packages-table input:focus { border-color: #5a6c7d; outline: none; box-shadow: 0 0 0 3px rgba(90,108,125,0.1); }
+.packages-table .delete-package-btn { cursor: pointer; font-size: 16px; transition: all 0.2s; opacity: 0.7; display: inline-block; }
+.packages-table .delete-package-btn:hover { opacity: 1; transform: scale(1.2); }
+.add-package-btn { margin-top: 12px; padding: 10px 18px; background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.add-package-btn:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.empty-store-message { text-align: center; padding: 40px; color: #666; font-style: italic; font-size: 15px; }
+.bookings-table-wrapper { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+#bookings-table { margin: 0; border: none; border-radius: 0; }
+#bookings-table thead tr { background: linear-gradient(135deg, #546e7a 0%, #78909c 100%); }
+#bookings-table thead th { color: white; padding: 15px 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: none; text-align: left; }
+#bookings-table tbody tr { transition: all 0.2s; border-bottom: 1px solid #f0f0f0; }
+#bookings-table tbody tr:hover { background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%); transform: scale(1.002); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+#bookings-table tbody tr:last-child { border-bottom: none; }
+#bookings-table tbody td { padding: 15px 12px; font-size: 13px; vertical-align: middle; border: none; }
+#bookings-table .check-column { text-align: center; padding: 15px 8px; width: 40px; }
+#bookings-table .booking-checkbox { margin: 0 auto; display: block; width: 18px; height: 18px; cursor: pointer; }
+#bookings-table #select-all-bookings { margin: 0 auto; display: block; width: 18px; height: 18px; cursor: pointer; }
+.delete-booking-btn { background: transparent !important; border: none !important; padding: 6px 10px !important; cursor: pointer; font-size: 18px; opacity: 0.6; transition: all 0.2s; }
+.delete-booking-btn:hover { opacity: 1; transform: scale(1.3); background: transparent !important; }
+.status-badge { padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+.status-upcoming { background: linear-gradient(135deg, #fff3cd 0%, #ffe89d 100%); color: #856404; border: 1px solid #ffeaa7; }
+.status-completed { background: linear-gradient(135deg, #d4edda 0%, #b8e6c0 100%); color: #155724; border: 1px solid #a3d9b1; }
+.bookings-toolbar button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(220,50,50,0.4); }
+.vip-booking-cleanup-settings button:hover, .vip-booking-badge-settings button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
 .flag-item { font-size: 40px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
 .flag-item:hover { border-color: #ff4444; transform: scale(1.15); }
 #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999; }
 .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+#telegram-bot-token:focus, #test-email-address:focus, #notification-template:focus { border-color: #5a6c7d; outline: none; box-shadow: 0 0 0 3px rgba(90,108,125,0.1); }
+#add-telegram-chat-id:hover, #add-email-recipient:hover, #test-telegram:hover, #test-email:hover, #reset-template:hover, #add-flag:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
+#save-notification-settings:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
+#add-store:hover, #save-changes:hover, #export-csv:hover, #import-csv:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
+#reset-all:hover { background: linear-gradient(135deg, #c62d2d 0%, #b02727 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(220,50,50,0.4); }
 </style>
 
 <script>

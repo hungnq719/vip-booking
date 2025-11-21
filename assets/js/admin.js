@@ -68,6 +68,9 @@ jQuery(document).ready(function($) {
         return str.toString().replace(/,/g, '');
     }
     
+    // Store management: Group flat rows by Store
+    let storesData = [];
+
     function loadData() {
         $('#loading-overlay').show();
         $.ajax({
@@ -75,81 +78,307 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: { action: 'vip_booking_get_data', nonce: nonce },
             success: function(response) {
-                $('#vip-booking-tbody').empty();
                 const data = response.success ? (response.data || []) : [];
-                if (data.length === 0) {
-                    addRow();
-                } else {
-                    data.forEach(function(row) { addRow(row); });
-                }
+                storesData = groupDataByStore(data);
+                renderStores();
                 $('#loading-overlay').hide();
             }
         });
     }
+
+    function groupDataByStore(flatData) {
+        const storesMap = {};
+
+        flatData.forEach(function(row) {
+            const storeKey = (row.store || '') + '|' + (row.store_id || '');
+
+            if (!storesMap[storeKey]) {
+                storesMap[storeKey] = {
+                    service: row.service || '',
+                    store_name: row.store || '',
+                    store_id: row.store_id || '',
+                    opening_hours: row.opening_hours || '',
+                    closing_hours: row.closing_hours || '',
+                    packages: []
+                };
+            }
+
+            storesMap[storeKey].packages.push({
+                package: row.package || '',
+                price: row.price || '',
+                prebook_time: row.prebook_time || '15'
+            });
+        });
+
+        return Object.values(storesMap);
+    }
+
+    function renderStores() {
+        const container = $('#stores-container');
+        container.empty();
+
+        if (storesData.length === 0) {
+            container.html('<div class="empty-store-message">No stores yet. Click "➕ Add New Store" to get started.</div>');
+            return;
+        }
+
+        storesData.forEach(function(store, storeIndex) {
+            const storeSection = renderStoreSection(store, storeIndex);
+            container.append(storeSection);
+        });
+    }
+
+    // Save which stores are currently expanded
+    function saveExpandedState() {
+        const expandedIndices = [];
+        $('.store-section').each(function(index) {
+            if ($(this).find('.store-body').hasClass('active')) {
+                expandedIndices.push(index);
+            }
+        });
+        return expandedIndices;
+    }
+
+    // Restore expanded state after re-rendering
+    function restoreExpandedState(expandedIndices) {
+        expandedIndices.forEach(function(index) {
+            const $section = $('.store-section').eq(index);
+            $section.find('.store-body').addClass('active');
+            $section.find('.store-header-icon').removeClass('collapsed');
+        });
+    }
+
+    function renderStoreSection(store, storeIndex) {
+        const section = $('<div class="store-section" data-store-index="' + storeIndex + '"></div>');
+
+        // Store header
+        const header = $(`
+            <div class="store-header">
+                <div class="store-header-left">
+                    <div class="store-header-icon">▼</div>
+                    <div class="store-header-info">
+                        <div class="store-info-item">
+                            <span class="store-info-label">Service</span>
+                            <span class="store-info-value">${store.service || 'N/A'}</span>
+                        </div>
+                        <div class="store-info-item">
+                            <span class="store-info-label">Store Name</span>
+                            <span class="store-info-value">${store.store_name || 'N/A'}</span>
+                        </div>
+                        <div class="store-info-item">
+                            <span class="store-info-label">Store ID</span>
+                            <span class="store-info-value">${store.store_id || 'N/A'}</span>
+                        </div>
+                        <div class="store-info-item">
+                            <span class="store-info-label">Hours</span>
+                            <span class="store-info-value">${store.opening_hours || 'N/A'} - ${store.closing_hours || 'N/A'}</span>
+                        </div>
+                        <div class="store-info-item">
+                            <span class="store-info-label">Packages</span>
+                            <span class="store-info-value">${store.packages.length}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="store-header-actions">
+                    <button class="delete-store-btn" data-store-index="${storeIndex}">🗑️ Delete Store</button>
+                </div>
+            </div>
+        `);
+
+        // Store body (collapsed by default)
+        const body = $('<div class="store-body"></div>');
+
+        // Fixed fields (editable)
+        const fixedFields = $(`
+            <div class="store-fixed-fields">
+                <div class="store-field">
+                    <label>Service</label>
+                    <input type="text" class="store-service" value="${store.service || ''}" placeholder="Karaoke">
+                </div>
+                <div class="store-field">
+                    <label>Store Name</label>
+                    <input type="text" class="store-name" value="${store.store_name || ''}" placeholder="Store name">
+                </div>
+                <div class="store-field">
+                    <label>Store ID</label>
+                    <input type="text" class="store-id" value="${store.store_id || ''}" placeholder="S1">
+                </div>
+                <div class="store-field">
+                    <label>Opening Hours</label>
+                    <input type="time" class="store-opening" value="${normalizeTime(store.opening_hours)}">
+                </div>
+                <div class="store-field">
+                    <label>Closing Hours</label>
+                    <input type="time" class="store-closing" value="${normalizeTime(store.closing_hours)}">
+                </div>
+            </div>
+        `);
+
+        // Packages section
+        const packagesSection = $('<div class="packages-section"></div>');
+        packagesSection.append('<h4>📦 Service Packages</h4>');
+
+        const packagesTable = $(`
+            <table class="packages-table">
+                <thead>
+                    <tr>
+                        <th style="width: 45%;">Service Package</th>
+                        <th style="width: 30%;">Price (VND)</th>
+                        <th style="width: 20%;">Prebook (min)</th>
+                        <th style="width: 5%; text-align: center;">Delete</th>
+                    </tr>
+                </thead>
+                <tbody class="packages-tbody"></tbody>
+            </table>
+        `);
+
+        const packagesTbody = packagesTable.find('.packages-tbody');
+        store.packages.forEach(function(pkg, pkgIndex) {
+            const row = renderPackageRow(pkg, storeIndex, pkgIndex);
+            packagesTbody.append(row);
+        });
+
+        packagesSection.append(packagesTable);
+        packagesSection.append(`<button class="add-package-btn" data-store-index="${storeIndex}">➕ Add Package</button>`);
+
+        body.append(fixedFields);
+        body.append(packagesSection);
+
+        section.append(header);
+        section.append(body);
+
+        // Toggle accordion
+        header.on('click', function() {
+            const icon = $(this).find('.store-header-icon');
+            const body = $(this).siblings('.store-body');
+
+            if (body.hasClass('active')) {
+                body.removeClass('active');
+                icon.addClass('collapsed');
+            } else {
+                body.addClass('active');
+                icon.removeClass('collapsed');
+            }
+        });
+
+        return section;
+    }
+
+    function renderPackageRow(pkg, storeIndex, pkgIndex) {
+        return $(`
+            <tr data-package-index="${pkgIndex}">
+                <td><input type="text" class="package-name" value="${pkg.package || ''}" placeholder="VIP Package"></td>
+                <td><input type="text" class="package-price price-input" value="${formatNumber(pkg.price)}" data-raw-value="${pkg.price}" placeholder="0"></td>
+                <td><input type="number" class="package-prebook" value="${pkg.prebook_time || '15'}" min="0" placeholder="15"></td>
+                <td style="text-align: center;"><span class="delete-package-btn" data-store-index="${storeIndex}" data-package-index="${pkgIndex}">❌</span></td>
+            </tr>
+        `);
+    }
     
     function normalizeTime(timeStr) {
         if (!timeStr) return '';
-        
+
         // Convert to string and clean
         timeStr = String(timeStr).trim();
-        
+
         // Remove any quotes
         timeStr = timeStr.replace(/['"]/g, '');
-        
+
         // Remove any spaces
         timeStr = timeStr.replace(/\s/g, '');
-        
+
         // Split by colon
         const parts = timeStr.split(':');
         if (parts.length !== 2) {
             console.warn('Invalid time format:', timeStr);
             return '';
         }
-        
+
         // Parse and validate
         let hours = parseInt(parts[0], 10);
         let minutes = parseInt(parts[1], 10);
-        
+
         if (isNaN(hours) || isNaN(minutes)) {
             console.warn('Invalid time values:', timeStr);
             return '';
         }
-        
+
         // Validate ranges
         if (hours < 0 || hours > 23) hours = 0;
         if (minutes < 0 || minutes > 59) minutes = 0;
-        
+
         // Pad with zeros
         const normalized = String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0');
-        
+
         console.log('Normalized time:', timeStr, '->', normalized);
         return normalized;
     }
-    
-    function addRow(data = null) {
-        console.log('addRow called with data:', data);
-        
-        const openingTime = data && data.opening_hours ? normalizeTime(data.opening_hours) : '';
-        const closingTime = data && data.closing_hours ? normalizeTime(data.closing_hours) : '';
-        
-        console.log('After normalize - Opening:', openingTime, '| Closing:', closingTime);
-        
-        const row = $(`
-            <tr>
-                <td class="check-column" style="padding: 8px 2px;"><input type="checkbox" class="row-checkbox"></td>
-                <td><input type="text" name="service[]" value="${data ? data.service : ''}" placeholder="Karaoke" style="width:100%; box-sizing:border-box;"></td>
-                <td><input type="text" name="store[]" value="${data ? data.store : ''}" placeholder="Store name" style="width:100%; box-sizing:border-box;"></td>
-                <td><input type="text" name="store_id[]" value="${data ? data.store_id : ''}" placeholder="S1" style="width:100%; box-sizing:border-box;"></td>
-                <td><input type="text" name="package[]" value="${data ? data.package : ''}" placeholder="VIP" style="width:100%; box-sizing:border-box;"></td>
-                <td><input type="text" name="price[]" class="price-input" value="${data && data.price ? formatNumber(data.price) : ''}" placeholder="0" data-raw-value="${data ? data.price : ''}" style="width:100%; box-sizing:border-box;"></td>
-                <td><input type="time" name="opening_hours[]" value="${openingTime}" style="width:100%; box-sizing:border-box;"></td>
-                <td><input type="time" name="closing_hours[]" value="${closingTime}" style="width:100%; box-sizing:border-box;"></td>
-                <td><input type="number" name="prebook_time[]" value="${data ? data.prebook_time : '15'}" placeholder="15" min="0" style="width:100%; box-sizing:border-box;"></td>
-                <td style="text-align:center;"><button class="delete-row button" type="button" style="padding:2px 6px;">❌</button></td>
-            </tr>
-        `);
-        $('#vip-booking-tbody').append(row);
-        rowCounter++;
+
+    // Update storesData from DOM before saving
+    function updateStoresDataFromDOM() {
+        storesData = [];
+
+        $('.store-section').each(function() {
+            const $section = $(this);
+            const $body = $section.find('.store-body');
+
+            const store = {
+                service: $body.find('.store-service').val() || '',
+                store_name: $body.find('.store-name').val() || '',
+                store_id: $body.find('.store-id').val() || '',
+                opening_hours: $body.find('.store-opening').val() || '',
+                closing_hours: $body.find('.store-closing').val() || '',
+                packages: []
+            };
+
+            $body.find('.packages-tbody tr').each(function() {
+                const $row = $(this);
+                store.packages.push({
+                    package: $row.find('.package-name').val() || '',
+                    price: $row.find('.package-price').attr('data-raw-value') || unformatNumber($row.find('.package-price').val()) || '',
+                    prebook_time: $row.find('.package-prebook').val() || '15'
+                });
+            });
+
+            storesData.push(store);
+        });
+    }
+
+    // Flatten stores data to flat rows (for saving to database)
+    function flattenStoresData() {
+        const flatData = [];
+
+        storesData.forEach(function(store) {
+            if (store.packages.length === 0) {
+                // Store with no packages - create one row with empty package
+                flatData.push({
+                    service: store.service,
+                    store: store.store_name,
+                    store_id: store.store_id,
+                    package: '',
+                    price: '',
+                    opening_hours: store.opening_hours,
+                    closing_hours: store.closing_hours,
+                    prebook_time: '15'
+                });
+            } else {
+                // Create one row per package
+                store.packages.forEach(function(pkg) {
+                    flatData.push({
+                        service: store.service,
+                        store: store.store_name,
+                        store_id: store.store_id,
+                        package: pkg.package,
+                        price: pkg.price,
+                        opening_hours: store.opening_hours,
+                        closing_hours: store.closing_hours,
+                        prebook_time: pkg.prebook_time
+                    });
+                });
+            }
+        });
+
+        return flatData;
     }
     
     $(document).on('input', '.price-input', function() {
@@ -157,64 +386,147 @@ jQuery(document).ready(function($) {
         $(this).attr('data-raw-value', rawValue);
         $(this).val(formatNumber(rawValue));
     });
-    
+
     $('#exchange-rate-display').on('input', function() {
         const rawValue = unformatNumber($(this).val());
         $('#exchange-rate').val(rawValue);
         $(this).val(formatNumber(rawValue));
     });
-    
-    $('#add-row').click(function() { addRow(); });
-    
-    $(document).on('click', '.delete-row', function() {
-        $(this).closest('tr').remove();
+
+    // Add new store
+    $('#add-store').click(function() {
+        storesData.push({
+            service: '',
+            store_name: '',
+            store_id: '',
+            opening_hours: '',
+            closing_hours: '',
+            packages: [{
+                package: '',
+                price: '',
+                prebook_time: '15'
+            }]
+        });
+        renderStores();
+
+        // Auto-expand the new store
+        const newStore = $('.store-section').last();
+        newStore.find('.store-body').addClass('active');
+        newStore.find('.store-header-icon').removeClass('collapsed');
     });
-    
-    $('#select-all').change(function() {
-        $('.row-checkbox').prop('checked', $(this).prop('checked'));
+
+    // Delete store
+    $(document).on('click', '.delete-store-btn', function(e) {
+        e.stopPropagation();
+        const storeIndex = $(this).data('store-index');
+        const storeName = storesData[storeIndex].store_name || 'Unnamed Store';
+
+        if (confirm(`Delete store "${storeName}" and all its packages?`)) {
+            // Save expanded state before deletion
+            const expandedIndices = saveExpandedState();
+
+            storesData.splice(storeIndex, 1);
+            renderStores();
+
+            // Restore expanded state (adjust indices after deletion)
+            const adjustedIndices = expandedIndices
+                .filter(idx => idx !== storeIndex)
+                .map(idx => idx > storeIndex ? idx - 1 : idx);
+            restoreExpandedState(adjustedIndices);
+        }
     });
-    
-    $('#delete-selected').click(function() {
-        if (confirm('Delete selected rows?')) {
-            $('.row-checkbox:checked').each(function() { $(this).closest('tr').remove(); });
-            $('#select-all').prop('checked', false);
+
+    // Add package to store
+    $(document).on('click', '.add-package-btn', function() {
+        const storeIndex = $(this).data('store-index');
+        const $tbody = $(this).siblings('.packages-table').find('.packages-tbody');
+
+        const newPackage = {
+            package: '',
+            price: '',
+            prebook_time: '15'
+        };
+
+        storesData[storeIndex].packages.push(newPackage);
+
+        const pkgIndex = storesData[storeIndex].packages.length - 1;
+        const row = renderPackageRow(newPackage, storeIndex, pkgIndex);
+        $tbody.append(row);
+
+        // Update header package count
+        $(this).closest('.store-section').find('.store-header-info').find('.store-info-value').last().text(storesData[storeIndex].packages.length);
+    });
+
+    // Delete package from store
+    $(document).on('click', '.delete-package-btn', function() {
+        const storeIndex = $(this).data('store-index');
+        const pkgIndex = $(this).data('package-index');
+
+        if (storesData[storeIndex].packages.length === 1) {
+            alert('⚠️ Cannot delete the last package. Each store must have at least one package.');
+            return;
+        }
+
+        if (confirm('Delete this package?')) {
+            // Save expanded state before re-rendering
+            const expandedIndices = saveExpandedState();
+
+            storesData[storeIndex].packages.splice(pkgIndex, 1);
+            renderStores();
+
+            // Restore expanded state after re-rendering
+            restoreExpandedState(expandedIndices);
         }
     });
     
     $('#reset-all').click(function() {
-        if (confirm('⚠️ WARNING: This will delete ALL data in the table!\n\nAre you absolutely sure?')) {
+        if (confirm('⚠️ WARNING: This will delete ALL stores and data!\n\nAre you absolutely sure?')) {
             if (confirm('This action CANNOT be undone. Proceed?')) {
-                $('#vip-booking-tbody').empty();
-                addRow();
+                storesData = [];
+                renderStores();
                 alert('✅ All data has been cleared!');
             }
         }
     });
-    
+
     $('#save-changes').click(function() {
-        const data = [];
-        $('#vip-booking-tbody tr').each(function() {
-            const $row = $(this);
-            data.push({
-                service: $row.find('input[name="service[]"]').val(),
-                store: $row.find('input[name="store[]"]').val(),
-                store_id: $row.find('input[name="store_id[]"]').val(),
-                package: $row.find('input[name="package[]"]').val(),
-                price: $row.find('input[name="price[]"]').attr('data-raw-value') || unformatNumber($row.find('input[name="price[]"]').val()),
-                opening_hours: $row.find('input[name="opening_hours[]"]').val(),
-                closing_hours: $row.find('input[name="closing_hours[]"]').val(),
-                prebook_time: $row.find('input[name="prebook_time[]"]').val()
-            });
-        });
-        
+        // Update storesData from DOM
+        updateStoresDataFromDOM();
+
+        // Flatten to flat rows for database
+        const flatData = flattenStoresData();
+
+        console.log('Saving stores:', storesData);
+        console.log('Flattened data:', flatData);
+
+        // Save expanded state before saving
+        const expandedIndices = saveExpandedState();
+
         $('#loading-overlay').show();
         $.ajax({
             url: ajaxurl,
             type: 'POST',
-            data: { action: 'vip_booking_save_data', nonce: nonce, data: JSON.stringify(data) },
+            data: { action: 'vip_booking_save_data', nonce: nonce, data: JSON.stringify(flatData) },
             success: function(response) {
                 $('#loading-overlay').hide();
-                alert(response.success ? '✅ Data saved!' : '❌ Failed to save');
+                if (response.success) {
+                    alert('✅ Data saved!');
+                    // Reload to reflect any changes
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: { action: 'vip_booking_get_data', nonce: nonce },
+                        success: function(response) {
+                            const data = response.success ? (response.data || []) : [];
+                            storesData = groupDataByStore(data);
+                            renderStores();
+                            // Restore expanded state after reload
+                            restoreExpandedState(expandedIndices);
+                        }
+                    });
+                } else {
+                    alert('❌ Failed to save');
+                }
             }
         });
     });
@@ -357,26 +669,17 @@ jQuery(document).ready(function($) {
     });
 
     $('#export-csv').click(function() {
-        const data = [];
-        $('#vip-booking-tbody tr').each(function() {
-            const $row = $(this);
-            data.push({
-                service: $row.find('input[name="service[]"]').val(),
-                store: $row.find('input[name="store[]"]').val(),
-                store_id: $row.find('input[name="store_id[]"]').val(),
-                package: $row.find('input[name="package[]"]').val(),
-                price: $row.find('input[name="price[]"]').attr('data-raw-value') || unformatNumber($row.find('input[name="price[]"]').val()),
-                opening_hours: $row.find('input[name="opening_hours[]"]').val(),
-                closing_hours: $row.find('input[name="closing_hours[]"]').val(),
-                prebook_time: $row.find('input[name="prebook_time[]"]').val()
-            });
-        });
+        // Update storesData from DOM
+        updateStoresDataFromDOM();
+
+        // Flatten to flat rows for CSV export
+        const flatData = flattenStoresData();
 
         let csvContent = "Service,Store Name,Store ID,Service Package,Price,Opening Hours,Closing Hours,Prebook Time\n";
-        data.forEach(function(row) {
+        flatData.forEach(function(row) {
             csvContent += `"${row.service}","${row.store}","${row.store_id}","${row.package}","${row.price}","${row.opening_hours}","${row.closing_hours}","${row.prebook_time}"\n`;
         });
-        
+
         const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -386,6 +689,8 @@ jQuery(document).ready(function($) {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
+
+        alert('✅ CSV exported successfully!');
     });
     
     $('#import-csv').click(function() { $('#csv-file-input').click(); });
@@ -393,31 +698,31 @@ jQuery(document).ready(function($) {
     $('#csv-file-input').change(function(e) {
         const file = e.target.files[0];
         if (!file) return;
-        
+
         const reader = new FileReader();
         reader.onload = function(e) {
             let csv = e.target.result;
-            
+
             // Normalize line endings (handle \r\n, \r, \n)
             csv = csv.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-            
+
             const lines = csv.split('\n');
-            $('#vip-booking-tbody').empty();
-            
+            const flatData = [];
+
             let importCount = 0;
             let errorCount = 0;
-            
+
             console.log('=== CSV IMPORT START ===');
-            
+
             for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
                 if (!line) continue;
-                
+
                 // Parse CSV - handle quoted values properly
                 const values = [];
                 let current = '';
                 let inQuotes = false;
-                
+
                 for (let j = 0; j < line.length; j++) {
                     const char = line[j];
                     if (char === '"') {
@@ -431,7 +736,7 @@ jQuery(document).ready(function($) {
                 }
                 // Don't forget the last value!
                 values.push(current.trim().replace(/^["']|["']$/g, ''));
-                
+
                 // Debug every row
                 console.log('Row', i, 'raw values:', values);
 
@@ -442,7 +747,7 @@ jQuery(document).ready(function($) {
 
                     if (hasStoreId) {
                         console.log('Row', i, '- Opening raw:', values[5], '- Closing raw:', values[6]);
-                        addRow({
+                        flatData.push({
                             service: values[0] || '',
                             store: values[1] || '',
                             store_id: values[2] || '',
@@ -455,7 +760,7 @@ jQuery(document).ready(function($) {
                     } else {
                         // Old format without Store ID
                         console.log('Row', i, '- Opening raw:', values[4], '- Closing raw:', values[5]);
-                        addRow({
+                        flatData.push({
                             service: values[0] || '',
                             store: values[1] || '',
                             store_id: '',
@@ -472,19 +777,27 @@ jQuery(document).ready(function($) {
                     errorCount++;
                 }
             }
-            
+
             console.log('=== CSV IMPORT END ===');
             console.log('Imported:', importCount, '| Errors:', errorCount);
-            
+
             if (importCount > 0) {
-                let message = `✅ Successfully imported ${importCount} row(s)!`;
+                // Group flat data into stores
+                storesData = groupDataByStore(flatData);
+                renderStores();
+
+                // Expand all stores after import so user can see what was imported
+                const allIndices = storesData.map((_, idx) => idx);
+                restoreExpandedState(allIndices);
+
+                let message = `✅ Successfully imported ${importCount} row(s) into ${storesData.length} store(s)!`;
                 if (errorCount > 0) {
                     message += `\n\n⚠️ Skipped ${errorCount} invalid row(s).`;
                 }
                 message += '\n\n💾 Click "Save Changes" to save to database.';
                 alert(message);
             } else {
-                alert('❌ No valid data found in CSV file.\n\nExpected 7 columns:\nService, Store Name, Service Package, Price, Opening Hours, Closing Hours, Prebook Time\n\nCheck browser console (F12) for details.');
+                alert('❌ No valid data found in CSV file.\n\nExpected 8 columns:\nService, Store Name, Store ID, Service Package, Price, Opening Hours, Closing Hours, Prebook Time\n\nCheck browser console (F12) for details.');
             }
         };
         reader.readAsText(file);

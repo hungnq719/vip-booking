@@ -93,6 +93,137 @@ vip-booking/
 - `save_badge_url($url)` - Saves badge click URL
 - `get_badge_url()` - Gets badge click URL (default: empty string)
 
+**Admin UI Tabs:**
+- **Dashboard** - Statistics overview with beautiful stat cards
+- **Booking Manager** - View and manage all bookings with filterable table
+- **Booking Data** - Configure services, stores, packages with accordion-based UI
+- **Notifications** - Setup Telegram and Email notifications
+
+### 2.1. Admin UI Design System - `templates/admin-page.php`
+
+The admin interface features a modern, uniform design system across all tabs with consistent styling, gradients, and interactive elements.
+
+**Color Theme:**
+- Primary gradient: `linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%)` - Neutral blue-gray
+- Danger gradient: `linear-gradient(135deg, #dc3232 0%, #c62d2d 100%)` - Red for destructive actions
+- Card background: `linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)` - White to light gray
+
+**Design Principles:**
+- **Consistent Cards**: All sections use gradient card backgrounds with rounded corners (8px) and shadows
+- **Unified Buttons**: All buttons feature gradient backgrounds, shadows, and hover elevation effects
+- **Icon Headers**: Section headers enhanced with emoji icons for visual clarity
+- **Hover Effects**: Interactive elements elevate (`translateY(-2px)`) and enhance shadows on hover
+- **Smooth Transitions**: All interactive elements have 0.3s transitions for fluid animations
+
+**Dashboard Tab:**
+- **Stat Cards**: Display Today, This Week, This Month booking counts
+  - Gradient backgrounds with shadows (`0 4px 15px rgba(0,0,0,0.08)`)
+  - Large emoji icons (48px) with drop-shadow filter
+  - Gradient text for numbers using `background-clip: text`
+  - Pill-shaped status badges for Upcoming/Completed counts
+  - Hover effect: Elevation with enhanced shadow
+  - Flexbox layout with proper spacing to prevent number overlap
+- **Shortcode Guide**: Card-based guide with colored left borders for different shortcode types
+
+**Booking Manager Tab:**
+- **Settings Cards**: Cleanup Settings and Badge Settings in gradient cards
+  - Icon-enhanced headers with emoji + title
+  - Input fields with consistent styling and focus states
+  - Info boxes with subtle backgrounds and left borders
+- **Bookings Table**: Beautiful table wrapper with gradient header
+  - Gradient header row: `#546e7a → #78909c` with white text
+  - Hover effect on rows: Subtle elevation and background change
+  - Enhanced status badges with gradients and icons
+  - Delete button with emoji, transparent background, hover scale
+  - Checkbox column for bulk selection
+
+**Booking Data Tab:**
+- **Store Accordion System**: Groups flat CSV data by Store (Store Name + Store ID)
+  - Gradient store headers with click-to-expand functionality
+  - Store info display: Service, Store Name, Store ID, Hours, Package count
+  - Editable fixed fields inside accordion body
+  - Packages table with Add/Delete functionality per store
+  - State preservation across all operations (delete, save, import)
+  - Hover effects on store sections and packages table rows
+- **General Settings Card**: Exchange rate and rate limiter configuration
+  - Icon-enhanced header (⚙️ + title)
+  - Consistent input field styling
+- **Nation Flags Card**: Flag emoji management
+  - Visual flag display with hover scale effect
+  - Add/Remove flag functionality
+- **Toolbar Buttons**: Add New Store, Save Changes, Reset All Data, Export/Import CSV
+  - All buttons use gradient styling with consistent padding and shadows
+  - Hover effects with darker gradients and elevation
+
+**Notifications Tab:**
+- **Telegram Settings Card**: Bot token, chat IDs, and test connection
+  - Checkbox to enable/disable
+  - Add Chat ID button for multiple recipients
+  - Test button with result display
+  - Info boxes with links to @BotFather and @userinfobot
+- **Email Settings Card**: Email recipients and test functionality
+  - Add Recipient button for multiple emails
+  - Test email with address input
+  - Warning box for WP Mail SMTP plugin recommendation
+- **Card Image Settings**: Toggle to include booking card in notifications
+- **Template Settings**: Customizable notification message template
+  - Monospace textarea for template editing
+  - Placeholder documentation
+  - Reset to Default button
+- **Save Button**: Large gradient button for saving all notification settings
+
+**Button Styling Standards:**
+```css
+/* Primary buttons (Save, Add, Export, etc.) */
+background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%);
+border: none;
+color: white;
+padding: 10px 20px; /* or 8px 16px for smaller buttons */
+border-radius: 6px;
+font-weight: 500;
+box-shadow: 0 2px 8px rgba(90,108,125,0.3);
+transition: all 0.3s;
+
+/* Hover state */
+background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%);
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(90,108,125,0.4);
+```
+
+**Input Field Styling Standards:**
+```css
+/* Text inputs, textareas, selects */
+width: 100%; /* or specific max-width */
+padding: 10px;
+border: 1px solid #ddd;
+border-radius: 5px;
+font-size: 14px;
+transition: all 0.2s;
+
+/* Focus state */
+border-color: #5a6c7d;
+outline: none;
+box-shadow: 0 0 0 3px rgba(90,108,125,0.1);
+```
+
+**Card Styling Standards:**
+```css
+/* Section cards */
+background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+padding: 20px-25px;
+margin-bottom: 20px;
+border: none;
+border-radius: 8px;
+box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+```
+
+**CSV Import/Export Compatibility:**
+- Booking Data accordion UI maintains 100% compatibility with flat CSV format
+- Data transformation functions: `groupDataByStore()` and `flattenStoresData()`
+- Store grouping key: `store_name|store_id`
+- CSV export flattens accordion data back to rows
+- CSV import re-groups rows into store sections and auto-expands all
+
 ### 3. AJAX Handlers - `class-ajax.php`
 
 **Admin Endpoints (require `manage_options`):**
@@ -923,7 +1054,7 @@ VIP_BOOKING_PLUGIN_URL   // URL to plugin directory
 
 ---
 
-**Last Updated:** 2025-11-21 (Added Store ID field with storeid shortcode attribute for direct booking. Removed auto-login popup - login only required on submission. Added smooth 500ms transitions for form/results/time-picker state changes. Fixed step numbering for storeid mode. Improved scroll behavior - scrolls to container top instead of page top. Added CSV import/export support for Store ID field with backward compatibility.)
+**Last Updated:** 2025-11-21 (Redesigned admin UI with uniform design system across all tabs. Implemented gradient-based card layouts, enhanced stat cards in Dashboard, accordion-based store grouping in Booking Data, beautiful table design in Booking Manager, and comprehensive notification settings. Added consistent button styling with hover effects, icon-enhanced headers, and smooth transitions throughout. All UI elements now follow neutral blue-gray color theme with proper spacing and visual hierarchy. Store accordion system maintains 100% CSV import/export compatibility.)
 **Maintainer:** VIP Booking Development Team
 **WordPress Version Tested:** 6.x+
 **PHP Version Required:** 7.4+
