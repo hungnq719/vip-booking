@@ -342,10 +342,30 @@ var vipCardApp = (function() {
             loadRateLimitInfo();
         }
 
-        // Load popup settings and handle auto-open
+        // Load popup settings and create trigger element early
         if (requireLogin && !isLoggedIn) {
+            // Create trigger element IMMEDIATELY (before Spectra initializes)
+            createEarlyTrigger();
+            // Then load settings asynchronously
             loadPopupSettings();
         }
+    }
+
+    function createEarlyTrigger() {
+        // Create a placeholder trigger element that will be updated with the actual class later
+        var earlyTrigger = document.createElement('a');
+        earlyTrigger.href = 'javascript:void(0);'; // Prevent scroll to top
+        earlyTrigger.id = 'vip-booking-popup-trigger';
+        earlyTrigger.style.cssText = 'display: none !important; visibility: hidden !important; position: absolute; left: -9999px; pointer-events: none;';
+        earlyTrigger.setAttribute('aria-hidden', 'true');
+        earlyTrigger.setAttribute('tabindex', '-1');
+        // Prevent default on click to avoid any scroll behavior
+        earlyTrigger.onclick = function(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            return false;
+        };
+        document.body.appendChild(earlyTrigger);
+        console.log('Created early placeholder trigger element');
     }
 
     function loadPopupSettings() {
@@ -359,9 +379,9 @@ var vipCardApp = (function() {
             if (data.success && data.data) {
                 popupSettings = data.data;
 
-                // Create permanent hidden trigger element for Spectra
-                if (popupSettings.trigger_class && !document.querySelector('.' + popupSettings.trigger_class)) {
-                    createPermanentTrigger();
+                // Update the early trigger element with the actual Spectra class
+                if (popupSettings.trigger_class) {
+                    updateTriggerClass();
                 }
 
                 // Handle auto-open if enabled
@@ -378,15 +398,12 @@ var vipCardApp = (function() {
         });
     }
 
-    function createPermanentTrigger() {
-        var permanentTrigger = document.createElement('a');
-        permanentTrigger.href = '#';
-        permanentTrigger.className = popupSettings.trigger_class;
-        permanentTrigger.style.cssText = 'display: none !important; visibility: hidden !important; position: absolute; left: -9999px; pointer-events: none;';
-        permanentTrigger.setAttribute('aria-hidden', 'true');
-        permanentTrigger.setAttribute('tabindex', '-1');
-        document.body.appendChild(permanentTrigger);
-        console.log('Created permanent Spectra trigger element:', popupSettings.trigger_class);
+    function updateTriggerClass() {
+        var trigger = document.getElementById('vip-booking-popup-trigger');
+        if (trigger && popupSettings.trigger_class) {
+            trigger.className = popupSettings.trigger_class;
+            console.log('Updated trigger element with Spectra class:', popupSettings.trigger_class);
+        }
     }
 
     function triggerSpectraPopup() {
@@ -399,7 +416,14 @@ var vipCardApp = (function() {
         var triggerElement = document.querySelector('.' + popupSettings.trigger_class);
         if (triggerElement) {
             console.log('Triggering Spectra popup:', popupSettings.trigger_class);
-            triggerElement.click();
+
+            // Create and dispatch a proper click event
+            var clickEvent = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+            triggerElement.dispatchEvent(clickEvent);
         } else {
             console.warn('Spectra popup trigger not found. Ensure popup is configured correctly.');
         }
