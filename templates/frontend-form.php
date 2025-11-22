@@ -369,17 +369,13 @@ var vipCardApp = (function() {
 
     function triggerSpectraPopup() {
         if (!popupSettings || !popupSettings.trigger_class) {
-            console.warn('Spectra popup trigger class not configured');
             showLoginMessage();
             return;
         }
 
-        console.log('Attempting to trigger Spectra popup with class:', popupSettings.trigger_class);
-
         // Method 1: Click our hidden trigger element (preferred)
         var hiddenTrigger = document.getElementById('vip-booking-spectra-trigger');
         if (hiddenTrigger && hiddenTrigger.className.indexOf(popupSettings.trigger_class) > -1) {
-            console.log('Clicking our hidden Spectra trigger element');
             hiddenTrigger.click();
             return;
         }
@@ -388,10 +384,7 @@ var vipCardApp = (function() {
         var existingTriggers = document.querySelectorAll('.' + popupSettings.trigger_class);
 
         if (existingTriggers.length > 0) {
-            console.log('Found existing Spectra trigger(s):', existingTriggers.length);
             var trigger = existingTriggers[0];
-            console.log('Clicking existing trigger:', trigger);
-
             if (typeof trigger.click === 'function') {
                 trigger.click();
             } else {
@@ -404,19 +397,15 @@ var vipCardApp = (function() {
             return;
         }
 
-        console.log('No existing trigger found, trying to open popup directly via Spectra API');
-
         // Method 3: Extract popup ID and try to open via Spectra's JavaScript API
         // Trigger class format: "spectra-popup-trigger-XXXXX" where XXXXX is the popup ID
         var popupIdMatch = popupSettings.trigger_class.match(/spectra-popup-trigger-(\d+)/);
 
         if (popupIdMatch && popupIdMatch[1]) {
             var popupId = popupIdMatch[1];
-            console.log('Extracted popup ID:', popupId);
 
             // Try Spectra's global API to open popup directly
             if (window.UAGBSpectraPopup && typeof window.UAGBSpectraPopup.openPopup === 'function') {
-                console.log('Using UAGBSpectraPopup.openPopup()');
                 window.UAGBSpectraPopup.openPopup(popupId);
                 return;
             }
@@ -424,15 +413,10 @@ var vipCardApp = (function() {
             // Alternative: Try to find popup element and trigger it
             var popupElement = document.querySelector('.uagb-spectra-popup-' + popupId);
             if (popupElement) {
-                console.log('Found popup element, adding show class');
                 popupElement.classList.add('uagb-spectra-popup-show');
                 return;
             }
         }
-
-        console.error('Failed to trigger Spectra popup. Please ensure:',
-            '\n1. A Spectra popup trigger element exists on the page with class: ' + popupSettings.trigger_class,
-            '\n2. Or the Spectra popup plugin is properly installed and activated');
     }
 
     function showLoginMessage() {
@@ -1355,11 +1339,8 @@ var vipCardApp = (function() {
         })
         .then(function(response) { return response.json(); })
         .then(function(data) {
-            if (data.success) {
-                console.log('Booking saved:', data.data.booking_number);
-                if (document.getElementById('rate-limit-info')) {
-                    loadRateLimitInfo();
-                }
+            if (data.success && document.getElementById('rate-limit-info')) {
+                loadRateLimitInfo();
             }
         })
         .catch(function(err) {

@@ -86,8 +86,4 @@ class VIP_Booking_Rate_Limiter {
             'message' => $allowed ? '' : 'Rate limit exceeded'
         );
     }
-
-    public function record_booking($user_id = null) {
-        return true;
-    }
 }

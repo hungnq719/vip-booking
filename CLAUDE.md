@@ -246,7 +246,6 @@ box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 
 **Frontend Endpoints:**
 - `vip_booking_check_rate_limit` - Check if user can book (logged in only)
-- `vip_booking_record_booking` - Record booking attempt (deprecated)
 - `vip_booking_create_booking` - Create new booking (logged in only)
 - `vip_booking_check_login` - Check login status (public + logged in)
 - `vip_booking_get_badge_count` - Get user's upcoming bookings count (public + logged in)
@@ -1054,7 +1053,31 @@ VIP_BOOKING_PLUGIN_URL   // URL to plugin directory
 
 ---
 
-**Last Updated:** 2025-11-21 (Redesigned admin UI with uniform design system across all tabs. Implemented gradient-based card layouts, enhanced stat cards in Dashboard, accordion-based store grouping in Booking Data, beautiful table design in Booking Manager, and comprehensive notification settings. Added consistent button styling with hover effects, icon-enhanced headers, and smooth transitions throughout. All UI elements now follow neutral blue-gray color theme with proper spacing and visual hierarchy. Store accordion system maintains 100% CSV import/export compatibility.)
+## Code Cleanup & Optimization
+
+**Date:** 2025-11-22
+
+### Removed Deprecated Code:
+- ❌ Removed `record_booking()` AJAX endpoint (deprecated, no longer used)
+- ❌ Removed `record_booking()` method from `VIP_Booking_Rate_Limiter` class
+- ❌ Removed all debugging `console.log()` statements from production code
+  - Cleaned up `assets/js/admin.js` (16 debug logs removed)
+  - Cleaned up `assets/js/frontend.js` (1 debug log removed)
+  - Cleaned up `templates/frontend-form.php` (10 debug logs removed)
+
+### Retained Error Logging:
+- ✅ Kept critical `console.error()` and `console.warn()` for error tracking
+- ✅ Kept server-side `error_log()` for debugging
+
+### Code Quality Improvements:
+- Cleaner, production-ready JavaScript
+- Reduced code size and improved performance
+- Removed legacy debugging artifacts
+- All functionality verified and working after cleanup
+
+---
+
+**Last Updated:** 2025-11-22 (Code cleanup: Removed deprecated `record_booking` endpoint and method, removed all debug console.log statements from JavaScript files while keeping error logging. Verified all remaining code is actively used and necessary for plugin functionality.)
 **Maintainer:** VIP Booking Development Team
 **WordPress Version Tested:** 6.x+
 **PHP Version Required:** 7.4+
