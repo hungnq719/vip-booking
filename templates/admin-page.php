@@ -99,6 +99,7 @@ foreach ($month_bookings as $booking_id) {
         <a href="#bookings" class="nav-tab" data-tab="bookings">📋 Booking Manager</a>
         <a href="#data" class="nav-tab" data-tab="data">🏪 Booking Data</a>
         <a href="#notifications" class="nav-tab" data-tab="notifications">🔔 Notifications</a>
+        <a href="#popup-login" class="nav-tab" data-tab="popup-login">🔐 Popup Login</a>
     </div>
     
     <!-- Tab 1: Dashboard -->
@@ -486,6 +487,75 @@ foreach ($month_bookings as $booking_id) {
         </div>
     </div>
 
+    <!-- Tab 5: Popup Login -->
+    <div id="tab-popup-login" class="tab-content">
+        <h2 style="margin-bottom: 25px; color: #546e7a;">🔐 Popup Login Settings</h2>
+
+        <!-- Spectra Popup Settings -->
+        <div class="vip-popup-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">🎯</span> Spectra (UAG) Popup Configuration</h3>
+            <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                Configure your Spectra popup to display login form when users click "Make Reservation" button. This replaces the default custom login popup with your Spectra popup.
+            </p>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;"><strong>Spectra Popup Trigger Class:</strong></label>
+                <input type="text" id="popup-trigger-class" placeholder="e.g., spectra-popup-trigger-1234" style="width: 100%; max-width: 500px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: all 0.2s;">
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
+                    ℹ️ Enter the CSS class of your Spectra popup trigger (without the dot). Example: <code style="background: rgba(90,108,125,0.1); padding: 2px 6px; border-radius: 3px;">spectra-popup-trigger-1234</code><br>
+                    You can find this class in your Spectra popup settings in the WordPress editor.
+                </p>
+            </div>
+
+            <div style="margin-bottom: 20px; padding: 20px; background: rgba(90,108,125,0.03); border-radius: 8px; border: 1px solid rgba(90,108,125,0.1);">
+                <h4 style="margin-top: 0; color: #546e7a; font-size: 16px;">⏱️ Auto-Open Settings</h4>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="popup-auto-open-enabled" style="width: auto;">
+                        <strong>Enable auto-open popup on page load</strong>
+                    </label>
+                </div>
+
+                <div id="auto-open-seconds-container" style="margin-bottom: 15px; padding-left: 30px; display: none;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Auto-open delay (seconds):</label>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <input type="number" id="popup-auto-open-seconds" value="0" min="0" max="60" style="width: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                        <span style="color: #666;">seconds</span>
+                    </div>
+                    <p style="color: #666; font-size: 12px; margin: 8px 0 0 0;">
+                        ℹ️ Set to 0 for immediate popup on page load. Recommended: 2-5 seconds for better user experience.
+                    </p>
+                </div>
+
+                <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin-top: 15px;">
+                    <p style="margin: 0; color: #856404; font-size: 13px;">
+                        ⚠️ <strong>Note:</strong> When disabled, the popup will only show when users click the "Make Reservation" button (recommended default behavior).
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to Setup Guide -->
+        <div class="vip-popup-section" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 25px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #1976d2; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">📚</span> How to Setup Spectra Popup</h3>
+            <ol style="color: #0d47a1; font-size: 14px; line-height: 1.8; padding-left: 20px;">
+                <li>Install and activate the <strong>Spectra (UAG)</strong> plugin if not already installed</li>
+                <li>Create a new Spectra popup with your login form content</li>
+                <li>In the popup settings, find the <strong>"Trigger Class"</strong> (e.g., <code>spectra-popup-trigger-1234</code>)</li>
+                <li>Copy the trigger class and paste it in the field above</li>
+                <li>Configure auto-open settings if desired (optional)</li>
+                <li>Click <strong>"Save Popup Settings"</strong> below</li>
+                <li>Test by visiting your booking form page and clicking "Make Reservation"</li>
+            </ol>
+        </div>
+
+        <!-- Save Button -->
+        <div style="padding: 15px 0;">
+            <button id="save-popup-settings" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 12px 30px; border-radius: 6px; font-weight: 500; font-size: 14px; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s; cursor: pointer;">💾 Save Popup Settings</button>
+        </div>
+    </div>
+
     <div id="loading-overlay" style="display: none;">
         <div class="loading-spinner"></div>
     </div>
@@ -576,6 +646,8 @@ foreach ($month_bookings as $booking_id) {
 #save-notification-settings:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
 #add-store:hover, #save-changes:hover, #export-csv:hover, #import-csv:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
 #reset-all:hover { background: linear-gradient(135deg, #c62d2d 0%, #b02727 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(220,50,50,0.4); }
+#popup-trigger-class:focus, #popup-auto-open-seconds:focus { border-color: #5a6c7d; outline: none; box-shadow: 0 0 0 3px rgba(90,108,125,0.1); }
+#save-popup-settings:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
 </style>
 
 <script>

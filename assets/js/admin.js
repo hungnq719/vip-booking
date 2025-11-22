@@ -1085,4 +1085,92 @@ jQuery(document).ready(function($) {
             alert('✅ Template reset to default. Click "Save All Notification Settings" to save.');
         }
     });
+
+    // ===== Popup Login Settings =====
+
+    // Load popup settings on page load
+    loadPopupSettings();
+
+    function loadPopupSettings() {
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: { action: 'vip_booking_get_popup_settings' },
+            success: function(response) {
+                if (response.success && response.data) {
+                    const settings = response.data;
+
+                    // Set trigger class
+                    $('#popup-trigger-class').val(settings.trigger_class || '');
+
+                    // Set auto-open settings
+                    $('#popup-auto-open-enabled').prop('checked', settings.auto_open_enabled || false);
+                    $('#popup-auto-open-seconds').val(settings.auto_open_seconds || 0);
+
+                    // Show/hide seconds input based on checkbox state
+                    if (settings.auto_open_enabled) {
+                        $('#auto-open-seconds-container').show();
+                    } else {
+                        $('#auto-open-seconds-container').hide();
+                    }
+                }
+            }
+        });
+    }
+
+    // Toggle auto-open seconds container
+    $('#popup-auto-open-enabled').change(function() {
+        if ($(this).is(':checked')) {
+            $('#auto-open-seconds-container').slideDown(300);
+        } else {
+            $('#auto-open-seconds-container').slideUp(300);
+        }
+    });
+
+    // Save popup settings
+    $('#save-popup-settings').click(function() {
+        const triggerClass = $('#popup-trigger-class').val().trim();
+        const autoOpenEnabled = $('#popup-auto-open-enabled').is(':checked');
+        const autoOpenSeconds = parseInt($('#popup-auto-open-seconds').val()) || 0;
+
+        // Validate trigger class
+        if (triggerClass === '') {
+            alert('⚠️ Please enter a Spectra popup trigger class.');
+            return;
+        }
+
+        // Validate seconds
+        if (autoOpenEnabled && (autoOpenSeconds < 0 || autoOpenSeconds > 60)) {
+            alert('⚠️ Auto-open delay must be between 0 and 60 seconds.');
+            return;
+        }
+
+        console.log('Saving popup settings:', { triggerClass, autoOpenEnabled, autoOpenSeconds });
+
+        $('#loading-overlay').show();
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_save_popup_settings',
+                nonce: nonce,
+                trigger_class: triggerClass,
+                auto_open_enabled: autoOpenEnabled ? 1 : 0,
+                auto_open_seconds: autoOpenSeconds
+            },
+            success: function(response) {
+                $('#loading-overlay').hide();
+                if (response.success) {
+                    alert('✅ Popup settings saved successfully!');
+                } else {
+                    alert('❌ Failed to save popup settings: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function() {
+                $('#loading-overlay').hide();
+                alert('❌ Failed to save popup settings. Please try again.');
+            }
+        });
+    });
 });

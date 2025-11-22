@@ -320,6 +320,11 @@ var vipCardApp = (function() {
     var selectedHour = null, selectedMinute = null;
     var currentTimeMode = 'hour'; // 'hour' or 'minute'
     var currentStoreConfig = null;
+    var popupSettings = {
+        trigger_class: '',
+        auto_open_enabled: false,
+        auto_open_seconds: 0
+    };
     
     function init() {
         initServiceDropdown();
@@ -337,7 +342,91 @@ var vipCardApp = (function() {
             loadRateLimitInfo();
         }
 
-        // Auto-popup disabled - login modal only shows when clicking Make Reservation
+        // Load popup settings and create trigger element early
+        if (requireLogin && !isLoggedIn) {
+            // Create trigger element IMMEDIATELY (before Spectra initializes)
+            createEarlyTrigger();
+            // Then load settings asynchronously
+            loadPopupSettings();
+        }
+    }
+
+    function createEarlyTrigger() {
+        // Create a placeholder trigger element that will be updated with the actual class later
+        var earlyTrigger = document.createElement('a');
+        earlyTrigger.href = 'javascript:void(0);'; // Prevent scroll to top
+        earlyTrigger.id = 'vip-booking-popup-trigger';
+        earlyTrigger.style.cssText = 'display: none !important; visibility: hidden !important; position: absolute; left: -9999px; pointer-events: none;';
+        earlyTrigger.setAttribute('aria-hidden', 'true');
+        earlyTrigger.setAttribute('tabindex', '-1');
+        // Prevent default on click to avoid any scroll behavior
+        earlyTrigger.onclick = function(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            return false;
+        };
+        document.body.appendChild(earlyTrigger);
+        console.log('Created early placeholder trigger element');
+    }
+
+    function loadPopupSettings() {
+        fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'action=vip_booking_get_popup_settings'
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success && data.data) {
+                popupSettings = data.data;
+
+                // Update the early trigger element with the actual Spectra class
+                if (popupSettings.trigger_class) {
+                    updateTriggerClass();
+                }
+
+                // Handle auto-open if enabled
+                if (popupSettings.auto_open_enabled && popupSettings.trigger_class) {
+                    var delay = Math.max(0, parseInt(popupSettings.auto_open_seconds) || 0) * 1000;
+                    setTimeout(function() {
+                        triggerSpectraPopup();
+                    }, delay);
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Failed to load popup settings:', error);
+        });
+    }
+
+    function updateTriggerClass() {
+        var trigger = document.getElementById('vip-booking-popup-trigger');
+        if (trigger && popupSettings.trigger_class) {
+            trigger.className = popupSettings.trigger_class;
+            console.log('Updated trigger element with Spectra class:', popupSettings.trigger_class);
+        }
+    }
+
+    function triggerSpectraPopup() {
+        if (!popupSettings.trigger_class) {
+            console.warn('Spectra popup trigger class not configured');
+            return;
+        }
+
+        // Find and click the permanent trigger element
+        var triggerElement = document.querySelector('.' + popupSettings.trigger_class);
+        if (triggerElement) {
+            console.log('Triggering Spectra popup:', popupSettings.trigger_class);
+
+            // Create and dispatch a proper click event
+            var clickEvent = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+            triggerElement.dispatchEvent(clickEvent);
+        } else {
+            console.warn('Spectra popup trigger not found. Ensure popup is configured correctly.');
+        }
     }
 
     function handlePreselectedStore() {
@@ -936,7 +1025,7 @@ var vipCardApp = (function() {
 
     function generateCard() {
         if (requireLogin && !isLoggedIn) {
-            showLoginModal();
+            triggerSpectraPopup();
             return;
         }
 
@@ -1193,19 +1282,6 @@ var vipCardApp = (function() {
         countdownInterval = setInterval(updateCountdown, 1000);
     }
     
-    function recordBooking() {
-        fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'action=vip_booking_record_booking&nonce=<?php echo wp_create_nonce('vip_booking_nonce'); ?>'
-        })
-        .then(function() {
-            if (document.getElementById('rate-limit-info')) {
-                loadRateLimitInfo();
-            }
-        });
-    }
-    
     function saveBookingToDatabase() {
         var service = document.getElementById('service').value;
         var store = document.getElementById('store').value;
@@ -1255,54 +1331,9 @@ var vipCardApp = (function() {
             console.error('Failed to save booking:', err);
         });
     }
-    
-    function openLoginPopup() {
-        window.open('/login', '_blank', 'width=600,height=700,left=200,top=100');
-    }
-    
-    function showLoginModal() {
-        var overlay = document.createElement('div');
-        overlay.id = 'login-modal-overlay';
-        overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;';
-        
-        var modal = document.createElement('div');
-        modal.style.cssText = 'background: white; border-radius: 30px; padding: 40px; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6);';
-        
-        modal.innerHTML = '<div style="margin-bottom: 20px;">🔐</div>' +
-            '<h2 style="margin: 0 0 15px 0;">' + i18n.login_required + '</h2>' +
-            '<p style="margin: 0 0 15px 0; font-size: 16px; color: #333; line-height: 1.6;">' + i18n.login_message + '</p>' +
-            '<p style="margin: 0 0 25px 0; font-size: 14px; color: #666; line-height: 1.5;">' + i18n.login_refresh_message + '</p>' +
-            '<button onclick="vipCardApp.openLoginFromModal()" style="display: inline-block; padding: 10px 20px; margin: 10px">' + i18n.login_now + '</button>' +
-            '<button onclick="vipCardApp.closeLoginModal()" style="padding: 10px 20px; background: #666; color: #fff;">' + i18n.cancel + '</button>';
-        
-        overlay.appendChild(modal);
-        document.body.appendChild(overlay);
-        
-        overlay.onclick = function(e) {
-            if (e.target === overlay) {
-                closeLoginModal();
-            }
-        };
-    }
-    
-    function openLoginFromModal() {
-        closeLoginModal();
-        openLoginPopup();
-    }
-    
-    function closeLoginModal() {
-        var overlay = document.getElementById('login-modal-overlay');
-        if (overlay) {
-            overlay.remove();
-        }
-    }
-    
-    
-    return { 
-        init: init,
-        openLoginPopup: openLoginPopup,
-        openLoginFromModal: openLoginFromModal,
-        closeLoginModal: closeLoginModal
+
+    return {
+        init: init
     };
 })();
 
