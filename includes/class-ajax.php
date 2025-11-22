@@ -27,10 +27,12 @@ class VIP_Booking_AJAX {
         add_action('wp_ajax_vip_booking_save_popup_settings', array($this, 'save_popup_settings'));
         add_action('wp_ajax_vip_booking_get_popup_settings', array($this, 'get_popup_settings'));
         add_action('wp_ajax_nopriv_vip_booking_get_popup_settings', array($this, 'get_popup_settings'));
+        add_action('wp_ajax_vip_booking_save_login_message_settings', array($this, 'save_login_message_settings'));
+        add_action('wp_ajax_vip_booking_get_login_message_settings', array($this, 'get_login_message_settings'));
+        add_action('wp_ajax_nopriv_vip_booking_get_login_message_settings', array($this, 'get_login_message_settings'));
 
         // Frontend AJAX
         add_action('wp_ajax_vip_booking_check_rate_limit', array($this, 'check_rate_limit'));
-        add_action('wp_ajax_vip_booking_record_booking', array($this, 'record_booking'));
         add_action('wp_ajax_vip_booking_create_booking', array($this, 'create_booking'));
         add_action('wp_ajax_vip_booking_check_login', array($this, 'check_login'));
         add_action('wp_ajax_nopriv_vip_booking_check_login', array($this, 'check_login'));
@@ -165,13 +167,7 @@ class VIP_Booking_AJAX {
             wp_send_json_error($result);
         }
     }
-    
-    public function record_booking() {
-        check_ajax_referer('vip_booking_nonce', 'nonce');
-        $this->rate_limiter->record_booking();
-        wp_send_json_success();
-    }
-    
+
     public function create_booking() {
         check_ajax_referer('vip_booking_nonce', 'nonce');
         if (!is_user_logged_in()) wp_send_json_error('Not logged in');
@@ -460,6 +456,25 @@ HTML;
     public function get_popup_settings() {
         // Public endpoint - no admin permission required for frontend to fetch settings
         $settings = VIP_Booking_Admin::get_popup_settings();
+        wp_send_json_success($settings);
+    }
+
+    public function save_login_message_settings() {
+        check_ajax_referer('vip_booking_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
+
+        $settings = array(
+            'message' => isset($_POST['message']) ? $_POST['message'] : '⚠️ Please login to make reservation!',
+            'login_url' => isset($_POST['login_url']) ? $_POST['login_url'] : '/login'
+        );
+
+        VIP_Booking_Admin::save_login_message_settings($settings);
+        wp_send_json_success();
+    }
+
+    public function get_login_message_settings() {
+        // Public endpoint - no admin permission required for frontend to fetch settings
+        $settings = VIP_Booking_Admin::get_login_message_settings();
         wp_send_json_success($settings);
     }
 }

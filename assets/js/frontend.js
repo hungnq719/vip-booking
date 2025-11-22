@@ -133,7 +133,6 @@ jQuery(document).ready(function($) {
                     var currentLang = getCurrentLanguage();
                     var finalUrl = getLanguageAwareUrl(baseUrl, currentLang);
 
-                    console.log('Badge navigation:', {
                         baseUrl: baseUrl,
                         detectedLang: currentLang,
                         finalUrl: finalUrl

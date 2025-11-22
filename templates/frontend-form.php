@@ -23,7 +23,24 @@ $show_login_notice = $require_login && !$is_logged_in;
 
 // Get translations
 $i18n = VIP_Booking_I18n::get_translations();
+
+// Get popup settings for non-logged-in users
+$popup_settings = array();
+$login_message_settings = array();
+if ($require_login && !$is_logged_in) {
+    $popup_settings = VIP_Booking_Admin::get_popup_settings();
+    $login_message_settings = VIP_Booking_Admin::get_login_message_settings();
+}
 ?>
+
+<!-- Hidden Spectra popup trigger (class added server-side so Spectra finds it on init) -->
+<?php if ($require_login && !$is_logged_in && !empty($popup_settings['trigger_class'])): ?>
+<a href="javascript:void(0);"
+   id="vip-booking-spectra-trigger"
+   class="<?php echo esc_attr($popup_settings['trigger_class']); ?>"
+   style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: auto;"
+   aria-hidden="true">Trigger Popup</a>
+<?php endif; ?>
 
 <div id="vip-booking-container">
     <!-- Step-by-step form -->
@@ -175,6 +192,8 @@ $i18n = VIP_Booking_I18n::get_translations();
             <div id="rate-limit-info" style="margin-top: 15px; padding: 10px; font-size: 14px;">
                 <span id="rate-limit-text"><?php echo esc_html($i18n['loading_booking_limits']); ?></span>
             </div>
+            <?php elseif ($require_login && !$is_logged_in): ?>
+            <div id="login-message" style="display: none; margin-top: 15px; padding: 10px; font-size: 16px; color: #f44336; text-align: center;"></div>
             <?php endif; ?>
         </div>
     </div>
@@ -320,12 +339,9 @@ var vipCardApp = (function() {
     var selectedHour = null, selectedMinute = null;
     var currentTimeMode = 'hour'; // 'hour' or 'minute'
     var currentStoreConfig = null;
-    var popupSettings = {
-        trigger_class: '',
-        auto_open_enabled: false,
-        auto_open_seconds: 0
-    };
-    
+    var popupSettings = <?php echo json_encode($popup_settings); ?>;
+    var loginMessageSettings = <?php echo json_encode($login_message_settings); ?>;
+
     function init() {
         initServiceDropdown();
         initPaxSelector();
@@ -342,91 +358,94 @@ var vipCardApp = (function() {
             loadRateLimitInfo();
         }
 
-        // Load popup settings and create trigger element early
-        if (requireLogin && !isLoggedIn) {
-            // Create trigger element IMMEDIATELY (before Spectra initializes)
-            createEarlyTrigger();
-            // Then load settings asynchronously
-            loadPopupSettings();
-        }
-    }
-
-    function createEarlyTrigger() {
-        // Create a placeholder trigger element that will be updated with the actual class later
-        var earlyTrigger = document.createElement('a');
-        earlyTrigger.href = 'javascript:void(0);'; // Prevent scroll to top
-        earlyTrigger.id = 'vip-booking-popup-trigger';
-        earlyTrigger.style.cssText = 'display: none !important; visibility: hidden !important; position: absolute; left: -9999px; pointer-events: none;';
-        earlyTrigger.setAttribute('aria-hidden', 'true');
-        earlyTrigger.setAttribute('tabindex', '-1');
-        // Prevent default on click to avoid any scroll behavior
-        earlyTrigger.onclick = function(e) {
-            if (e && e.preventDefault) e.preventDefault();
-            return false;
-        };
-        document.body.appendChild(earlyTrigger);
-        console.log('Created early placeholder trigger element');
-    }
-
-    function loadPopupSettings() {
-        fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'action=vip_booking_get_popup_settings'
-        })
-        .then(function(response) { return response.json(); })
-        .then(function(data) {
-            if (data.success && data.data) {
-                popupSettings = data.data;
-
-                // Update the early trigger element with the actual Spectra class
-                if (popupSettings.trigger_class) {
-                    updateTriggerClass();
-                }
-
-                // Handle auto-open if enabled
-                if (popupSettings.auto_open_enabled && popupSettings.trigger_class) {
-                    var delay = Math.max(0, parseInt(popupSettings.auto_open_seconds) || 0) * 1000;
-                    setTimeout(function() {
-                        triggerSpectraPopup();
-                    }, delay);
-                }
-            }
-        })
-        .catch(function(error) {
-            console.error('Failed to load popup settings:', error);
-        });
-    }
-
-    function updateTriggerClass() {
-        var trigger = document.getElementById('vip-booking-popup-trigger');
-        if (trigger && popupSettings.trigger_class) {
-            trigger.className = popupSettings.trigger_class;
-            console.log('Updated trigger element with Spectra class:', popupSettings.trigger_class);
+        // Handle auto-open popup for non-logged-in users
+        if (requireLogin && !isLoggedIn && popupSettings && popupSettings.auto_open_enabled && popupSettings.trigger_class) {
+            var delay = Math.max(0, parseInt(popupSettings.auto_open_seconds) || 0) * 1000;
+            setTimeout(function() {
+                triggerSpectraPopup();
+            }, delay);
         }
     }
 
     function triggerSpectraPopup() {
-        if (!popupSettings.trigger_class) {
-            console.warn('Spectra popup trigger class not configured');
+        if (!popupSettings || !popupSettings.trigger_class) {
+            showLoginMessage();
             return;
         }
 
-        // Find and click the permanent trigger element
-        var triggerElement = document.querySelector('.' + popupSettings.trigger_class);
-        if (triggerElement) {
-            console.log('Triggering Spectra popup:', popupSettings.trigger_class);
-
-            // Create and dispatch a proper click event
-            var clickEvent = new MouseEvent('click', {
-                view: window,
-                bubbles: true,
-                cancelable: true
-            });
-            triggerElement.dispatchEvent(clickEvent);
-        } else {
-            console.warn('Spectra popup trigger not found. Ensure popup is configured correctly.');
+        // Method 1: Click our hidden trigger element (preferred)
+        var hiddenTrigger = document.getElementById('vip-booking-spectra-trigger');
+        if (hiddenTrigger && hiddenTrigger.className.indexOf(popupSettings.trigger_class) > -1) {
+            hiddenTrigger.click();
+            return;
         }
+
+        // Method 2: Find any other existing Spectra trigger element on the page
+        var existingTriggers = document.querySelectorAll('.' + popupSettings.trigger_class);
+
+        if (existingTriggers.length > 0) {
+            var trigger = existingTriggers[0];
+            if (typeof trigger.click === 'function') {
+                trigger.click();
+            } else {
+                trigger.dispatchEvent(new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true
+                }));
+            }
+            return;
+        }
+
+        // Method 3: Extract popup ID and try to open via Spectra's JavaScript API
+        // Trigger class format: "spectra-popup-trigger-XXXXX" where XXXXX is the popup ID
+        var popupIdMatch = popupSettings.trigger_class.match(/spectra-popup-trigger-(\d+)/);
+
+        if (popupIdMatch && popupIdMatch[1]) {
+            var popupId = popupIdMatch[1];
+
+            // Try Spectra's global API to open popup directly
+            if (window.UAGBSpectraPopup && typeof window.UAGBSpectraPopup.openPopup === 'function') {
+                window.UAGBSpectraPopup.openPopup(popupId);
+                return;
+            }
+
+            // Alternative: Try to find popup element and trigger it
+            var popupElement = document.querySelector('.uagb-spectra-popup-' + popupId);
+            if (popupElement) {
+                popupElement.classList.add('uagb-spectra-popup-show');
+                return;
+            }
+        }
+    }
+
+    function showLoginMessage() {
+        if (!loginMessageSettings || !loginMessageSettings.message) {
+            return;
+        }
+
+        var messageDiv = document.getElementById('login-message');
+        if (!messageDiv) {
+            return;
+        }
+
+        // Get the message and login URL
+        var message = loginMessageSettings.message;
+        var loginUrl = loginMessageSettings.login_url || '/login';
+
+        // Replace the word "login" (case-insensitive) with a clickable link
+        var messageWithLink = message.replace(/\blogin\b/gi, function(match) {
+            return '<a href="' + loginUrl + '" style="color: #ff9800; text-decoration: underline; font-weight: bold;">' + match + '</a>';
+        });
+
+        // Display the message
+        messageDiv.innerHTML = messageWithLink;
+        messageDiv.style.display = 'block';
+
+        // Auto-hide after 5 seconds
+        setTimeout(function() {
+            messageDiv.style.display = 'none';
+        }, 5000);
     }
 
     function handlePreselectedStore() {
@@ -1320,11 +1339,8 @@ var vipCardApp = (function() {
         })
         .then(function(response) { return response.json(); })
         .then(function(data) {
-            if (data.success) {
-                console.log('Booking saved:', data.data.booking_number);
-                if (document.getElementById('rate-limit-info')) {
-                    loadRateLimitInfo();
-                }
+            if (data.success && document.getElementById('rate-limit-info')) {
+                loadRateLimitInfo();
             }
         })
         .catch(function(err) {

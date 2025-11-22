@@ -102,4 +102,20 @@ class VIP_Booking_Admin {
 
         return array_merge($defaults, get_option('vip_booking_popup_settings', array()));
     }
+
+    public static function save_login_message_settings($settings) {
+        $settings['message'] = sanitize_text_field($settings['message']);
+        $settings['login_url'] = esc_url_raw($settings['login_url']);
+
+        update_option('vip_booking_login_message_settings', $settings);
+    }
+
+    public static function get_login_message_settings() {
+        $defaults = array(
+            'message' => '⚠️ Please login to make reservation!',
+            'login_url' => '/login'
+        );
+
+        return array_merge($defaults, get_option('vip_booking_login_message_settings', array()));
+    }
 }

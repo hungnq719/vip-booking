@@ -310,7 +310,6 @@ jQuery(document).ready(function($) {
         // Pad with zeros
         const normalized = String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0');
 
-        console.log('Normalized time:', timeStr, '->', normalized);
         return normalized;
     }
 
@@ -496,8 +495,6 @@ jQuery(document).ready(function($) {
         // Flatten to flat rows for database
         const flatData = flattenStoresData();
 
-        console.log('Saving stores:', storesData);
-        console.log('Flattened data:', flatData);
 
         // Save expanded state before saving
         const expandedIndices = saveExpandedState();
@@ -572,7 +569,6 @@ jQuery(document).ready(function($) {
         const limit2h = parseInt($('#limit-2h').val()) || 2;
         const limit12h = parseInt($('#limit-12h').val()) || 4;
 
-        console.log('Saving settings:', { exchangeRate, limit2h, limit12h });
 
         $.ajax({
             url: ajaxurl,
@@ -585,7 +581,6 @@ jQuery(document).ready(function($) {
                 limit_12h: limit12h
             },
             success: function(response) {
-                console.log('Save response:', response);
                 if (response.success) {
                     alert('✅ Settings saved! Please reload the page to see changes.');
                 } else {
@@ -615,7 +610,6 @@ jQuery(document).ready(function($) {
         // Convert to negative for backend storage
         const cleanupPeriodNegative = -Math.abs(cleanupPeriodPositive);
 
-        console.log('Saving cleanup period:', cleanupPeriodPositive, '->', cleanupPeriodNegative);
 
         $.ajax({
             url: ajaxurl,
@@ -626,7 +620,6 @@ jQuery(document).ready(function($) {
                 cleanup_period: cleanupPeriodNegative
             },
             success: function(response) {
-                console.log('Cleanup save response:', response);
                 if (response.success) {
                     alert('✅ Cleanup settings saved! Please reload the page to see changes.');
                 } else {
@@ -643,7 +636,6 @@ jQuery(document).ready(function($) {
     $('#save-badge-url').click(function() {
         const badgeUrl = $('#badge-url').val().trim();
 
-        console.log('Saving badge URL:', badgeUrl);
 
         $.ajax({
             url: ajaxurl,
@@ -654,7 +646,6 @@ jQuery(document).ready(function($) {
                 badge_url: badgeUrl
             },
             success: function(response) {
-                console.log('Badge URL save response:', response);
                 if (response.success) {
                     alert('✅ Badge settings saved!');
                 } else {
@@ -712,7 +703,6 @@ jQuery(document).ready(function($) {
             let importCount = 0;
             let errorCount = 0;
 
-            console.log('=== CSV IMPORT START ===');
 
             for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
@@ -738,7 +728,6 @@ jQuery(document).ready(function($) {
                 values.push(current.trim().replace(/^["']|["']$/g, ''));
 
                 // Debug every row
-                console.log('Row', i, 'raw values:', values);
 
                 // Support both old format (7 columns) and new format (8 columns with Store ID)
                 if (values.length >= 7) {
@@ -746,7 +735,6 @@ jQuery(document).ready(function($) {
                     const hasStoreId = values.length >= 8;
 
                     if (hasStoreId) {
-                        console.log('Row', i, '- Opening raw:', values[5], '- Closing raw:', values[6]);
                         flatData.push({
                             service: values[0] || '',
                             store: values[1] || '',
@@ -759,7 +747,6 @@ jQuery(document).ready(function($) {
                         });
                     } else {
                         // Old format without Store ID
-                        console.log('Row', i, '- Opening raw:', values[4], '- Closing raw:', values[5]);
                         flatData.push({
                             service: values[0] || '',
                             store: values[1] || '',
@@ -778,8 +765,6 @@ jQuery(document).ready(function($) {
                 }
             }
 
-            console.log('=== CSV IMPORT END ===');
-            console.log('Imported:', importCount, '| Errors:', errorCount);
 
             if (importCount > 0) {
                 // Group flat data into stores
@@ -1133,19 +1118,6 @@ jQuery(document).ready(function($) {
         const autoOpenEnabled = $('#popup-auto-open-enabled').is(':checked');
         const autoOpenSeconds = parseInt($('#popup-auto-open-seconds').val()) || 0;
 
-        // Validate trigger class
-        if (triggerClass === '') {
-            alert('⚠️ Please enter a Spectra popup trigger class.');
-            return;
-        }
-
-        // Validate seconds
-        if (autoOpenEnabled && (autoOpenSeconds < 0 || autoOpenSeconds > 60)) {
-            alert('⚠️ Auto-open delay must be between 0 and 60 seconds.');
-            return;
-        }
-
-        console.log('Saving popup settings:', { triggerClass, autoOpenEnabled, autoOpenSeconds });
 
         $('#loading-overlay').show();
 
@@ -1170,6 +1142,64 @@ jQuery(document).ready(function($) {
             error: function() {
                 $('#loading-overlay').hide();
                 alert('❌ Failed to save popup settings. Please try again.');
+            }
+        });
+    });
+
+    // Load Login Message Settings on page load
+    function loadLoginMessageSettings() {
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_get_login_message_settings'
+            },
+            success: function(response) {
+                if (response.success && response.data) {
+                    $('#login-message-text').val(response.data.message || '⚠️ Please login to make reservation!');
+                    $('#login-link-url').val(response.data.login_url || '/login');
+                }
+            }
+        });
+    }
+
+    // Load login message settings when tab is activated
+    if ($('#tab-spectra-popup').hasClass('active')) {
+        loadLoginMessageSettings();
+    }
+
+    $('.nav-tab[data-tab="spectra-popup"]').on('click', function() {
+        loadLoginMessageSettings();
+    });
+
+    // Save Login Message Settings
+    $('#save-login-message-settings').click(function() {
+        var message = $('#login-message-text').val().trim();
+        var loginUrl = $('#login-link-url').val().trim();
+
+
+        $('#loading-overlay').show();
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_save_login_message_settings',
+                nonce: nonce,
+                message: message,
+                login_url: loginUrl
+            },
+            success: function(response) {
+                $('#loading-overlay').hide();
+                if (response.success) {
+                    alert('✅ Login message settings saved successfully!');
+                } else {
+                    alert('❌ Failed to save login message settings: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function() {
+                $('#loading-overlay').hide();
+                alert('❌ Failed to save login message settings. Please try again.');
             }
         });
     });
