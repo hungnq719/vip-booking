@@ -342,31 +342,10 @@ var vipCardApp = (function() {
             loadRateLimitInfo();
         }
 
-        // Load popup settings and create trigger element early
+        // Load popup settings for triggering Spectra popup
         if (requireLogin && !isLoggedIn) {
-            // Create trigger element IMMEDIATELY (before Spectra initializes)
-            createEarlyTrigger();
-            // Then load settings asynchronously
             loadPopupSettings();
         }
-    }
-
-    function createEarlyTrigger() {
-        // Create a placeholder trigger element that will be updated with the actual class later
-        var earlyTrigger = document.createElement('a');
-        earlyTrigger.href = 'javascript:void(0);';
-        earlyTrigger.id = 'vip-booking-popup-trigger';
-        // Hide visually but keep it functional for event dispatching
-        earlyTrigger.style.cssText = 'position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; overflow: hidden;';
-        earlyTrigger.setAttribute('aria-hidden', 'true');
-        earlyTrigger.setAttribute('tabindex', '-1');
-        // Add click handler to prevent any default behavior
-        earlyTrigger.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        });
-        document.body.appendChild(earlyTrigger);
-        console.log('Created early placeholder trigger element');
     }
 
     function loadPopupSettings() {
@@ -379,11 +358,6 @@ var vipCardApp = (function() {
         .then(function(data) {
             if (data.success && data.data) {
                 popupSettings = data.data;
-
-                // Update the early trigger element with the actual Spectra class
-                if (popupSettings.trigger_class) {
-                    updateTriggerClass();
-                }
 
                 // Handle auto-open if enabled
                 if (popupSettings.auto_open_enabled && popupSettings.trigger_class) {
@@ -399,60 +373,63 @@ var vipCardApp = (function() {
         });
     }
 
-    function updateTriggerClass() {
-        var trigger = document.getElementById('vip-booking-popup-trigger');
-        if (trigger && popupSettings.trigger_class) {
-            trigger.className = popupSettings.trigger_class;
-            console.log('Updated trigger element with Spectra class:', popupSettings.trigger_class);
-        }
-    }
-
     function triggerSpectraPopup() {
         if (!popupSettings.trigger_class) {
             console.warn('Spectra popup trigger class not configured');
             return;
         }
 
-        // Find ALL elements with the Spectra trigger class (including real Spectra triggers, not just our placeholder)
-        var triggerElements = document.querySelectorAll('.' + popupSettings.trigger_class);
+        console.log('Attempting to trigger Spectra popup with class:', popupSettings.trigger_class);
 
-        if (triggerElements.length === 0) {
-            console.warn('Spectra popup trigger not found. Ensure popup is configured correctly.');
-            return;
-        }
+        // Method 1: Find existing Spectra trigger element on the page
+        var existingTriggers = document.querySelectorAll('.' + popupSettings.trigger_class);
 
-        // Find the FIRST trigger that is NOT our placeholder (the real Spectra trigger)
-        var realTrigger = null;
-        for (var i = 0; i < triggerElements.length; i++) {
-            if (triggerElements[i].id !== 'vip-booking-popup-trigger') {
-                realTrigger = triggerElements[i];
-                break;
-            }
-        }
+        if (existingTriggers.length > 0) {
+            console.log('Found existing Spectra trigger(s):', existingTriggers.length);
+            var trigger = existingTriggers[0];
+            console.log('Clicking existing trigger:', trigger);
 
-        // If no real trigger found, use our placeholder as fallback
-        if (!realTrigger && triggerElements.length > 0) {
-            realTrigger = triggerElements[0];
-        }
-
-        if (realTrigger) {
-            console.log('Triggering Spectra popup:', popupSettings.trigger_class, 'Element:', realTrigger);
-
-            // Try native click first (works best with Spectra)
-            if (typeof realTrigger.click === 'function') {
-                realTrigger.click();
+            if (typeof trigger.click === 'function') {
+                trigger.click();
             } else {
-                // Fallback to dispatching click event
-                var clickEvent = new MouseEvent('click', {
+                trigger.dispatchEvent(new MouseEvent('click', {
                     view: window,
                     bubbles: true,
                     cancelable: true
-                });
-                realTrigger.dispatchEvent(clickEvent);
+                }));
             }
-        } else {
-            console.warn('No valid Spectra popup trigger found');
+            return;
         }
+
+        console.log('No existing trigger found, trying to open popup directly via Spectra API');
+
+        // Method 2: Extract popup ID and try to open via Spectra's JavaScript API
+        // Trigger class format: "spectra-popup-trigger-XXXXX" where XXXXX is the popup ID
+        var popupIdMatch = popupSettings.trigger_class.match(/spectra-popup-trigger-(\d+)/);
+
+        if (popupIdMatch && popupIdMatch[1]) {
+            var popupId = popupIdMatch[1];
+            console.log('Extracted popup ID:', popupId);
+
+            // Try Spectra's global API to open popup directly
+            if (window.UAGBSpectraPopup && typeof window.UAGBSpectraPopup.openPopup === 'function') {
+                console.log('Using UAGBSpectraPopup.openPopup()');
+                window.UAGBSpectraPopup.openPopup(popupId);
+                return;
+            }
+
+            // Alternative: Try to find popup element and trigger it
+            var popupElement = document.querySelector('.uagb-spectra-popup-' + popupId);
+            if (popupElement) {
+                console.log('Found popup element, adding show class');
+                popupElement.classList.add('uagb-spectra-popup-show');
+                return;
+            }
+        }
+
+        console.error('Failed to trigger Spectra popup. Please ensure:',
+            '\n1. A Spectra popup trigger element exists on the page with class: ' + popupSettings.trigger_class,
+            '\n2. Or create a hidden trigger element in your theme/page');
     }
 
     function handlePreselectedStore() {
