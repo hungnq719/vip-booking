@@ -1173,4 +1173,73 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+    // Load Login Message Settings on page load
+    function loadLoginMessageSettings() {
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_get_login_message_settings'
+            },
+            success: function(response) {
+                if (response.success && response.data) {
+                    $('#login-message-text').val(response.data.message || '⚠️ Please login to make reservation!');
+                    $('#login-link-url').val(response.data.login_url || '/login');
+                }
+            }
+        });
+    }
+
+    // Load login message settings when tab is activated
+    if ($('#tab-spectra-popup').hasClass('active')) {
+        loadLoginMessageSettings();
+    }
+
+    $('.nav-tab[data-tab="spectra-popup"]').on('click', function() {
+        loadLoginMessageSettings();
+    });
+
+    // Save Login Message Settings
+    $('#save-login-message-settings').click(function() {
+        var message = $('#login-message-text').val().trim();
+        var loginUrl = $('#login-link-url').val().trim();
+
+        if (!message) {
+            alert('⚠️ Please enter a login message.');
+            return;
+        }
+
+        if (!loginUrl) {
+            alert('⚠️ Please enter a login link URL.');
+            return;
+        }
+
+        console.log('Saving login message settings:', { message, loginUrl });
+
+        $('#loading-overlay').show();
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'vip_booking_save_login_message_settings',
+                nonce: nonce,
+                message: message,
+                login_url: loginUrl
+            },
+            success: function(response) {
+                $('#loading-overlay').hide();
+                if (response.success) {
+                    alert('✅ Login message settings saved successfully!');
+                } else {
+                    alert('❌ Failed to save login message settings: ' + (response.data || 'Unknown error'));
+                }
+            },
+            error: function() {
+                $('#loading-overlay').hide();
+                alert('❌ Failed to save login message settings. Please try again.');
+            }
+        });
+    });
 });

@@ -26,8 +26,10 @@ $i18n = VIP_Booking_I18n::get_translations();
 
 // Get popup settings for non-logged-in users
 $popup_settings = array();
+$login_message_settings = array();
 if ($require_login && !$is_logged_in) {
     $popup_settings = VIP_Booking_Admin::get_popup_settings();
+    $login_message_settings = VIP_Booking_Admin::get_login_message_settings();
 }
 ?>
 
@@ -190,6 +192,8 @@ if ($require_login && !$is_logged_in) {
             <div id="rate-limit-info" style="margin-top: 15px; padding: 10px; font-size: 14px;">
                 <span id="rate-limit-text"><?php echo esc_html($i18n['loading_booking_limits']); ?></span>
             </div>
+            <?php elseif ($require_login && !$is_logged_in): ?>
+            <div id="login-message" style="display: none; margin-top: 15px; padding: 10px; font-size: 16px; color: #f44336; text-align: center;"></div>
             <?php endif; ?>
         </div>
     </div>
@@ -336,7 +340,8 @@ var vipCardApp = (function() {
     var currentTimeMode = 'hour'; // 'hour' or 'minute'
     var currentStoreConfig = null;
     var popupSettings = <?php echo json_encode($popup_settings); ?>;
-    
+    var loginMessageSettings = <?php echo json_encode($login_message_settings); ?>;
+
     function init() {
         initServiceDropdown();
         initPaxSelector();
@@ -363,8 +368,9 @@ var vipCardApp = (function() {
     }
 
     function triggerSpectraPopup() {
-        if (!popupSettings.trigger_class) {
+        if (!popupSettings || !popupSettings.trigger_class) {
             console.warn('Spectra popup trigger class not configured');
+            showLoginMessage();
             return;
         }
 
@@ -427,6 +433,35 @@ var vipCardApp = (function() {
         console.error('Failed to trigger Spectra popup. Please ensure:',
             '\n1. A Spectra popup trigger element exists on the page with class: ' + popupSettings.trigger_class,
             '\n2. Or the Spectra popup plugin is properly installed and activated');
+    }
+
+    function showLoginMessage() {
+        if (!loginMessageSettings || !loginMessageSettings.message) {
+            return;
+        }
+
+        var messageDiv = document.getElementById('login-message');
+        if (!messageDiv) {
+            return;
+        }
+
+        // Get the message and login URL
+        var message = loginMessageSettings.message;
+        var loginUrl = loginMessageSettings.login_url || '/login';
+
+        // Replace the word "login" (case-insensitive) with a clickable link
+        var messageWithLink = message.replace(/\blogin\b/gi, function(match) {
+            return '<a href="' + loginUrl + '" style="color: #ff9800; text-decoration: underline; font-weight: bold;">' + match + '</a>';
+        });
+
+        // Display the message
+        messageDiv.innerHTML = messageWithLink;
+        messageDiv.style.display = 'block';
+
+        // Auto-hide after 5 seconds
+        setTimeout(function() {
+            messageDiv.style.display = 'none';
+        }, 5000);
     }
 
     function handlePreselectedStore() {

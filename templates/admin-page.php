@@ -554,6 +554,35 @@ foreach ($month_bookings as $booking_id) {
         <div style="padding: 15px 0;">
             <button id="save-popup-settings" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 12px 30px; border-radius: 6px; font-weight: 500; font-size: 14px; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s; cursor: pointer;">💾 Save Popup Settings</button>
         </div>
+
+        <!-- Login Message Settings -->
+        <div class="vip-popup-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; margin-top: 20px; margin-bottom: 20px; border: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #546e7a; display: flex; align-items: center; gap: 10px; font-size: 18px;"><span style="font-size: 24px;">💬</span> Login Message Configuration</h3>
+            <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                Configure the message shown when users click "Make Reservation" but Spectra popup is not configured. The word "login" in the message will automatically become a clickable link.
+            </p>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;"><strong>Login Message:</strong></label>
+                <input type="text" id="login-message-text" placeholder="⚠️ Please login to make reservation!" style="width: 100%; max-width: 600px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: all 0.2s;">
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
+                    ℹ️ The word "login" in your message will automatically become a clickable link. Example: <code style="background: rgba(90,108,125,0.1); padding: 2px 6px; border-radius: 3px;">⚠️ Please login to make reservation!</code>
+                </p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;"><strong>Login Link URL:</strong></label>
+                <input type="text" id="login-link-url" placeholder="/login" style="width: 100%; max-width: 600px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: all 0.2s;">
+                <p style="color: #666; font-size: 12px; margin: 8px 0 0 0; padding: 10px; background: rgba(90,108,125,0.05); border-left: 3px solid #5a6c7d; border-radius: 4px;">
+                    ℹ️ Enter the URL users will be redirected to when clicking the "login" link. Example: <code style="background: rgba(90,108,125,0.1); padding: 2px 6px; border-radius: 3px;">/login</code> or <code style="background: rgba(90,108,125,0.1); padding: 2px 6px; border-radius: 3px;">/wp-login.php</code>
+                </p>
+            </div>
+
+            <!-- Save Button -->
+            <div style="padding: 15px 0;">
+                <button id="save-login-message-settings" class="button button-primary" style="background: linear-gradient(135deg, #5a6c7d 0%, #6d7f8d 100%); border: none; color: white; padding: 12px 30px; border-radius: 6px; font-weight: 500; font-size: 14px; box-shadow: 0 2px 8px rgba(90,108,125,0.3); transition: all 0.3s; cursor: pointer;">💾 Save Login Message Settings</button>
+            </div>
+        </div>
     </div>
 
     <div id="loading-overlay" style="display: none;">
@@ -648,6 +677,8 @@ foreach ($month_bookings as $booking_id) {
 #reset-all:hover { background: linear-gradient(135deg, #c62d2d 0%, #b02727 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(220,50,50,0.4); }
 #popup-trigger-class:focus, #popup-auto-open-seconds:focus { border-color: #5a6c7d; outline: none; box-shadow: 0 0 0 3px rgba(90,108,125,0.1); }
 #save-popup-settings:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
+#login-message-text:focus, #login-link-url:focus { border-color: #5a6c7d; outline: none; box-shadow: 0 0 0 3px rgba(90,108,125,0.1); }
+#save-login-message-settings:hover { background: linear-gradient(135deg, #4a5c6d 0%, #5d6f7d 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(90,108,125,0.4); }
 </style>
 
 <script>
