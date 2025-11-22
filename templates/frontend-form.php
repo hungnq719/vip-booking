@@ -379,13 +379,39 @@ var vipCardApp = (function() {
             return;
         }
 
-        // Find and click the Spectra popup trigger
+        // Method 1: Try to find and click the trigger element
         var triggerElement = document.querySelector('.' + popupSettings.trigger_class);
         if (triggerElement) {
             triggerElement.click();
-        } else {
-            console.warn('Spectra popup trigger not found: .' + popupSettings.trigger_class);
+            return;
         }
+
+        // Method 2: Try to find any link with the trigger class (including hidden ones)
+        var allLinks = document.querySelectorAll('a[class*="' + popupSettings.trigger_class + '"]');
+        if (allLinks.length > 0) {
+            allLinks[0].click();
+            return;
+        }
+
+        // Method 3: Create temporary trigger element and click it
+        console.log('Creating temporary trigger element for class: ' + popupSettings.trigger_class);
+        var tempTrigger = document.createElement('a');
+        tempTrigger.href = '#';
+        tempTrigger.className = popupSettings.trigger_class;
+        tempTrigger.style.cssText = 'display: none !important; visibility: hidden !important; position: absolute; left: -9999px;';
+        document.body.appendChild(tempTrigger);
+
+        // Small delay to ensure Spectra can detect the element
+        setTimeout(function() {
+            tempTrigger.click();
+
+            // Clean up after a delay
+            setTimeout(function() {
+                if (tempTrigger && tempTrigger.parentNode) {
+                    tempTrigger.parentNode.removeChild(tempTrigger);
+                }
+            }, 1000);
+        }, 100);
     }
 
     function handlePreselectedStore() {
