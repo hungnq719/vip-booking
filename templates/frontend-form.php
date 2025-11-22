@@ -354,16 +354,12 @@ var vipCardApp = (function() {
     function createEarlyTrigger() {
         // Create a placeholder trigger element that will be updated with the actual class later
         var earlyTrigger = document.createElement('a');
-        earlyTrigger.href = 'javascript:void(0);'; // Prevent scroll to top
+        earlyTrigger.href = '#';
         earlyTrigger.id = 'vip-booking-popup-trigger';
-        earlyTrigger.style.cssText = 'display: none !important; visibility: hidden !important; position: absolute; left: -9999px; pointer-events: none;';
+        // Hide visually but keep it functional for event dispatching
+        earlyTrigger.style.cssText = 'position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; overflow: hidden;';
         earlyTrigger.setAttribute('aria-hidden', 'true');
         earlyTrigger.setAttribute('tabindex', '-1');
-        // Prevent default on click to avoid any scroll behavior
-        earlyTrigger.onclick = function(e) {
-            if (e && e.preventDefault) e.preventDefault();
-            return false;
-        };
         document.body.appendChild(earlyTrigger);
         console.log('Created early placeholder trigger element');
     }
@@ -417,13 +413,18 @@ var vipCardApp = (function() {
         if (triggerElement) {
             console.log('Triggering Spectra popup:', popupSettings.trigger_class);
 
-            // Create and dispatch a proper click event
-            var clickEvent = new MouseEvent('click', {
-                view: window,
-                bubbles: true,
-                cancelable: true
-            });
-            triggerElement.dispatchEvent(clickEvent);
+            // Try native click first (works best with Spectra)
+            if (typeof triggerElement.click === 'function') {
+                triggerElement.click();
+            } else {
+                // Fallback to dispatching click event
+                var clickEvent = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true
+                });
+                triggerElement.dispatchEvent(clickEvent);
+            }
         } else {
             console.warn('Spectra popup trigger not found. Ensure popup is configured correctly.');
         }
