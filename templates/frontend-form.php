@@ -354,12 +354,17 @@ var vipCardApp = (function() {
     function createEarlyTrigger() {
         // Create a placeholder trigger element that will be updated with the actual class later
         var earlyTrigger = document.createElement('a');
-        earlyTrigger.href = '#';
+        earlyTrigger.href = 'javascript:void(0);';
         earlyTrigger.id = 'vip-booking-popup-trigger';
         // Hide visually but keep it functional for event dispatching
         earlyTrigger.style.cssText = 'position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; overflow: hidden;';
         earlyTrigger.setAttribute('aria-hidden', 'true');
         earlyTrigger.setAttribute('tabindex', '-1');
+        // Add click handler to prevent any default behavior
+        earlyTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
         document.body.appendChild(earlyTrigger);
         console.log('Created early placeholder trigger element');
     }
@@ -408,14 +413,34 @@ var vipCardApp = (function() {
             return;
         }
 
-        // Find and click the permanent trigger element
-        var triggerElement = document.querySelector('.' + popupSettings.trigger_class);
-        if (triggerElement) {
-            console.log('Triggering Spectra popup:', popupSettings.trigger_class);
+        // Find ALL elements with the Spectra trigger class (including real Spectra triggers, not just our placeholder)
+        var triggerElements = document.querySelectorAll('.' + popupSettings.trigger_class);
+
+        if (triggerElements.length === 0) {
+            console.warn('Spectra popup trigger not found. Ensure popup is configured correctly.');
+            return;
+        }
+
+        // Find the FIRST trigger that is NOT our placeholder (the real Spectra trigger)
+        var realTrigger = null;
+        for (var i = 0; i < triggerElements.length; i++) {
+            if (triggerElements[i].id !== 'vip-booking-popup-trigger') {
+                realTrigger = triggerElements[i];
+                break;
+            }
+        }
+
+        // If no real trigger found, use our placeholder as fallback
+        if (!realTrigger && triggerElements.length > 0) {
+            realTrigger = triggerElements[0];
+        }
+
+        if (realTrigger) {
+            console.log('Triggering Spectra popup:', popupSettings.trigger_class, 'Element:', realTrigger);
 
             // Try native click first (works best with Spectra)
-            if (typeof triggerElement.click === 'function') {
-                triggerElement.click();
+            if (typeof realTrigger.click === 'function') {
+                realTrigger.click();
             } else {
                 // Fallback to dispatching click event
                 var clickEvent = new MouseEvent('click', {
@@ -423,10 +448,10 @@ var vipCardApp = (function() {
                     bubbles: true,
                     cancelable: true
                 });
-                triggerElement.dispatchEvent(clickEvent);
+                realTrigger.dispatchEvent(clickEvent);
             }
         } else {
-            console.warn('Spectra popup trigger not found. Ensure popup is configured correctly.');
+            console.warn('No valid Spectra popup trigger found');
         }
     }
 
