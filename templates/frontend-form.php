@@ -25,6 +25,14 @@ $show_login_notice = $require_login && !$is_logged_in;
 $i18n = VIP_Booking_I18n::get_translations();
 ?>
 
+<!-- Hidden Spectra popup trigger (class will be added dynamically) -->
+<?php if ($require_login && !$is_logged_in): ?>
+<a href="javascript:void(0);"
+   id="vip-booking-spectra-trigger"
+   style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: auto;"
+   aria-hidden="true">Trigger Popup</a>
+<?php endif; ?>
+
 <div id="vip-booking-container">
     <!-- Step-by-step form -->
     <div id="booking-form" class="booking-steps">
@@ -341,11 +349,6 @@ var vipCardApp = (function() {
         if (requireLogin && isLoggedIn) {
             loadRateLimitInfo();
         }
-
-        // Load popup settings for triggering Spectra popup
-        if (requireLogin && !isLoggedIn) {
-            loadPopupSettings();
-        }
     }
 
     function loadPopupSettings() {
@@ -358,6 +361,15 @@ var vipCardApp = (function() {
         .then(function(data) {
             if (data.success && data.data) {
                 popupSettings = data.data;
+
+                // Add Spectra trigger class to our hidden element IMMEDIATELY
+                if (popupSettings.trigger_class) {
+                    var triggerElement = document.getElementById('vip-booking-spectra-trigger');
+                    if (triggerElement) {
+                        triggerElement.className = popupSettings.trigger_class;
+                        console.log('Added Spectra trigger class to hidden element:', popupSettings.trigger_class);
+                    }
+                }
 
                 // Handle auto-open if enabled
                 if (popupSettings.auto_open_enabled && popupSettings.trigger_class) {
@@ -381,7 +393,15 @@ var vipCardApp = (function() {
 
         console.log('Attempting to trigger Spectra popup with class:', popupSettings.trigger_class);
 
-        // Method 1: Find existing Spectra trigger element on the page
+        // Method 1: Click our hidden trigger element (preferred)
+        var hiddenTrigger = document.getElementById('vip-booking-spectra-trigger');
+        if (hiddenTrigger && hiddenTrigger.className.indexOf(popupSettings.trigger_class) > -1) {
+            console.log('Clicking our hidden Spectra trigger element');
+            hiddenTrigger.click();
+            return;
+        }
+
+        // Method 2: Find any other existing Spectra trigger element on the page
         var existingTriggers = document.querySelectorAll('.' + popupSettings.trigger_class);
 
         if (existingTriggers.length > 0) {
@@ -403,7 +423,7 @@ var vipCardApp = (function() {
 
         console.log('No existing trigger found, trying to open popup directly via Spectra API');
 
-        // Method 2: Extract popup ID and try to open via Spectra's JavaScript API
+        // Method 3: Extract popup ID and try to open via Spectra's JavaScript API
         // Trigger class format: "spectra-popup-trigger-XXXXX" where XXXXX is the popup ID
         var popupIdMatch = popupSettings.trigger_class.match(/spectra-popup-trigger-(\d+)/);
 
@@ -429,7 +449,7 @@ var vipCardApp = (function() {
 
         console.error('Failed to trigger Spectra popup. Please ensure:',
             '\n1. A Spectra popup trigger element exists on the page with class: ' + popupSettings.trigger_class,
-            '\n2. Or create a hidden trigger element in your theme/page');
+            '\n2. Or the Spectra popup plugin is properly installed and activated');
     }
 
     function handlePreselectedStore() {
@@ -1333,6 +1353,11 @@ var vipCardApp = (function() {
         .catch(function(err) {
             console.error('Failed to save booking:', err);
         });
+    }
+
+    // Load popup settings immediately (before Spectra initializes) for non-logged-in users
+    if (requireLogin && !isLoggedIn) {
+        loadPopupSettings();
     }
 
     return {
