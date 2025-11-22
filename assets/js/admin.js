@@ -1133,18 +1133,6 @@ jQuery(document).ready(function($) {
         const autoOpenEnabled = $('#popup-auto-open-enabled').is(':checked');
         const autoOpenSeconds = parseInt($('#popup-auto-open-seconds').val()) || 0;
 
-        // Validate trigger class
-        if (triggerClass === '') {
-            alert('⚠️ Please enter a Spectra popup trigger class.');
-            return;
-        }
-
-        // Validate seconds
-        if (autoOpenEnabled && (autoOpenSeconds < 0 || autoOpenSeconds > 60)) {
-            alert('⚠️ Auto-open delay must be between 0 and 60 seconds.');
-            return;
-        }
-
         console.log('Saving popup settings:', { triggerClass, autoOpenEnabled, autoOpenSeconds });
 
         $('#loading-overlay').show();
