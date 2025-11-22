@@ -1205,16 +1205,6 @@ jQuery(document).ready(function($) {
         var message = $('#login-message-text').val().trim();
         var loginUrl = $('#login-link-url').val().trim();
 
-        if (!message) {
-            alert('⚠️ Please enter a login message.');
-            return;
-        }
-
-        if (!loginUrl) {
-            alert('⚠️ Please enter a login link URL.');
-            return;
-        }
-
         console.log('Saving login message settings:', { message, loginUrl });
 
         $('#loading-overlay').show();
