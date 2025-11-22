@@ -24,6 +24,9 @@ class VIP_Booking_AJAX {
         add_action('wp_ajax_vip_booking_get_notification_settings', array($this, 'get_notification_settings'));
         add_action('wp_ajax_vip_booking_test_telegram', array($this, 'test_telegram'));
         add_action('wp_ajax_vip_booking_test_email', array($this, 'test_email'));
+        add_action('wp_ajax_vip_booking_save_popup_settings', array($this, 'save_popup_settings'));
+        add_action('wp_ajax_vip_booking_get_popup_settings', array($this, 'get_popup_settings'));
+        add_action('wp_ajax_nopriv_vip_booking_get_popup_settings', array($this, 'get_popup_settings'));
 
         // Frontend AJAX
         add_action('wp_ajax_vip_booking_check_rate_limit', array($this, 'check_rate_limit'));
@@ -437,5 +440,26 @@ HTML;
         if ($settings['email_enabled']) {
             VIP_Booking_Email_Notifier::send_notification($booking_id);
         }
+    }
+
+    // Popup Login settings endpoints
+    public function save_popup_settings() {
+        check_ajax_referer('vip_booking_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error('Permission denied');
+
+        $settings = array(
+            'trigger_class' => isset($_POST['trigger_class']) ? sanitize_text_field($_POST['trigger_class']) : '',
+            'auto_open_enabled' => isset($_POST['auto_open_enabled']) ? (bool) $_POST['auto_open_enabled'] : false,
+            'auto_open_seconds' => isset($_POST['auto_open_seconds']) ? intval($_POST['auto_open_seconds']) : 0
+        );
+
+        VIP_Booking_Admin::save_popup_settings($settings);
+        wp_send_json_success();
+    }
+
+    public function get_popup_settings() {
+        // Public endpoint - no admin permission required for frontend to fetch settings
+        $settings = VIP_Booking_Admin::get_popup_settings();
+        wp_send_json_success($settings);
     }
 }

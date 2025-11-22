@@ -74,4 +74,32 @@ class VIP_Booking_Admin {
     public static function get_badge_url() {
         return get_option('vip_booking_badge_url', '');
     }
+
+    // Popup Login settings management
+    public static function save_popup_settings($settings) {
+        $defaults = array(
+            'trigger_class' => '',
+            'auto_open_enabled' => false,
+            'auto_open_seconds' => 0
+        );
+
+        $settings = array_merge($defaults, $settings);
+
+        // Sanitize
+        $settings['trigger_class'] = sanitize_text_field($settings['trigger_class']);
+        $settings['auto_open_enabled'] = (bool) $settings['auto_open_enabled'];
+        $settings['auto_open_seconds'] = max(0, intval($settings['auto_open_seconds']));
+
+        update_option('vip_booking_popup_settings', $settings);
+    }
+
+    public static function get_popup_settings() {
+        $defaults = array(
+            'trigger_class' => '',
+            'auto_open_enabled' => false,
+            'auto_open_seconds' => 0
+        );
+
+        return array_merge($defaults, get_option('vip_booking_popup_settings', array()));
+    }
 }
