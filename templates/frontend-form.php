@@ -359,6 +359,11 @@ var vipCardApp = (function() {
             if (data.success && data.data) {
                 popupSettings = data.data;
 
+                // Create permanent hidden trigger element for Spectra
+                if (popupSettings.trigger_class && !document.querySelector('.' + popupSettings.trigger_class)) {
+                    createPermanentTrigger();
+                }
+
                 // Handle auto-open if enabled
                 if (popupSettings.auto_open_enabled && popupSettings.trigger_class) {
                     var delay = Math.max(0, parseInt(popupSettings.auto_open_seconds) || 0) * 1000;
@@ -373,45 +378,31 @@ var vipCardApp = (function() {
         });
     }
 
+    function createPermanentTrigger() {
+        var permanentTrigger = document.createElement('a');
+        permanentTrigger.href = '#';
+        permanentTrigger.className = popupSettings.trigger_class;
+        permanentTrigger.style.cssText = 'display: none !important; visibility: hidden !important; position: absolute; left: -9999px; pointer-events: none;';
+        permanentTrigger.setAttribute('aria-hidden', 'true');
+        permanentTrigger.setAttribute('tabindex', '-1');
+        document.body.appendChild(permanentTrigger);
+        console.log('Created permanent Spectra trigger element:', popupSettings.trigger_class);
+    }
+
     function triggerSpectraPopup() {
         if (!popupSettings.trigger_class) {
             console.warn('Spectra popup trigger class not configured');
             return;
         }
 
-        // Method 1: Try to find and click the trigger element
+        // Find and click the permanent trigger element
         var triggerElement = document.querySelector('.' + popupSettings.trigger_class);
         if (triggerElement) {
+            console.log('Triggering Spectra popup:', popupSettings.trigger_class);
             triggerElement.click();
-            return;
+        } else {
+            console.warn('Spectra popup trigger not found. Ensure popup is configured correctly.');
         }
-
-        // Method 2: Try to find any link with the trigger class (including hidden ones)
-        var allLinks = document.querySelectorAll('a[class*="' + popupSettings.trigger_class + '"]');
-        if (allLinks.length > 0) {
-            allLinks[0].click();
-            return;
-        }
-
-        // Method 3: Create temporary trigger element and click it
-        console.log('Creating temporary trigger element for class: ' + popupSettings.trigger_class);
-        var tempTrigger = document.createElement('a');
-        tempTrigger.href = '#';
-        tempTrigger.className = popupSettings.trigger_class;
-        tempTrigger.style.cssText = 'display: none !important; visibility: hidden !important; position: absolute; left: -9999px;';
-        document.body.appendChild(tempTrigger);
-
-        // Small delay to ensure Spectra can detect the element
-        setTimeout(function() {
-            tempTrigger.click();
-
-            // Clean up after a delay
-            setTimeout(function() {
-                if (tempTrigger && tempTrigger.parentNode) {
-                    tempTrigger.parentNode.removeChild(tempTrigger);
-                }
-            }, 1000);
-        }, 100);
     }
 
     function handlePreselectedStore() {
